@@ -22,7 +22,7 @@ email:
 description: >- # this means to ignore newlines until "baseurl:"
   Computational essays from FYS1120 at the University of Oslo
 
-baseurl: "/u" # the subpath of your site, e.g. /blog. If there is no subpath for your site, use an empty string ""
+baseurl: "/computational-essay-showroom" # the subpath of your site, e.g. /blog. If there is no subpath for your site, use an empty string ""
 url: "https://uio-ccse.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 
 
