@@ -6,7 +6,11 @@
   sections:
   - title: "How much electric current would you need to use a railgun to launch a package up to the ISS?"
     url: /essays/railgun_TOO/Railgun_V1_9
-    not_numbered: false
   - title: "2D Stormcloud, with lightning and lightning rod"
     url: essays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense
-    not_numbered: false
+  - title: "Railgun Train"
+    url: essays/railgun_FG_IK/Train_Railgun_CompEssay
+  - title: "Magnetic Bottle"
+    url: essays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay
+  - title: "Stormsky"
+    url: essays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18
