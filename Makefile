@@ -3,6 +3,7 @@ install:
 
 clone: 
 	git clone https://github.com/jupyter/jupyter-book .jupyter-book
+	cd .jupyter-book && git checkout 5bcbf9aafcea177b10377de81778e4d281cba70f && cd ..
 
 build: clone build_noclone
 
