@@ -7,11 +7,6 @@
     url: essays/exampleessays/railgun_TOO/Railgun_V1_9
   - title: "How would ion drives compare to conventional rockets on a trip to Mars?"
     url: essays/exampleessays/iondrives/ExploringTheMartian_V2_5
-- title: "Student Essays"
-  url: /index
-  not_numbered: true
-  expand_sections: true
-  sections:
   - title: "What is the best material for a lightning rod?"
     url: essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense
   - title: "Can railguns be used to power the Oslo metro system?"
