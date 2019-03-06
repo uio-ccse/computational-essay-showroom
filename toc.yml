@@ -1,17 +1,16 @@
-- title: Example Essays
+
+- title: "Essays"
   url: /index
   not_numbered: true
   expand_sections: true
   sections:
-  - title: How much electric current would you need to use a railgun to launch a package up to the ISS?
-    url: essays/exampleessays/railgun_TOO/Railgun_V1_9
-  - title: How would ion drives compare to conventional rockets on a trip to Mars?
-    url: essays/exampleessays/iondrives/ExploringTheMartian_V2_5
-  - title: What is the best material for a lightning rod?
-    url: essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense
-  - title: Can railguns be used to power the Oslo metro system?
-    url: essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay
-  - title: Can we trap a high-energy particle in a magnetic bottle?
-    url: essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay
-  - title: Hvor langt kan du trygt sta borte fra et lynnedslag?
-    url: essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18
+  - title: "How much electric current would you need to use a railgun to launch a package up to the ISS?"
+    url: /essays/railgun_TOO/Railgun_V1_9
+  - title: "2D Stormcloud, with lightning and lightning rod"
+    url: essays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense
+  - title: "Railgun Train"
+    url: essays/railgun_FG_IK/Train_Railgun_CompEssay
+  - title: "Magnetic Bottle"
+    url: essays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay
+  - title: "Stormsky"
+    url: essays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18
