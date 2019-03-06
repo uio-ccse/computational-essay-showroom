@@ -7,3 +7,4 @@ datascience
 folium
 matplotlib
 sympy
+jsonschema
