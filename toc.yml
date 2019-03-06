@@ -1,14 +1,14 @@
 - title: "Example Essays"
-  url: /essays/exampleessays
+  url: /index
   not_numbered: true
   expand_sections: true
   sections:
   - title: "How much electric current would you need to use a railgun to launch a package up to the ISS?"
     url: essays/exampleessays/railgun_TOO/Railgun_V1_9
   - title: "How would ion drives compare to conventional rockets on a trip to Mars?"
-    url: essays/exampleessays/iondrives/ExploringTheMartian-V2.5
+    url: essays/exampleessays/iondrives/ExploringTheMartian-V2_5
 - title: "Student Essays"
-  url: /essays/studentessays
+  url: /index
   not_numbered: true
   expand_sections: true
   sections:
