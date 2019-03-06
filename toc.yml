@@ -14,9 +14,9 @@
   sections:
   - title: What is the best material for a lightning rod?
     url: essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense
-  - title: Can railguns be used to power the Oslo metro system?
-    url: essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay
   - title: Can we trap a high-energy particle in a magnetic bottle?
     url: essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay
-  - title: Hvor langt kan du trygt sta borte fra et lynnedslag?
+  - title: Kan vi bruke en railgun til å akselerere et tog i Oslo t-banen?
+    url: essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay
+  - title: Hvor langt kan du trygt stå borte fra et lynnedslag?
     url: essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18
