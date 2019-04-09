@@ -6,7 +6,7 @@ python:
 cache: pip
 
 script:
-  make build && cp -r .jupyter-book/* .
+  make install && make site
 
 deploy:
   provider: pages

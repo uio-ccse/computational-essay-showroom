@@ -1,0 +1,76 @@
+/* Put your custom CSS here */
+
+/* CSS overrides.
+   An additional edit was applied to a variable in _sass/inuitcss/tools/_tools.mq.scss: wide: 1300px -> 1500px
+   20190409 Alessandro Marin
+*/
+
+.output_png img,
+p img {
+  max-width: 85%;
+}
+
+main,
+nav {
+  scrollbar-width: auto;
+}
+
+/* CSS for the modal
+   Refer to the JS code in ./custom.js
+   20190409 Alessandro Marin
+*/
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 2;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto; /* Enable scrollbar if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.modal-content {
+  margin: auto;
+  display: block;
+  height: 600px;
+  min-height: 85%;
+  max-height: 90%;
+}
+
+@keyframes zoom {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* The Close Button */
+.close {
+  position: absolute;
+  top: 15px;
+  right: 35px;
+  color: #1a1a1a;
+  font-size: 60px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+  color: #bbb;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* 100% Image Width on Smaller Screens */
+@media only screen and (max-width: 700px) {
+  .modal-content {
+    width: 100%;
+  }
+}

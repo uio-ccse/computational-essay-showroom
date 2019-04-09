@@ -1,24 +1,31 @@
+.PHONY: help book clean serve
+
+help:
+	@echo "Please use 'make <target>' where <target> is one of:"
+	@echo "  install     to install the necessary dependencies for jupyter-book to build"
+	@echo "  book        to convert the `content/` folder into Jekyll markdown in `_build/`"
+	@echo "  clean       to clean out site build files"
+	@echo "  runall      to run all notebooks in-place, capturing outputs with the notebook"
+	@echo "  serve       to serve the repository locally with Jekyll"
+	@echo "  build       to build the site HTML locally with Jekyll and store in _site/"
+
+
 install:
-	cd .jupyter-book && make install
+	gem install bundler
+	bundle install
 
-clone: 
-	git clone https://github.com/jupyter/jupyter-book .jupyter-book
-	cd .jupyter-book && git checkout 5bcbf9aafcea177b10377de81778e4d281cba70f && cd ..
+book:
+	jupyter-book build ./
 
-build: clone build_noclone
+runall:
+	jupyter-book run ./content
 
-build_noclone:
-	rm -rf .jupyter-book/content
-	rm -rf .jupyter-book/_build/*
-	cp -r content .jupyter-book/
-	cp -r assets .jupyter-book/
-	cp _includes/* .jupyter-book/_includes/
-	cp toc.yml .jupyter-book/_data/
-	cp _config.yml .jupyter-book/_config.yml
-	cd .jupyter-book && make book
+clean:
+	python scripts/clean.py
 
-clean: 
-	rm -rf .jupyter-book
+serve:
+	bundle exec guard
 
-serve: install 
-	cd .jupyter-book && make serve
+site:
+	bundle exec jekyll build
+	touch _site/.nojekyll
