@@ -6,7 +6,7 @@ kernel_name: python3
 has_widgets: false
 title: 'How long would it take to fall into Space?'
 prev_page:
-  url: /essays/exampleessays/earthtunnel/FallingThroughTheEarth
+  url: /essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative
   title: 'How long would it take to fall through a non-uniform Earth?'
 next_page:
   url: /index
@@ -159,10 +159,10 @@ def USStdAtmos(Z): #Input is height in meters
         Tb = 214.65
         L = -2
         Pb = 3.9564 * 10**(-2)
-
+        
     if H < 84.8520:
         T = Tb + L * (H - Hb) #Temperature formula for the lower half of the model
-
+        
         g0s = 9.80665 #m^2/(s^2*m')
         Rs = 8.31432 * 10**(3) #Nm/(kmol*K)
         M0 = 28.9644 #kg/kmol
@@ -284,7 +284,7 @@ for i in range(n-1):
     acc[i] = acceleration(pos[i], vel[i], Cd, A, m)
     vel[i+1] = vel[i] + acc[i]*dt
     pos[i+1] = pos[i] + vel[i+1]*dt
-
+    
     velsq[i] = vel[i]**2
     dns[i] = USStdAtmos(pos[i])[2]
     drg[i] = drag(dns[i], vel[i], Cd, A)/m

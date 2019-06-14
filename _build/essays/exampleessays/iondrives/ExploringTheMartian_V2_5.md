@@ -9,7 +9,7 @@ prev_page:
   url: /essays/exampleessays/railgun_TOO/Railgun_V1_9
   title: 'How much electric current would you need to use a railgun to launch a package up to the ISS?'
 next_page:
-  url: /essays/exampleessays/earthtunnel/FallingThroughTheEarth
+  url: /essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative
   title: 'How long would it take to fall through a non-uniform Earth?'
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
