@@ -3,6 +3,7 @@ redirect_from:
   - "essays/studentessays/lhc/lhc-compessay"
 interact_link: content/essays/studentessays/LHC/LHC_CompEssay.ipynb
 kernel_name: python3
+has_widgets: false
 title: 'What are the effects of relativity on particles in the LHC?'
 prev_page:
   url: /essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense

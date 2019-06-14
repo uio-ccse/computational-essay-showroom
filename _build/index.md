@@ -1,8 +1,8 @@
 ---
 title: 'Student Essays'
 prev_page:
-  url: /essays/exampleessays/earthtunnel/earth_tunnel
-  title: 'How long would it take to fall through a non-uniform Earth?'
+  url: /essays/exampleessays/intoSpace/FallingIntoSpace
+  title: 'How long would it take to fall into Space?'
 next_page:
   url: /essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense
   title: 'What is the best material for a lightning rod?'

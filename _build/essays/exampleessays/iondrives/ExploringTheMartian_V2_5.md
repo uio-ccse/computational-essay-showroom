@@ -3,12 +3,13 @@ redirect_from:
   - "essays/exampleessays/iondrives/exploringthemartian-v2-5"
 interact_link: content/essays/exampleessays/iondrives/ExploringTheMartian_V2_5.ipynb
 kernel_name: python3
+has_widgets: false
 title: 'How would ion drives compare to conventional rockets on a trip to Mars?'
 prev_page:
   url: /essays/exampleessays/railgun_TOO/Railgun_V1_9
   title: 'How much electric current would you need to use a railgun to launch a package up to the ISS?'
 next_page:
-  url: /essays/exampleessays/earthtunnel/earth_tunnel
+  url: /essays/exampleessays/earthtunnel/FallingThroughTheEarth
   title: 'How long would it take to fall through a non-uniform Earth?'
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---

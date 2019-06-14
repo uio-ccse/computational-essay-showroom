@@ -3,6 +3,7 @@ redirect_from:
   - "essays/exampleessays/railgun-too/railgun-v1-9"
 interact_link: content/essays/exampleessays/railgun_TOO/Railgun_V1_9.ipynb
 kernel_name: vpython
+has_widgets: false
 title: 'How much electric current would you need to use a railgun to launch a package up to the ISS?'
 prev_page:
   url: /index

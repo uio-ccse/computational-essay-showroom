@@ -3,6 +3,7 @@ redirect_from:
   - "essays/studentessays/magnetic-bottle-mbp-kg/magneticbottle-trap-computationalessay"
 interact_link: content/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay.ipynb
 kernel_name: python3
+has_widgets: false
 title: 'Can we trap a high-energy particle in a magnetic bottle?'
 prev_page:
   url: /essays/studentessays/LHC/LHC_CompEssay

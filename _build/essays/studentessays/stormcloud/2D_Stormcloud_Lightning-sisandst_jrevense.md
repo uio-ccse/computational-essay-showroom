@@ -3,6 +3,7 @@ redirect_from:
   - "essays/studentessays/stormcloud/2d-stormcloud-lightning-sisandst-jrevense"
 interact_link: content/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense.ipynb
 kernel_name: python3
+has_widgets: false
 title: 'What is the best material for a lightning rod?'
 prev_page:
   url: /index

@@ -3,6 +3,7 @@ redirect_from:
   - "essays/studentessays/stormcloud-ls/3d-stormcloud-lassst-fys1120-h18"
 interact_link: content/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18.ipynb
 kernel_name: python3
+has_widgets: false
 title: 'Hvor langt kan du trygt stå borte fra et lynnedslag?'
 prev_page:
   url: /essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay

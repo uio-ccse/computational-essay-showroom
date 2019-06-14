@@ -3,6 +3,7 @@ redirect_from:
   - "essays/studentessays/railgun-fg-ik/train-railgun-compessay"
 interact_link: content/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay.ipynb
 kernel_name: python3
+has_widgets: false
 title: 'Kan vi bruke en railgun til å akselerere et tog i Oslo t-banen?'
 prev_page:
   url: /essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay

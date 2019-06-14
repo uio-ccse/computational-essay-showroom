@@ -1,15 +1,16 @@
 ---
 redirect_from:
-  - "essays/exampleessays/earthtunnel/earth-tunnel"
-interact_link: content/essays/exampleessays/earthtunnel/earth_tunnel.ipynb
+  - "essays/exampleessays/earthtunnel/fallingthroughtheearth"
+interact_link: content/essays/exampleessays/earthtunnel/FallingThroughTheEarth.ipynb
 kernel_name: python3
+has_widgets: false
 title: 'How long would it take to fall through a non-uniform Earth?'
 prev_page:
   url: /essays/exampleessays/iondrives/ExploringTheMartian_V2_5
   title: 'How would ion drives compare to conventional rockets on a trip to Mars?'
 next_page:
-  url: /index
-  title: 'Student Essays'
+  url: /essays/exampleessays/intoSpace/FallingIntoSpace
+  title: 'How long would it take to fall into Space?'
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
 
@@ -21,16 +22,15 @@ comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /con
 
 What would happen if the ground under you disappeared and you fell all the way to the center of the Earth? What if someone somehow made a tunnel from the surface to the core? How fast would you go along the way? What would your top speed be? Would you be able to get up to the surface again or would you get trapped by gravity?
 
-In this computational essay we are going to look your movement as you fall under the influence of the Earth's gravity without being stopped by the ground. We will look at how position, velocity and acceleration changes during the fall, and use these findings to better understand the movement.
+In this computational essay, we are going to look your movement as you fall under the influence of the Earth's gravity without being stopped by the ground. We will look at how position, velocity and acceleration changes during the fall, and use these findings to better understand the movement.
 
-<figure>
-    <img src="xthe-kola-superdeep-borehole-russia-10.jpg.pagespeed.ic.Fpl43mVzfr.jpg" alt="Drawing" style="width: 60%;"/>
-    <figcaption style="text-align:center;">The Kola Borehole (From <a href="http://www.absolute-knowledge.com/unexpected-discoveries-kola-superdeep-borehole/">absolute-knowledge.com</a>)</figcaption>
-</figure>
+<img src="FallingThroughTheEarthResources/KolaBorehole.jpg" alt="Drawing" style="width: 60%;"/>
+
+*The Kola Borehole (From <a href="http://www.absolute-knowledge.com/unexpected-discoveries-kola-superdeep-borehole/">absolute-knowledge.com</a>)*
 
 ## Gravity in and around spherical objects
 
-In many analyses it's assumed that the Earth is a perfect sphere with uniform density ([example](https://www.livescience.com/50312-how-long-to-fall-through-earth.html)). But, this doesn't take into account the fact that the Earth has a much denser core. So, for the purpose of this essay we are going to assume that the Earth is a perfect sphere with a varying density given by the [Preliminary Reference Earth Model (PREM)](https://en.wikipedia.org/wiki/Preliminary_reference_Earth_model).
+For the purpose of this essay we are going to assume that the Earth is a perfect sphere with a varying density given by the [Preliminary Reference Earth Model (PREM)](https://en.wikipedia.org/wiki/Preliminary_reference_Earth_model).
 
 
 We will also assume that there is no air resistance. With air resistance, our falling person would quickly reach terminal velocity and slowly lose all of their speed near the center of the Earth. This situation would also be interesting to look at, but will not be the focus of this essay. Furhermore, we will assume that the Earth's rotation has no effect, for example by saying that you fall from pole to pole.
@@ -46,9 +46,9 @@ The aforementioned factors lead to some questions and calculations beyond the sc
 
 This means that we do not have to calculate the gravitational pull from all throughout the Earth, since we can act as if all of the Earth's mass is located in its center. We also only need to worry about the what is further in than the point you are currently at.
 
-<img src="ShellTheorem.png" alt="Drawing" style="width: 70%;"/>
+<img src="FallingThroughTheEarthResources/ShellTheoremWe.jpg" alt="Drawing" style="width: 70%;"/>
 
-The gravitational force between two objects is given by $$F = \frac{GMm}{r^2}$$
+The gravitational force between two objects is given by $F = \frac{GMm}{r^2}$
 
 where G is the gravitational constant $6.68\times10^-11\frac{Nm^2}{kg^2}$, M is the mass of one of the objects, m is the mass of the other object and r is the distance between the objects. The force acts on both of the objects, and is pointed from one object to the other.
 
@@ -81,7 +81,8 @@ Let us read the data and store them in arrays.
 radius = []
 density = []
 
-infile = open("PREM_ANISOTROPIC.txt","r") #The file has 199 lines starting with "[Radius] [Density]" that we read need.
+#The file has 199 lines starting with "[Radius] [Density]" that we read like this
+infile = open("FallingThroughTheEarthResources/PREM_ANISOTROPIC.txt","r")
 lines = infile.readlines()
 for line in lines[3:]: #The data starts at line 3.
     numbers = line.split()
@@ -110,19 +111,19 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/earth_tunnel_20_0.png)
+![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth_21_0.png)
 
 
 
-This image (taken from <a href="https://en.wikipedia.org/wiki/Structure_of_the_Earth">en.wikipedia.org/wiki/Structure_of_the_Earth</a>) shows how the different layers and densities of the earth fit together.
+*This image (taken from <a href="https://en.wikipedia.org/wiki/Structure_of_the_Earth">en.wikipedia.org/wiki/Structure_of_the_Earth</a>) shows how the different layers and densities of the earth fit together.*
 
-<img src="RadialDensityPREM.jpg" alt="Drawing" style="width: 70%;" align="left"/>
+<img src="FallingThroughTheEarthResources/RadialDensityPREM.jpg" alt="Drawing" style="width: 70%;"/>
 
 ### Mass at different heights
 
 Next we need to find out how the total mass further in than us changes as we fall. By working our way from the center we can add one and one "shell" to find the total mass at different distances from the center. We have to find the total mass by adding these shells due to the relatively rough resolution of our density data.
 
-![title](EarthShells.png)
+![title](FallingThroughTheEarthResources/EarthShells.jpg)
 
 Note that we use the same density for the inner and outer sphere to calculate the mass of the shell. The density we use for the spheres is the average of the Earth's density at the outer and inner radius of the shell. So that:
 
@@ -155,7 +156,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/earth_tunnel_27_0.png)
+![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth_28_0.png)
 
 
 
@@ -182,9 +183,12 @@ This accuracy is encouraging. Note that the total mass is not the only useful re
 ## Acceleration at different heights
 
 The gravitational force between two objects is given by $F = \frac{GMm}{r^2}$. The Shell Theorem states that at a distance r we only need to consider the mass further in than where we currently are. Additionally, Newton's second law gives us that:
-\begin{align}
-\\&F = ma \Rightarrow a = \frac{F}{m} = \frac{GMm}{r^2m} = \frac{GM}{r^2}
-\end{align}
+
+$$
+\begin{align*}
+F = ma \Rightarrow a = \frac{F}{m} = \frac{GMm}{r^2m} = \frac{GM}{r^2}
+\end{align*}
+$$
 
 
 
@@ -206,7 +210,7 @@ We can plot these findings as well. We are eventually going to need a general fu
 
 {:.input_area}
 ```python
-plt.rcParams['figure.figsize'] = [19, 4] #Makes the figure bigger so that we can fit more plots.
+plt.figure(figsize=(19, 4))
 plt.subplot(131)
 plt.plot(radius/1000,acceleration) #The smooth graph
 plt.xlabel("Radius [km]")
@@ -227,14 +231,12 @@ plt.ylabel("Acceleration [m/s^2]")
 plt.title("Gravity as you fall from the surface")
 
 plt.show()
-plt.rcParams['figure.figsize'] = [6, 4]
-#This line changes the figure size back to the default for future graphs, so that we do not change other figures by accident
 ```
 
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/earth_tunnel_35_0.png)
+![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth_37_0.png)
 
 
 
@@ -294,10 +296,12 @@ print(coefs1)
 
 ```
 
-\begin{align}
-\\ f_1(r) &= a_0 + a_1r^1 + a_2r^2 + a_3r^3
-\\ f_1(r) &= -2.93*10^{-2} + 3.88*10^{-6}r - 2.40*10^{-13}r^2 + 3.85*10^{-21}r^3
-\end{align}
+$$
+\begin{align*}
+f_1(r) &= a_0 + a_1r^1 + a_2r^2 + a_3r^3 \\
+f_1(r) &= -2.93*10^{-2} + 3.88*10^{-6}r - 2.40*10^{-13}r^2 + 3.85*10^{-21}r^3
+\end{align*}
+$$
 
 To show this new general function in relation to the values for gravitational acceleration we found from the data, we can plot them together and summarize the errors for every point:
 
@@ -323,13 +327,13 @@ plt.show()
 
 {:.output .output_stream}
 ```
-Total error = 1.0836096370860657
+Total error = 1.0836096370862585
 
 ```
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/earth_tunnel_44_1.png)
+![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth_46_1.png)
 
 
 
@@ -355,7 +359,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/earth_tunnel_46_0.png)
+![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth_48_0.png)
 
 
 
@@ -420,7 +424,7 @@ We can plot our results side by side in subplots:
 
 {:.input_area}
 ```python
-plt.rcParams['figure.figsize'] = [19, 4] #Makes the figure bigger so that we can fit more plots.
+plt.figure(figsize=(19, 4))
 plt.subplot(131)
 plt.plot(times,positions/1000,color="blue")
 plt.xlabel("Time [s]")
@@ -443,14 +447,12 @@ plt.title("Acceleration")
 plt.grid()
 
 plt.show()
-plt.rcParams['figure.figsize'] = [6, 4]
-#This^ line changes the figure size back to the default for future graphs, so that we do not change other figures by accident
 ```
 
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/earth_tunnel_57_0.png)
+![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth_59_0.png)
 
 
 
@@ -504,7 +506,7 @@ To better look at how position, velocity and acceleration change in relation to 
 
 {:.input_area}
 ```python
-plt.rcParams['figure.figsize'] = [19, 4]
+plt.figure(figsize=(19, 4))
 plt.plot(times,positions/(np.amax(positions)),label="Position")
 plt.plot(times,velocities/(np.amax(velocities)),label="Velocity")
 plt.plot(times,accelerations/(np.amax(accelerations)),label="Acceleration")
@@ -514,13 +516,12 @@ plt.title("Normalized graphs for position, velocity and acceleration")
 plt.legend()
 plt.grid()
 plt.show()
-plt.rcParams['figure.figsize'] = [6, 4]
 ```
 
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/earth_tunnel_65_0.png)
+![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth_67_0.png)
 
 
 
@@ -528,15 +529,15 @@ We see that when we reach the center (position=0), acceleration is also 0. This 
 
 We saw earlier that gravity is almost constant close to the surface, which can also be seen here. This near constant gravity near the surface is what makes our velocity change so linearly between the sharper turns.
 
-## Summary and Conclusion
+### Summary and Conclustion
 
-Using our model of a perfectly spherical Earth with a density given by the Preliminary Reference Earth Model, with no air resistance and no rotation we found that we would fall through the entire Earth in 38 minutes and 10 seconds, reaching a top speed of 9,920 m/s along the way. These results are similar to published results: see, for example, Klotz (2015).
+Using our model of a perfectly spherical Earth with a density given by the Preliminary Reference Earth Model, with no air resistance and no rotation we found that we would fall through the entire Earth in 38 minutes and 10 seconds, reaching a top speed of 9,920 m/s along the way.
 
 We saw that we would fall back and forth, reaching the same height each time. Our model also showed that acceleration would initially increase a little before decreasing nearly linearly while falling towards the center.
 
 These are, of course, estimates. A more accurate picture of a fall through the Earth could include a more accurate density model, air resistance, the coriolis effect or an earth that is not perfectly spherical. Even though you will probably not be falling through the Earth at any time soon, these calculations can be useful in other places. If one wanted to fly a spacecraft into a gaseous planet, one would have to look at how it would fall under the variable gravity while moving through the gases. One might even want to dig through other celestial objects, like moons or asteroids, where these kinds of calculations could be useful.
 
-## References, Sources, and Inspiration
+### Sources and Inspiration
 
 Preliminary Reference Earth Model - http://ds.iris.edu/ds/products/emc-prem/
 
@@ -547,5 +548,3 @@ How Long To Fall Through The Earth? - minutephysics - https://www.youtube.com/wa
 Gravity of Earth - https://en.wikipedia.org/wiki/Gravity_of_Earth
 
 Structure of the Earth https://en.wikipedia.org/wiki/Structure_of_the_Earth
-
-Klotz, A. R. (2015). The Gravity Tunnel in a Non-Uniform Earth. American Journal of Physics, 83, 231–237. http://doi.org/10.1119/1.4898780
