@@ -159,10 +159,10 @@ def USStdAtmos(Z): #Input is height in meters
         Tb = 214.65
         L = -2
         Pb = 3.9564 * 10**(-2)
-        
+
     if H < 84.8520:
         T = Tb + L * (H - Hb) #Temperature formula for the lower half of the model
-        
+
         g0s = 9.80665 #m^2/(s^2*m')
         Rs = 8.31432 * 10**(3) #Nm/(kmol*K)
         M0 = 28.9644 #kg/kmol
@@ -284,7 +284,7 @@ for i in range(n-1):
     acc[i] = acceleration(pos[i], vel[i], Cd, A, m)
     vel[i+1] = vel[i] + acc[i]*dt
     pos[i+1] = pos[i] + vel[i+1]*dt
-    
+
     velsq[i] = vel[i]**2
     dns[i] = USStdAtmos(pos[i])[2]
     drg[i] = drag(dns[i], vel[i], Cd, A)/m
@@ -426,13 +426,13 @@ During these few minutes you would experience a gradual decrease in temperature,
 
 After you have reached space, you are officially an astronaut according to the <a href="https://www.merriam-webster.com/dictionary/astronaut">Marriam-Webester dictionary</a>, which defines an astronaut as "a person who travels beyond the earth's atmosphere", so congrats!
 
-### Summary and Conclusion
+## Summary and Conclusion
 
 We found that it takes 249,5 seconds to fall into space. At the start of the fall, anti-gravity would quickly increase your speed, but then drag will kick in and make the speed stay nearly constant. It won't take long until the air is too thin to slow you down though, resulting in another big speed increase, continuing until you reach the edge of space.
 
 The model for air resistance we used is a very simplified model, so these results probably won't hold up well to reality. However, the interacton of height, air density, velocity and air resistance that this model offers shows some interesting properties of free fall in the atmosphere that have real world implications.
 
-### Sources and Inspiration
+## Sources and Inspiration
 
 Explanations of the various layers of the atmosphere, and the change in temperature, pressure and density
 https://en.wikibooks.org/wiki/High_School_Earth_Science/Atmospheric_Layers    

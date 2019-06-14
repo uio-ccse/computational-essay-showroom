@@ -112,7 +112,7 @@ defaults:
     toc_label: '  On this page'
     toc_icon: list-ul
 
-favicon_path: images/logo/favicon.ico
+favicon_path: assets/images/favicon.ico
 
 # Markdown Processing
 markdown: kramdown
