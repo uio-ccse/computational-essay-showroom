@@ -1,11 +1,11 @@
 ---
-title: 'Student Essays'
+title: 'Example Essays'
 prev_page:
-  url: /essays/exampleessays/intoSpace/FallingIntoSpace
-  title: 'How long would it take to fall into Space?'
+  url: 
+  title: ''
 next_page:
-  url: /essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense
-  title: 'What is the best material for a lightning rod?'
+  url: /essays/exampleessays/railgun_TOO/Railgun_V1_9
+  title: 'How much electric current would you need to use a railgun to launch a package up to the ISS?'
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
 # Computational Essays from the University of Oslo

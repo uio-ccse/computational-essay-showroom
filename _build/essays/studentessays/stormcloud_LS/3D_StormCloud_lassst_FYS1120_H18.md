@@ -9,8 +9,8 @@ prev_page:
   url: /essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay
   title: 'Kan vi bruke en railgun til å akselerere et tog i Oslo t-banen?'
 next_page:
-  url: 
-  title: ''
+  url: /index
+  title: 'Exercise Sets'
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
 
