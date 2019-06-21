@@ -1,16 +1,16 @@
 ---
 redirect_from:
-  - "essays/exercises/fallingthroughtheearth/fallingthroughtheearth"
-interact_link: content/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth.ipynb
+  - "essays/exercises/fallingthroughtheearth/fallingthroughtheearth-solution"
+interact_link: content/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution.ipynb
 kernel_name: python3
 has_widgets: false
-title: 'How long would it take to fall through the Earth?'
+title: 'Falling through the Earth - Example Solution'
 prev_page:
-  url: /index
-  title: 'Exercise Sets'
+  url: /essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth
+  title: 'How long would it take to fall through the Earth?'
 next_page:
-  url: /essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution
-  title: 'Falling through the Earth - Example Solution'
+  url: 
+  title: ''
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
 
@@ -61,6 +61,19 @@ Write the function **gravAccel(totalmass, position)** that takes the mass of the
 **b)**
 Make the function take the direction of the force into account. A positive position corresponds to being above the object, and a negative position corresponds to being below the object.
 
+
+
+{:.input_area}
+```python
+G = 6.674e-11 #The gravitational constant
+
+def gravAccel(mass, pos):
+    if pos == 0: #Making sure I'm not dividing by zero
+        return 0
+    return -G * mass / (abs(pos)**3) * pos
+```
+
+
 ### The Shell Theorem
 
 The main difference between being affected by gravity while outside the Earth, and being affected while inside it, is how much of it is below you to "pull you down". As you venture further down, less of the Earth will be below you to pull you down, and more of it will be above you to pull you up. In addition to this, as you get closer to different parts of the Earth, they will have a greater pull on you due to being closer to you.
@@ -84,13 +97,44 @@ To start with, assume that the Earth has a constant density (a uniform Earth). T
 
 Find the Earth's total mass and radius online, and use this to calculate the density of a uniform Earth.
 
+
+
+{:.input_area}
+```python
+earthMass = 5.972 * 10**24 #kg
+earthRadius = 6.371 * 10**6 #m
+
+earthVolume = 4/3 * np.pi * earthRadius**3
+
+uniDensity = earthMass/earthVolume
+```
+
+
 **EXERCISE 3:**
 
 Using the density you found in the previous exercise, write the function **sphereMass(distance)** that takes the distance from the center of the Earth as an argument, and returns the mass of a sphere with that distance as radius, and with the same density as the uniform Earth. *(This sphere will be the equivelant of the red area in the figure above.)*
 
+
+
+{:.input_area}
+```python
+def sphereMass(distance):
+    return 4/3 * np.pi * distance**3 * uniDensity
+```
+
+
 **EXERCISE 4:**
 
 Using the **gravAccel** function, the **sphereMass** function, and the implications of the Shell Theorem, write the function **uniformGravityAccel(position)** that calculates the gravitational acceleration at any position relative to the center of a uniform Earth.
+
+
+
+{:.input_area}
+```python
+def uniformGravityAccel(pos):
+    return gravAccel(sphereMass(abs(pos)), pos)
+```
+
 
 ## Calculating the fall through a uniform Earth
 
@@ -116,13 +160,74 @@ Make the starting distance from the center equal to the radius of the Earth, and
 **c)**
 Define a list or array that holds all of the different times.
 
+
+
+{:.input_area}
+```python
+n = 5000
+dt = 1
+
+acceleration = np.zeros(n)
+velocity = np.zeros(n)
+position = np.zeros(n)
+
+position[0] = earthRadius
+
+times = np.linspace(0, n*dt, n)
+```
+
+
 **EXERCISE 6:**
 
 Do the Euler-Cromer calculation of a fall through a uniform Earth with the initial conditions from exercise 5, and an acceleration given by the **uniformGravityAccel** function.
 
+
+
+{:.input_area}
+```python
+for i in range(n-1):
+    acceleration[i] = uniformGravityAccel(position[i])
+    velocity[i+1] = velocity[i] + acceleration[i] * dt
+    position[i+1] = position[i] + velocity[i+1] * dt
+acceleration[n-1] = uniformGravityAccel(position[n-1])
+```
+
+
 **EXERCISE 7:**
 
 Plot your results from exercise 6 (position, velocity and acceleration as a function of time).
+
+
+
+{:.input_area}
+```python
+plt.figure(figsize=(19,4))
+plt.subplot(131)
+plt.plot(times, position/(10**6))
+plt.title("Position over time")
+plt.xlabel("Time [s]")
+plt.ylabel("Distance from the center [m]")
+
+plt.subplot(132)
+plt.plot(times, velocity, color="orange")
+plt.title("Velocity over time")
+plt.xlabel("Time [s]")
+plt.ylabel("Velocity [m/s]")
+
+plt.subplot(133)
+plt.plot(times, acceleration, color="green")
+plt.title("Acceleration over time")
+plt.xlabel("Time [s]")
+plt.ylabel("Gravitational acceleration [m/s^2]")
+plt.show()
+```
+
+
+
+{:.output .output_png}
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_31_0.png)
+
+
 
 **EXERCISE 8:**
 
@@ -135,6 +240,27 @@ Find the maximum velocity along the way.
 **c)**
 Comment on the results. Why do the graphs look the way they do? And specifically:
 - Why are the plots for position and acceleration so similar? (look at acceleration as a function of position, and the properties of the derivative of sine waves)
+
+
+
+{:.input_area}
+```python
+print("It took {:.0f} seconds to fall through the Earth".format(times[np.argmin(position)]))
+
+print("The maximum velocity was {:.0f} m/s".format(np.amax(velocity)))
+```
+
+
+{:.output .output_stream}
+```
+It took 2531 seconds to fall through the Earth
+The maximum velocity was 7910 m/s
+
+```
+
+Position and acceleration have the opposite shapes due to one being a function of the other. In the function for gravity, gravity is inversely proportional to the square of the distance from the center. In the function for the mass of the mini-Earth I need to consider, mass is proportional to the cube of the distance from the center. All in all, this becomes a relation where gravitational acceleration is proportional to the distance from the center, with some negative constant. The velocity goes from very negative to very positive during the time that the gravitational acceleration is at its highest.
+
+The position and acceleration being linearly dependant points to them being sine waves, as the double derivative of a sine wave is the negative of the same wave(with some constants). And this also leads to the velocity being a cosine wave with only slightly different parameters.
 
 ## Falling through a non-uniform Earth
 
@@ -176,7 +302,7 @@ infile.close()
 
 plt.plot(radiusData/(10**6), densityData)
 plt.title("Density of the Earth as a function of distance from the center")
-plt.xlabel("Distance from center [m * 10^6]")
+plt.xlabel("Distance from center [m *10^6]")
 plt.ylabel("Density [kg/m^3]")
 plt.show()
 ```
@@ -184,7 +310,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth_30_0.png)
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_41_0.png)
 
 
 
@@ -222,7 +348,7 @@ Remove the "#" from the code below to see how the old model for the total mass a
 
 {:.input_area}
 ```python
-#plt.plot(radiusData/(10**6), [sphereMass(r)/(10**24) for r in radiusData])
+plt.plot(radiusData/(10**6), [sphereMass(r)/(10**24) for r in radiusData])
 plt.plot(radiusData/(10**6), massData/(10**24), "ro", markersize = 1)
 plt.title("Total mass of the Earth at different distances from the center")
 plt.xlabel("Distance from center [m * 10^6]")
@@ -233,9 +359,11 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth_37_0.png)
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_48_0.png)
 
 
+
+With the uniform Earth, the total mass increases somewhat exponentially as the total volume increases somewhat exponentially. With the non-uniform Earth, the total mass increases relatively faster in the dense core, and relatively slower in the not as dense mantle and crust.
 
 The next step is to turn the datapoints into datapoints for the gravitational acceleration.
 
@@ -305,7 +433,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth_43_0.png)
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_55_0.png)
 
 
 
@@ -328,6 +456,30 @@ Plot the **realGravityAccel** and **uniformGravityAccel** functions together, wi
 **b)**
 Comment on the results.
 
+
+
+{:.input_area}
+```python
+radiuses = np.linspace(0, earthRadius, 1000)
+
+plt.plot(radiuses/(10**6), [realGravityAccel(r) for r in radiuses])
+plt.plot(radiuses/(10**6), [uniformGravityAccel(r) for r in radiuses])
+
+plt.title("Accelerations at different distances from the center")
+plt.xlabel("Distance from center [m * 10^6]")
+plt.ylabel("Gravitational acceleration [m/s^2]")
+plt.show()
+```
+
+
+
+{:.output .output_png}
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_60_0.png)
+
+
+
+As discussed in exercise 8: with the uniform Earth, gravitational acceleration and distance from the center of the Earth are linearly related. Whereas with the non-uniform Earth, gravity first increases due to being closer to the very dense and masseive core, and only starts decreasing when inside the core, due to the masse above finally starting to overpower the mass below.
+
 ## The Euler-Cromer loop
 
 **EXERCISE 11:**
@@ -341,13 +493,74 @@ Make the starting distance from the center equal to the radius of the Earth, and
 **c)**
 Define a list or array that holds all of the different times.
 
+
+
+{:.input_area}
+```python
+n = 5000
+dt = 1
+
+acc = np.zeros(n)
+vel = np.zeros(n)
+pos = np.zeros(n)
+
+pos[0] = earthRadius
+
+time = np.linspace(0, n*dt, n)
+```
+
+
 **EXERCISE 12:**
 
 Do the Euler-Cromer calculation of a fall through a uniform Earth with the initial conditions from exercise 12, and an acceleration given by the **realGravityAccel** function.
 
+
+
+{:.input_area}
+```python
+for i in range(n-1):
+    acc[i] = realGravityAccel(pos[i])
+    vel[i+1] = vel[i] + acc[i] * dt
+    pos[i+1] = pos[i] + vel[i+1] * dt
+acc[n-1] = realGravityAccel(pos[n-1])
+```
+
+
 **EXERCISE 13:**
 
 Plot your results from exercise 12 (position, velocity and acceleration as a function of time).
+
+
+
+{:.input_area}
+```python
+plt.figure(figsize=(19,4))
+plt.subplot(131)
+plt.plot(time, pos/(10**6))
+plt.title("Position over time")
+plt.xlabel("Time [s]")
+plt.ylabel("Distance from the center [m]")
+
+plt.subplot(132)
+plt.plot(time, vel, color="orange")
+plt.title("Velocity over time")
+plt.xlabel("Time [s]")
+plt.ylabel("Velocity [m/s]")
+
+plt.subplot(133)
+plt.plot(time, acc, color="green")
+plt.title("Acceleration over time")
+plt.xlabel("Time [s]")
+plt.ylabel("Gravitational acceleration [m/s^2]")
+plt.show()
+```
+
+
+
+{:.output .output_png}
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_68_0.png)
+
+
 
 **EXERCISE 14:**
 
@@ -362,3 +575,26 @@ Comment on the results. Why do the graphs look the way they do? And specifically
  - What effect does the shape of the acceleration graph have on the velocity graph?
  - What does a large acceleration lead to?
  - What does a changing acceleration lead to?
+
+
+
+{:.input_area}
+```python
+print("It took {:.0f} seconds to fall through the Earth".format(time[np.argmin(pos)]))
+
+print("The maximum velocity was {:.0f} m/s".format(np.amax(vel)))
+```
+
+
+{:.output .output_stream}
+```
+It took 2290 seconds to fall through the Earth
+The maximum velocity was 9920 m/s
+
+```
+
+With nothing stopping you, you would fall all the way through the Earth and then back again, and then back again and so on. Given that gravity is a conservative force, it makes sense that you would never stop moving, but rather fall back and forth around the center.
+
+When you reach the center (position=0), acceleration is also 0. This is when you reach your top velocity, as after this point gravity makes the speed decrease.
+
+Gravity is almost constant close to the surface, which can also be seen here. This near constant gravity near the surface is what makes the velocity change so linearly between the sharper turns. The sharp turns of the velocity is due to gravity switching direction quickly, which happens because velocity is high while moving through the dense parts of the Earth where gravity is weak.
