@@ -9,8 +9,8 @@ prev_page:
   url: /essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative
   title: 'How long would it take to fall through a non-uniform Earth?'
 next_page:
-  url: /index
-  title: 'Student Essays'
+  url: /essays/exampleessays/volleyball/Volleyball
+  title: 'What is the fastest possible volleyball serve?'
 comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
 ---
 
