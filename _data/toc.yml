@@ -30,7 +30,7 @@
   - title: Hvor langt kan du trygt stå borte fra et lynnedslag?
     url: essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18
 
-- title: Exercise Sets
+- title: Exercise Sets and Templates
   url: /index
   not_numbered: true
   expand_sections: true
@@ -39,3 +39,11 @@
     url: essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth
   - title: Falling through the Earth - Example Solution
     url: essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution
+  - title: Cyclotron Template
+    url: essays/exercises/CyclotronTemplate/Cyclotron
+  - title: Magnetic Bottle Template
+    url: essays/exercises/MagneticBottleTemplate/MagneticBottle_Numpy
+  - title: Magnetic Bottle Template
+    url: essays/exercises/StormCloudTemplate/3D_StormCloud
+  - title: Lightning Template
+    url: essays/exercises/LightningTemplate/2D_StormCloud_Lightning
