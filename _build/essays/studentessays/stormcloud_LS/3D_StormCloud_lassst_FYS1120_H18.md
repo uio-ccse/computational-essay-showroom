@@ -206,7 +206,7 @@ plot_strikes()
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_13_1.png)
+![png](../../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_13_1.png)
 
 
 
@@ -298,7 +298,7 @@ plot_strikes()
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_14_1.png)
+![png](../../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_14_1.png)
 
 
 
@@ -539,7 +539,7 @@ print('\n')
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_21_0.png)
+![png](../../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_21_0.png)
 
 
 
@@ -642,7 +642,7 @@ print('Merk at aksene er i meter')
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_23_1.png)
+![png](../../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_23_1.png)
 
 
 
@@ -656,7 +656,7 @@ Fig5: Dødelig radius for gneiss som sediment 6.753753753753753 m
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_23_3.png)
+![png](../../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_23_3.png)
 
 
 

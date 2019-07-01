@@ -131,7 +131,7 @@ Text(0.5,1,'Magnetic Field Strength')
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_10_1.png)
+![png](../../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_10_1.png)
 
 
 
@@ -276,25 +276,25 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_15_0.png)
+![png](../../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_15_0.png)
 
 
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_15_1.png)
+![png](../../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_15_1.png)
 
 
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_15_2.png)
+![png](../../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_15_2.png)
 
 
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_15_3.png)
+![png](../../../../images/essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay_15_3.png)
 
 
 

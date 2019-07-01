@@ -215,7 +215,7 @@ Text(0,0.5,'Velocity (m/s)')
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/iondrives/ExploringTheMartian_V2_5_27_1.png)
+![png](../../../../images/essays/exampleessays/iondrives/ExploringTheMartian_V2_5_27_1.png)
 
 
 
@@ -399,7 +399,7 @@ Text(0,0.5,'Velocity (m/s)')
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/iondrives/ExploringTheMartian_V2_5_41_1.png)
+![png](../../../../images/essays/exampleessays/iondrives/ExploringTheMartian_V2_5_41_1.png)
 
 
 
@@ -432,7 +432,7 @@ Text(0,0.5,'Velocity (m/s)')
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/iondrives/ExploringTheMartian_V2_5_44_1.png)
+![png](../../../../images/essays/exampleessays/iondrives/ExploringTheMartian_V2_5_44_1.png)
 
 
 

@@ -225,7 +225,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_31_0.png)
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_31_0.png)
 
 
 
@@ -310,7 +310,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_41_0.png)
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_41_0.png)
 
 
 
@@ -359,7 +359,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_48_0.png)
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_48_0.png)
 
 
 
@@ -433,7 +433,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_55_0.png)
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_55_0.png)
 
 
 
@@ -474,7 +474,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_60_0.png)
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_60_0.png)
 
 
 
@@ -558,7 +558,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_68_0.png)
+![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution_68_0.png)
 
 
 

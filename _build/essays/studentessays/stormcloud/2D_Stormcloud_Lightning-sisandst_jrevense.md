@@ -261,7 +261,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_10_0.png)
+![png](../../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_10_0.png)
 
 
 
@@ -830,7 +830,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_27_0.png)
+![png](../../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_27_0.png)
 
 
 
@@ -1084,7 +1084,7 @@ Gold:
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_36_1.png)
+![png](../../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_36_1.png)
 
 
 
@@ -1104,7 +1104,7 @@ Copper:
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_37_1.png)
+![png](../../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_37_1.png)
 
 
 
@@ -1124,7 +1124,7 @@ Aluminium:
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_38_1.png)
+![png](../../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_38_1.png)
 
 
 
@@ -1144,7 +1144,7 @@ Silver:
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_39_1.png)
+![png](../../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_39_1.png)
 
 
 
@@ -1164,7 +1164,7 @@ Iron:
 
 
 {:.output .output_png}
-![png](../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_40_1.png)
+![png](../../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_40_1.png)
 
 
 

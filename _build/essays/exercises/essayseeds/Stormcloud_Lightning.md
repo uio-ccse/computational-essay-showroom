@@ -185,7 +185,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../images/essays/exercises/essayseeds/Stormcloud_Lightning_9_0.png)
+![png](../../../images/essays/exercises/essayseeds/Stormcloud_Lightning_9_0.png)
 
 
 
