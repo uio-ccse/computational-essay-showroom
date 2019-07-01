@@ -7,7 +7,7 @@ has_widgets: false
 title: 'How long would it take to fall through the Earth?'
 prev_page:
   url: /index
-  title: 'Exercise Sets'
+  title: 'Exercise Sets and Templates'
 next_page:
   url: /essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution
   title: 'Falling through the Earth - Example Solution'
@@ -184,7 +184,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth_30_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth_30_0.png)
 
 
 
@@ -233,7 +233,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth_37_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth_37_0.png)
 
 
 
@@ -305,7 +305,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth_43_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth_43_0.png)
 
 
 

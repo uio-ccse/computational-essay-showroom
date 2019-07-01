@@ -218,7 +218,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/intoSpace/FallingIntoSpace_25_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/intoSpace/FallingIntoSpace_25_0.png)
 
 
 
@@ -341,7 +341,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/intoSpace/FallingIntoSpace_37_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/intoSpace/FallingIntoSpace_37_0.png)
 
 
 
@@ -385,7 +385,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/intoSpace/FallingIntoSpace_40_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/intoSpace/FallingIntoSpace_40_0.png)
 
 
 

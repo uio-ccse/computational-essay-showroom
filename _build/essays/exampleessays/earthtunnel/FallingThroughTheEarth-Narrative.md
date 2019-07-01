@@ -113,7 +113,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_20_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_20_0.png)
 
 
 
@@ -160,7 +160,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_27_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_27_0.png)
 
 
 
@@ -242,7 +242,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_35_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_35_0.png)
 
 
 
@@ -340,7 +340,7 @@ Total error = 1.0836096370862585
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_44_1.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_44_1.png)
 
 
 
@@ -366,7 +366,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_46_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_46_0.png)
 
 
 
@@ -459,7 +459,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_57_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_57_0.png)
 
 
 
@@ -532,7 +532,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_65_0.png)
+![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative_65_0.png)
 
 
 
