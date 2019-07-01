@@ -218,7 +218,7 @@ Text(0.5,1,"Trajectory of Alpha Particle in a 'Magnetic Bottle'")
 
 
 {:.output .output_png}
-![png](/computational-essay-showroom/_build/images/essays/exercises/essayseeds/MagneticBottle_Numpy_19_1.png)
+![png](../../images/essays/exercises/essayseeds/MagneticBottle_Numpy_19_1.png)
 
 
 

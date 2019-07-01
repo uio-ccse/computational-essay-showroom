@@ -185,7 +185,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exercises/essayseeds/Stormcloud_Lightning_9_0.png)
+![png](../../images/essays/exercises/essayseeds/Stormcloud_Lightning_9_0.png)
 
 
 

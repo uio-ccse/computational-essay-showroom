@@ -228,7 +228,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/volleyball/Volleyball_32_0.png)
+![png](../../images/essays/exampleessays/volleyball/Volleyball_32_0.png)
 
 
 
@@ -275,7 +275,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/volleyball/Volleyball_39_0.png)
+![png](../../images/essays/exampleessays/volleyball/Volleyball_39_0.png)
 
 
 
@@ -308,7 +308,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/volleyball/Volleyball_41_0.png)
+![png](../../images/essays/exampleessays/volleyball/Volleyball_41_0.png)
 
 
 
@@ -351,7 +351,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/volleyball/Volleyball_46_0.png)
+![png](../../images/essays/exampleessays/volleyball/Volleyball_46_0.png)
 
 
 
@@ -384,7 +384,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/volleyball/Volleyball_48_0.png)
+![png](../../images/essays/exampleessays/volleyball/Volleyball_48_0.png)
 
 
 
@@ -456,7 +456,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/volleyball/Volleyball_55_0.png)
+![png](../../images/essays/exampleessays/volleyball/Volleyball_55_0.png)
 
 
 
@@ -522,7 +522,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](/Users/Tor/Dropbox/CCSE/Computational%20Essay%20Project/GitHub_CompEssays/computational-essay-showroom/_build/images/essays/exampleessays/volleyball/Volleyball_60_0.png)
+![png](../../images/essays/exampleessays/volleyball/Volleyball_60_0.png)
 
 
 
