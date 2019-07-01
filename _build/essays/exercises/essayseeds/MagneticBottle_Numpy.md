@@ -147,7 +147,7 @@ Text(0.5,1,"Magnetic Field of a 'Magnetic Bottle'")
 
 
 {:.output .output_png}
-![png](/computational-essay-showroom/_build/images/essays/exercises/essayseeds/MagneticBottle_Numpy_13_1.png)
+![png](/../../images/essays/exercises/essayseeds/MagneticBottle_Numpy_13_1.png)
 
 
 
