@@ -142,7 +142,7 @@ plt.plot(particleposx, particleposy) #create the plot
 
 
 {:.output .output_png}
-![png](/../../../images/essays/exercises/essayseeds/Cyclotron_12_1.png)
+![png](../../../images/essays/exercises/essayseeds/Cyclotron_12_1.png)
 
 
 
