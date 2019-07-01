@@ -346,7 +346,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../../images/essays/studentessays/LHC/LHC_CompEssay_19_0.png)
+![png](../../../images/essays/studentessays/LHC/LHC_CompEssay_19_0.png)
 
 
 
@@ -630,7 +630,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../../images/essays/studentessays/LHC/LHC_CompEssay_30_0.png)
+![png](../../../images/essays/studentessays/LHC/LHC_CompEssay_30_0.png)
 
 
 

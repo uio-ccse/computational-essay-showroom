@@ -128,7 +128,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_6_0.png)
+![png](../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_6_0.png)
 
 
 
@@ -152,7 +152,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_7_0.png)
+![png](../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_7_0.png)
 
 
 
@@ -182,7 +182,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_8_0.png)
+![png](../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_8_0.png)
 
 
 
@@ -220,7 +220,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_11_0.png)
+![png](../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_11_0.png)
 
 
 
@@ -245,7 +245,7 @@ plt.show()
 
 
 {:.output .output_png}
-![png](../../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_12_0.png)
+![png](../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_12_0.png)
 
 
 

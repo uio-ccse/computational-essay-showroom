@@ -1,4 +1,4 @@
-badGuy1 = "![png](../../"
+badGuy1 = "![png](../../../../"
 badGuy2 = "C:\\Users\\KarlH\\Dropbox\\GitHubRepositories\\Jupyter-Book-Showroom\\content\\"
 
 import os
