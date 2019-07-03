@@ -14,7 +14,7 @@ for subdir, dirs, files in os.walk(rootdir):
             with open(myfile, "w") as f:
                 for line in lines:
                     if (badGuy1 in line):
-                        f.write(line.replace(badGuy1, "![png](../../"))
+                        f.write(line.replace(badGuy1, "![png](../../../"))
                     elif (badGuy2 in line):
                         f.write(line.replace(badGuy2, ""))
                     else:

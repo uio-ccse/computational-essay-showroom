@@ -35,12 +35,14 @@ The US Navy's Electromagnetic Railgun
 
 ## Initial Simulation of the Railgun
 
-First, we have to import our various libraries. We will be using sympy and numpy for the graphing, as well as matplotlib.
+First, we have to import our various libraries. We will be using sympy and numpy for the graphing, as well as matplotlib. We'll also call the "notebook magic" command to make the plots show without needing to use extra commands every time.
 
 
 
 {:.input_area}
 ```python
+%matplotlib inline 
+
 import sympy as sp
 import numpy as np
 import matplotlib.pyplot as plt
@@ -74,7 +76,6 @@ Next, we define the position of the bar and the incremental quantities. We will 
 barpos = 0 #initial position of the bar (the projectile)
 dt=.00001 #initial timestep 0.00001s
 t=0 #time starts at 0
-v=0 #initial velocity set to 0
 ```
 
 
@@ -111,18 +112,38 @@ Muover2pi = 2e-7 #magnetic constant
 
 Now, let's put it all together and use the program to calculate the velocity of the bar under the simplest possible condition: a frictionless environment with infinite conducting rails (i.e., ignoring edge effects when the bar approaches the ends of the rails) and ignoring any other factors that might slow down the rail. This will be our best-case scenario.
 
-We create a loop that repeatedly calculates the magnetic force on the bar based on the above derivation, and uses that force to update the velocity of the bar.
+We create a function that will run the railgun simulation. It will contain a loop that repeatedly calculates the magnetic force on the bar based on the above derivation, and uses that force to update the velocity of the bar. We'll have it return the final velocity, as well as arrays for position and time (for plotting).
 
 
 
 {:.input_area}
 ```python
-while barpos < L:
-    Fnet = 2*Muover2pi*(I**2)*(np.log(D+w/2)-np.log(w/2)) #Based on our calculated expression for the force on the bar
-    v = v + Fnet/m*dt #Update the velocity of the bar
-    barpos = barpos + v*dt #Use velocity to update position
-print(v) #Print the final value of the velocity
+#Arguments:
+# L: Length of railgun
+# w: width of rails
+# D: width of the projectile
+# v_0: initial velocity
+# I: current in the railgun
+# dt: timestep
 
+def railgun(L,D,w,I,dt):
+    posarray = np.zeros(0)
+    timearray = np.zeros(0)
+    v = 0
+    barpos = 0
+    t = 0
+    
+    while barpos < L:
+        Fnet = 2*Muover2pi*(I**2)*(np.log(D+w/2)- np.log(w/2)) #net force, based on the above-derived expression
+        v = v + Fnet/m*dt #Update the velocity of the bar
+        barpos = barpos + v*dt #Use velocity to update position
+        t = t+dt
+        posarray = np.append(posarray,barpos)
+        timearray = np.append(timearray,t)
+    return v, posarray, timearray
+
+v_test, pos, time = railgun(L,D,w,I,dt) #run a test instance of the railgun function
+print(v_test)
 ```
 
 
@@ -134,6 +155,37 @@ print(v) #Print the final value of the velocity
 
 It appears that a current of 10000 amps will give us a velocity of ~33 m/s. However, to lob something up to the ISS, we need a velocity of at least **~2733 m/s** (based on a quick calculation of the potential energy required to ascend 405km above the earth's surface, ignoring air resistance). So, we're going to need a lot more current!
 
+Just as a check, we'll plot the position of the bar as a function of time. Since this is a constant force, we expect the plot to look like an object under constant acceleration.
+
+
+
+{:.input_area}
+```python
+plt.plot(time,pos)
+plt.title("Projectile position as a function of time")
+plt.xlabel("Time (s)")
+plt.ylabel("Position (m)")
+```
+
+
+
+
+
+{:.output .output_data_text}
+```
+Text(0, 0.5, 'Position (m)')
+```
+
+
+
+
+{:.output .output_png}
+![png](../../../images/essays/exampleessays/railgun_TOO/Railgun_V1_9_22_1.png)
+
+
+
+Yup, that looks right!
+
 ## Finding the right current to launch a package up to the ISS
 
 Now, our goal is to find the current required to launch a 1-kg package straight upwards to the ISS. Rather than doing this in a guess-and-check fashion, we'll do the loop multiple times see how high it has to go to reach the requisite velocity. This means we will have to define a new variable, the starting current. Since we have already seen that 10000 amps gives us a value several orders of magnitude below the required velocity, we will start an order of magnitude above, at 100,000 A, and begin the search there.
@@ -144,9 +196,9 @@ Now, our goal is to find the current required to launch a 1-kg package straight 
 ```python
 I_start = 100000 #Starting current. Set to 100,000 Amps
 I = I_start #Set the current to this starting value
-v=0 #Reset the velocity to 0 for the first loop
 
 v_goal = 2733 #The final velocity we're aiming to achieve
+v_test = 0
 ```
 
 
@@ -154,26 +206,41 @@ v_goal = 2733 #The final velocity we're aiming to achieve
 
 {:.input_area}
 ```python
-while v <= v_goal:
-    barpos = 0 #Reset the position of the bar to 0
-    v=0 #Initial velocity set to 0 after each loop iteration
-    
-    while barpos < L: 
-        Fnet = 2*Muover2pi*(I**2)*(np.log(D+w/2)-np.log(w/2))
-        v = v + Fnet/m*dt
-        barpos = barpos + v*dt
+while v_test <= v_goal:
+    v_test, pos, time = railgun(L,D,w,I,dt)
     I = I*1.01 #Increase the current by 1% each loop.
-print("For a velocity of", v, "m/s you need a current of", I/1.01, "amps.")
+print("For a velocity of", v_test, "m/s you need a current of", I/1.01, "amps. Projectile takes", np.around(time[-1],decimals=5), "seconds to exit barrel.")
+
+plt.plot(time,pos)
+plt.title("Projectile position as a function of time")
+plt.xlabel("Time (s)")
+plt.ylabel("Position (m)")
 ```
 
 
 {:.output .output_stream}
 ```
-For a velocity of 2743.527458597128 m/s you need a current of 824387.2036334316 amps.
+For a velocity of 2743.527458597128 m/s you need a current of 824387.2036334316 amps. Projectile takes 0.00728 seconds to exit barrel.
 
 ```
 
-So, based on these results, in an ideal, extremely simplified scenario we would need a little less than 825,000 Amps of current in order to launch 1kg up to the ISS (within a tolerance of 1%)
+
+
+
+{:.output .output_data_text}
+```
+Text(0, 0.5, 'Position (m)')
+```
+
+
+
+
+{:.output .output_png}
+![png](../../../images/essays/exampleessays/railgun_TOO/Railgun_V1_9_27_2.png)
+
+
+
+So, based on these results, in an ideal, extremely simplified scenario we would need a little less than 825,000 Amps of current in order to launch 1kg up to the ISS (within a tolerance of 1%). The projectile takes about 0.0073 seconds to exit the barrel.
 
 However, this is the most ideal scenario, ignoring many of the factors that would cost extra energy to overcome (for example: air resistance, electromagnetic induction, gravitational acceleration while the package is being launched, and the resistance/inductance of the rails). How do these factors change the amount of current required? 
 
@@ -212,10 +279,22 @@ Now, let's add these two expressions into our simulation. The gravity term will 
 
 {:.input_area}
 ```python
-I_start = 100000 #Starting current. Set to 100000 Amps
-I = I_start #Set the current to this starting value
-v = 0 #Reinitialize the velocity for the first loop iteration
-v_goal = 2733
+def railgun_g_induct(L,D,w,I,dt):
+    posarray = np.zeros(0)
+    timearray = np.zeros(0)
+    v = 0
+    barpos = 0
+    t = 0
+    
+    while barpos < L:
+        I = I - 2*Muover2pi*I*(np.log(D+w/2)-np.log(w/2))*v #update the current, subtracting the induced current
+        Fnet = 2*Muover2pi*(I**2)*(np.log(D+w/2)-np.log(w/2))-9.8*m
+        v = v + Fnet/m*dt #Update the velocity of the bar
+        barpos = barpos + v*dt #Use velocity to update position
+        t = t+dt
+        posarray = np.append(posarray,barpos)
+        timearray = np.append(timearray,t)
+    return v, posarray, timearray
 ```
 
 
@@ -223,29 +302,53 @@ v_goal = 2733
 
 {:.input_area}
 ```python
-while v <= v_goal:
-    barpos = 0 #reset the position of the bar to 0
-    v=0 #initial velocity set to 0
-    
-    while barpos < L: #while loop, to animate the bar
-        I = I - 2*Muover2pi*I*(np.log(D+w/2)-np.log(w/2))*v #update the current, subtracting the induced current
-        Fnet = 2*Muover2pi*(I**2)*(np.log(D+w/2)-np.log(w/2))-9.8*m
-        v = v + Fnet/m*dt
-        barpos = barpos + v*dt
-        t = t+dt
+I_start = 100000 #Starting current. Set to 100000 Amps
+I = I_start #Set the current to this starting value
+v_goal = 2733
+v_test = 0
+```
+
+
+
+
+{:.input_area}
+```python
+while v_test <= v_goal:
     I_start = I_start*1.01
     I = I_start
-print("For a velocity of", v, "m/s you need a current of", I/1.01, "amps.")
+    v_test, pos_ind, time_ind = railgun_g_induct(L,D,w,I,dt)
+print("For a velocity of", v_test, "m/s you need a current of", I, "amps. Projectile takes", np.around(time_ind[-1],decimals = 5), "seconds to exit the barrel.")
+
+plt.plot(time_ind,pos_ind)
+plt.title("Projectile position as a function of time, including gravity and E-M induction")
+plt.xlabel("Time (s)")
+plt.ylabel("Position (m)")
 ```
 
 
 {:.output .output_stream}
 ```
-For a velocity of 2737.0122483673435 m/s you need a current of 1057220.5262223003 amps.
+For a velocity of 2737.0122483673435 m/s you need a current of 1057220.5262223003 amps. Projectile takes 0.00622 seconds to exit the barrel.
 
 ```
 
-Our new current is approximately 1,060,000 amps, corresponding to an increase of about 28% above the calculated current without gravity and induction.
+
+
+
+{:.output .output_data_text}
+```
+Text(0, 0.5, 'Position (m)')
+```
+
+
+
+
+{:.output .output_png}
+![png](../../../images/essays/exampleessays/railgun_TOO/Railgun_V1_9_34_2.png)
+
+
+
+Our new current is approximately 1,060,000 amps, corresponding to an increase of about 28% above the calculated current without gravity and induction. While this current is necessary to achieve the desired velocity, it also contributes to a higher average velocity, shortening the length of time the projectile spends in the barrel of the railgun.
 
 ## Conclusion
 
@@ -259,5 +362,5 @@ Based on this extremely simplified model, it seems we would need a bit over a mi
 
 ...not to mention the difficulty of launching the package close enough to the ISS to be picked up without hitting the station itself.
 
-These additional factors are likely to make this form of orbital supply unfeasable for any reasonably-sized supply package (which is also likely be several tens of kilograms, minimum).
+These additional factors are likely to make this form of orbital supply unfeasable for any reasonably-sized supply package (which is also likely be several tens of kilograms, minimum). For example, such high currents would likely cause the rails to strongly repel one another, potentially damaging the railgun after each launch.
 
