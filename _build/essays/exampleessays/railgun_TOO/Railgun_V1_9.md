@@ -51,7 +51,7 @@ import matplotlib.pyplot as plt
 
 Next, we define some parameters, including the current in the rails, the separation of the rails (which is also the width of the projectile), the lengths of the rails, and the mass of the projectile.
 
-Using the [approximate dimensions](https://ndiastorage.blob.core.usgovcloudapi.net/ndia/2003/gun/ellis.pdf) of the navy railgun as a guide, we set the length of the rails to 10m and the separation of the rails to 15cm (corresponding to a 150mm bore railgun). We will also define the mass of the projectile (1 kg) and the magnetic constant for use in magnetic force calculations later on.
+Using the [approximate dimensions](https://ndiastorage.blob.core.usgovcloudapi.net/ndia/2003/gun/ellis.pdf) of the navy railgun as a guide, we set the length of the rails to 10m and the separation of the rails to 15cm (corresponding to a 150mm bore railgun). We will also define the mass of the projectile (1 kg) and the magnetic constant for use in magnetic force calculations later on. And, we will define our timestep and initialize our time constant.
 
 
 
@@ -62,22 +62,13 @@ w = 0.1 #width of the rails. Set to 10cm each
 L = 10 #length of the rails. Set to 10m
 m = 1 #set mass to 1kg
 I = 10000 #starting current. Set to 10000 Amps
-```
 
-
-![Railgun_Diagram.jpg](images/Railgun_Diagram.jpg)
-
-Next, we define the position of the bar and the incremental quantities. We will have to have both a timestep (since this simulation will involve accelerating the supply projectile over time) and a length step (which we will use to cut up the projectile to calculate the magentic force).
-
-
-
-{:.input_area}
-```python
-barpos = 0 #initial position of the bar (the projectile)
 dt=.00001 #initial timestep 0.00001s
 t=0 #time starts at 0
 ```
 
+
+![Railgun_Diagram.jpg](images/Railgun_Diagram.jpg)
 
 Now, we will need a way to calculate the force on the bar/projectile. This will require some derivation.
 
@@ -180,7 +171,7 @@ Text(0, 0.5, 'Position (m)')
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/railgun_TOO/Railgun_V1_9_22_1.png)
+![png](../../../images/essays/exampleessays/railgun_TOO/Railgun_V1_9_20_1.png)
 
 
 
@@ -236,7 +227,7 @@ Text(0, 0.5, 'Position (m)')
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/railgun_TOO/Railgun_V1_9_27_2.png)
+![png](../../../images/essays/exampleessays/railgun_TOO/Railgun_V1_9_25_2.png)
 
 
 
@@ -344,7 +335,7 @@ Text(0, 0.5, 'Position (m)')
 
 
 {:.output .output_png}
-![png](../../../images/essays/exampleessays/railgun_TOO/Railgun_V1_9_34_2.png)
+![png](../../../images/essays/exampleessays/railgun_TOO/Railgun_V1_9_32_2.png)
 
 
 
