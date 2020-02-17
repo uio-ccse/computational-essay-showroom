@@ -1,0 +1,458 @@
+---
+redirect_from:
+  - "/essays/studentessays/railgun-fg-ik/train-railgun-compessay"
+interact_link: content/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay.ipynb
+kernel_name: python3
+kernel_path: content/essays/studentessays/railgun_FG_IK
+has_widgets: false
+title: |-
+  Kan vi bruke en railgun til å akselerere et tog i Oslo t-banen?
+pagenum: 10
+prev_page:
+  url: /essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay.html
+next_page:
+  url: /essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18.html
+suffix: .ipynb
+search: vi en s p et det med og akselerere t kan railgun som akselerasjon til er tog strm frac m hvis av se hvor mye energi bane dette sammenligne funksjonen bruker kamp mindre skrevet anvendt gitt om slik endre fart masse fra samme andre ikke svarene tidsintervall toget ha krever train fridtjof gjengset isak kvanneid denne oppgaven har tatt konseptet kreves ett opp hastighet skal effektiv mte tradisjonelle baner koden funksjon distance speed acceleration mass lett relevante variable avstand lager flere lister inneholder posisjon tid deretter retunrnerer gjort rask nsker plotte uten kjre hele nytt igjen flge den engelse wiki
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Kan vi bruke en railgun til å akselerere et tog i Oslo t-banen?</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Railgun-train">Railgun train<a class="anchor-link" href="#Railgun-train"> </a></h1><h3 id="Skrevet-av-Fridtjof-Gjengset-og-Isak-Kvanneid">Skrevet av Fridtjof Gjengset og Isak Kvanneid<a class="anchor-link" href="#Skrevet-av-Fridtjof-Gjengset-og-Isak-Kvanneid"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I denne oppgaven har vi tatt konseptet av en railgun og anvendt det for å se på hvor mye energi som kreves for å akselerere ett t-bane med en gitt akselerasjon opp til en gitt hastighet. Vi skal se om dette er en effektiv måte å akselerere et t-bane på og sammenligne det med tradisjonelle t-baner.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Koden er skrevet som en funksjon railgun(distance,speed,acceleration,mass), slik at vi lett kan endre på relevante variable som akselerasjon, fart, avstand og masse. Funksjonen lager flere lister som inneholder posisjon, tid, fart, akselerasjon og strøm, som funksjonen deretter retunrnerer. Dette er gjort slik at vi rask kan endre det vi ønsker å plotte uten å kjøre hele funksjonen på nytt igjen.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">railgun</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span><span class="n">speed</span><span class="p">,</span><span class="n">acceleration</span><span class="p">,</span><span class="n">mass</span><span class="p">):</span>
+	<span class="n">D</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1">#separation of the rails and width of the cart. Set to 3m</span>
+	<span class="n">w</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c1">#width of the rails. Set to 20cm each</span>
+	<span class="n">L</span> <span class="o">=</span> <span class="n">distance</span> <span class="c1">#length of the rails.</span>
+	<span class="n">m</span> <span class="o">=</span> <span class="n">mass</span> <span class="c1">#defines mass</span>
+	<span class="n">fric</span> <span class="o">=</span> <span class="mf">0.001</span>
+	<span class="n">dt</span><span class="o">=.</span><span class="mi">00001</span> <span class="c1">#initial timestep 0.00001s</span>
+	<span class="n">Muover2pi</span> <span class="o">=</span> <span class="mf">2e-7</span> <span class="c1">#magnetic constant</span>
+
+
+	<span class="n">barpos</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#initial position of bar</span>
+	<span class="n">v</span><span class="o">=</span><span class="mi">0</span> <span class="c1">#initial velocity set to 0</span>
+	<span class="n">t</span><span class="o">=</span><span class="mi">0</span> <span class="c1">#initial time</span>
+	<span class="n">I</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#starting current. Set to 0 Amps</span>
+	<span class="n">a_tol</span> <span class="o">=</span> <span class="n">acceleration</span><span class="o">*</span><span class="mf">0.01</span> <span class="c1">#acceleration tolerance</span>
+
+
+	<span class="n">Fnet</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">Muover2pi</span><span class="o">*</span><span class="p">(</span><span class="n">I</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="o">+</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="n">fric</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="mf">9.81</span><span class="c1">#initial force</span>
+	<span class="n">a</span> <span class="o">=</span> <span class="n">Fnet</span><span class="o">/</span><span class="n">m</span> <span class="c1">#initial acceleration</span>
+
+	<span class="n">v_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span><span class="c1">#defines lists with initial values</span>
+	<span class="n">t_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">)]</span>
+	<span class="n">barpos_list</span> <span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">barpos</span><span class="p">)]</span>
+	<span class="n">I_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">I</span><span class="p">)]</span>
+	<span class="n">a_list</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)]</span>
+
+	<span class="k">while</span> <span class="n">barpos</span> <span class="o">&lt;</span> <span class="n">L</span><span class="p">:</span> <span class="c1">#while the desired distance is less than current distance</span>
+		<span class="n">Fnet</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">Muover2pi</span><span class="o">*</span><span class="p">(</span><span class="n">I</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="o">+</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="n">fric</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="mf">9.81</span><span class="c1">#Based on our calculated expression for the force on the bar minus frictional force</span>
+		<span class="n">a</span> <span class="o">=</span> <span class="n">Fnet</span><span class="o">/</span><span class="n">m</span> <span class="c1">#calculated acceleration based on Fnet</span>
+
+		<span class="k">while</span> <span class="n">a</span><span class="o">-</span><span class="n">a_tol</span><span class="o">&gt;</span><span class="n">acceleration</span> <span class="ow">and</span> <span class="n">v</span><span class="o">&lt;</span><span class="n">speed</span><span class="p">:</span> <span class="c1">#while a is too big adjusts current</span>
+			<span class="n">I</span> <span class="o">=</span> <span class="n">I</span> <span class="o">-</span> <span class="mi">1</span><span class="c1">#adjusts current down</span>
+			<span class="n">Fnet</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">Muover2pi</span><span class="o">*</span><span class="p">(</span><span class="n">I</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="o">+</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="n">fric</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="mf">9.81</span><span class="c1">#finds new force</span>
+			<span class="n">a</span> <span class="o">=</span> <span class="n">Fnet</span><span class="o">/</span><span class="n">m</span> <span class="c1">#finds acceleration</span>
+
+		<span class="k">while</span> <span class="n">a</span><span class="o">+</span><span class="n">a_tol</span><span class="o">&lt;</span><span class="n">acceleration</span> <span class="ow">and</span> <span class="n">v</span><span class="o">&lt;</span><span class="n">speed</span><span class="p">:</span> <span class="c1">#while a is too small adjusts current</span>
+			<span class="n">I</span> <span class="o">=</span> <span class="n">I</span> <span class="o">+</span> <span class="mi">1</span><span class="c1">#adjusts current up</span>
+			<span class="n">Fnet</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">Muover2pi</span><span class="o">*</span><span class="p">(</span><span class="n">I</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="o">+</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="n">fric</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="mf">9.81</span> <span class="c1">#new force</span>
+			<span class="n">a</span> <span class="o">=</span> <span class="n">Fnet</span><span class="o">/</span><span class="n">m</span> <span class="c1">#finds acceleration</span>
+
+		<span class="k">if</span> <span class="n">v</span><span class="o">&gt;</span><span class="n">speed</span><span class="p">:</span> 
+			<span class="k">while</span> <span class="n">Fnet</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span> <span class="c1">#calculates I to get Fnet=0</span>
+				<span class="n">I</span> <span class="o">=</span> <span class="n">I</span> <span class="o">-</span> <span class="mi">1</span>
+				<span class="n">Fnet</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">Muover2pi</span><span class="o">*</span><span class="p">(</span><span class="n">I</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="o">+</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="n">fric</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="mf">9.81</span>
+
+		<span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">a</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#Update the velocity</span>
+		<span class="n">barpos</span> <span class="o">=</span> <span class="n">barpos</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#Use velocity to update position</span>
+
+		<span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">+</span><span class="n">dt</span><span class="c1">#add to total time</span>
+		<span class="n">barpos_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">barpos</span><span class="p">))</span> <span class="c1">#updates all lists</span>
+		<span class="n">v_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+		<span class="n">t_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+		<span class="n">I_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">I</span><span class="p">))</span>
+		<span class="n">a_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+    
+	<span class="k">return</span><span class="p">([</span><span class="n">barpos_list</span><span class="p">,</span><span class="n">v_list</span><span class="p">,</span><span class="n">t_list</span><span class="p">,</span><span class="n">I_list</span><span class="p">,</span><span class="n">a_list</span><span class="p">])</span> <span class="c1">#returns complete lists</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">[</span><span class="n">barpos_list</span><span class="p">,</span><span class="n">v_list</span><span class="p">,</span><span class="n">t_list</span><span class="p">,</span><span class="n">I_list</span><span class="p">,</span><span class="n">a_list</span><span class="p">]</span><span class="o">=</span><span class="n">railgun</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mf">1.3</span><span class="p">,</span><span class="mi">125</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="c1">#distance,speed,acceleration,mass</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">barpos_list</span><span class="p">,</span><span class="n">I_list</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Current required&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;position(m)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;current(Amp)&#39;</span><span class="p">)</span>
+
+
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_6_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_list</span><span class="p">,</span><span class="n">I_list</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Current required&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time(s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;current(Amp)&#39;</span><span class="p">)</span>
+
+
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_7_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">barpos_list</span><span class="p">,</span><span class="n">v_list</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Speed of cart&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;position(m)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;speed(m/s)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_list</span><span class="p">,</span><span class="n">v_list</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Speed of cart&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time(s)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_8_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I følge den engelse wiki siden om de norske tbanene bruker et fullastet togsett omtret 5000amper for å akslerere fra 0 til 40 $\frac{km}{t}$. Vårt tog bruker 300 KAmp for å akselerere med 1.3 $\frac{m}{s^2}$ til samme fatren. Med andre ord er ikke elekromagnetisme beste måten å akselerere et tog.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="p">[</span><span class="n">barpos_list</span><span class="p">,</span><span class="n">v_list</span><span class="p">,</span><span class="n">t_list</span><span class="p">,</span><span class="n">I_list</span><span class="p">,</span><span class="n">a_list</span><span class="p">]</span><span class="o">=</span><span class="n">railgun</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">10000</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">barpos_list</span><span class="p">,</span><span class="n">v_list</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Speed of projectile&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;position(m)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;speed(m/s)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_list</span><span class="p">,</span><span class="n">v_list</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Speed of projectile&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time(s)&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_11_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">t_list</span><span class="p">,</span><span class="n">I_list</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Current required&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time(s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;current(Amp)&#39;</span><span class="p">)</span>
+
+
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay_12_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Selvom vår oppgave nå er spesielt anvendt for tog og ikke mindre prosjektiler så kan vi sammenligne svarene vi får hvis vi bruker det samme programmet. Hvis vi akselerere et 10kg prosjektil til 400$\frac{m}{s}$ med en akselerasjon på 10000$\frac{m}{s^2}$ over 10m så trekkes en strøm på 250 kAmp over et tidsintervall på 0.04s. Hvis vi sammenligner dette med resultatet vi fikk for toget hvor akselerasjonen krevde en strøm på omtrent 350 kAmp over et tidsintervall på litt over 8s så trekker toget ekstremt mye mer strøm.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Etter å ha sammenlignet svarene så kan vi se at å akselerere et tog ved hjelp av en railgun krever veldig mye energi i forhold til hva et vanelig tog vil trenge. Hvis vi prøver å sammenligne med en mindre masse så krever det åpenbart mindre energi, men det kan ha andre praktiske anvendelser hvor det faktisk kan lønne seg å bruke en railgun.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Kilder:</p>
+<p>Akselerasjon: <a href="https://www.tu.no/artikler/bremseenergi-fra-t-banen/326295">https://www.tu.no/artikler/bremseenergi-fra-t-banen/326295</a>
+specs: <a href="http://vognselskapet.no/v%C3%A5rt-materiell/mx3000-t-bane">http://vognselskapet.no/v%C3%A5rt-materiell/mx3000-t-bane</a></p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

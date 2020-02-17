@@ -1,0 +1,310 @@
+---
+redirect_from:
+  - "/essays/exercises/essayseeds/cyclotron"
+interact_link: content/essays/exercises/essayseeds/Cyclotron.ipynb
+kernel_name: python3
+kernel_path: content/essays/exercises/essayseeds
+has_widgets: false
+title: |-
+  Cyclotron Template
+pagenum: 15
+prev_page:
+  url: /essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution.html
+next_page:
+  url: /essays/exercises/essayseeds/MagneticBottle_Numpy.html
+suffix: .ipynb
+search: particle cyclotron motion frac create particles m code accelerator velocity different investigate numpy position set voltage between ds v field frequency expression r qb protons cancer wave instead simulates questions end parameters want next arrays hold x y positions initialize also plot give proton define electric t should speed magnetic force into pi here used treating need org nuclear happens just simulating introduction simple single calculates its final plots path suggestions investigation welcome play around add subtract pieces behaves yourself decide simulation import our standard libraries sympy matplotlib only ever three numbers z velocities starts origin store expand values later
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Cyclotron Template</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Simulating-a-Cyclotron">Simulating a Cyclotron<a class="anchor-link" href="#Simulating-a-Cyclotron"> </a></h1><h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction"> </a></h2><p>This code simulates a cyclotron, a simple particle accelerator. The code simulates the motion of a single particle in the accelerator, calculates its final velocity, and plots the path of the particle. There are some suggestions for investigation questions and the end, but you are welcome to play around with the parameters in the code, add or subtract different pieces, and see how it behaves for yourself as you decide what you want to use it to investigate.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simulation-of-the-Cyclotron">Simulation of the Cyclotron<a class="anchor-link" href="#Simulation-of-the-Cyclotron"> </a></h2><p>First, we import our standard libraries: Numpy, Sympy, and matplotlib.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sympy</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, we will create numpy arrays for the particle's position and velocity. These will only ever hold three numbers (the x, y, and z positions/velocities of the particle). We initialize these to 0, so that the particle starts at the origin with 0 velocity.</p>
+<p>We will also create 2 more arrays, which will store the x and y positions of the particle. These will expand to hold all of the different values of the particle's position over time, which we will use to create a plot of the motion later on.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">particlepos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">])</span>
+<span class="n">particlev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">])</span> <span class="c1">#Set the initial particle speed to 0</span>
+
+<span class="n">particleposx</span> <span class="o">=</span> <span class="p">[</span><span class="n">particlepos</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="c1">#create an array for the x position of the particle</span>
+<span class="n">particleposy</span> <span class="o">=</span> <span class="p">[</span><span class="n">particlepos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="c1">#create an array for the y position of the particle</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, we will enter some physical constants. We will give the particle the charge and mass of a proton.</p>
+<p>For the cyclotron itself, we will set the accelerating voltage between the two "D's" (halves of the accelerator) to 50000V and their separation to 90 micrometers. Using these two parameters, we define the electric field between the them. Within the "D's" we will set the B-field to 1.5T. We will give them a radius (r_cyclotron) of 5cm.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">q</span> <span class="o">=</span> <span class="mf">1.6e-19</span> <span class="c1">#Set the charge of the particle to the charge of a proton</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mf">1.67e-27</span> <span class="c1">#Set mass of the particle to the mass of a proton</span>
+
+<span class="n">V</span> <span class="o">=</span> <span class="mi">50000</span> <span class="c1">#Set voltage between the plates to 50V</span>
+<span class="n">d</span> <span class="o">=</span> <span class="mf">90e-6</span> <span class="c1">#Set the separation between the plates to 90 micrometers</span>
+<span class="n">E_0</span> <span class="o">=</span> <span class="n">V</span><span class="o">/</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="c1">#define the electric field based on voltage between the D&#39;s and separation</span>
+
+<span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.5</span><span class="p">])</span> <span class="c1">#Set magnetic field to 1.5T in the +Z direction</span>
+<span class="n">r_cyclotron</span> <span class="o">=</span> <span class="o">.</span><span class="mi">05</span> <span class="c1">#set the radius of the D&#39;s to 5cm</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, we define the cyclotron frequency, which is the frequency that determines when the electric field should switch to impart maximum speed to the particle. Assuming the gap between the D's is small, we can find this by setting the magnetic force equal to the expression for circular motion: $$F = qvB = \frac{M v^2}{r}$$ $$r = \frac{mv}{qB}$$ And then substituting this expression into the expression for the time for one full rotation, $$T = \frac{2 \pi r}{v} = \frac{2 \pi m}{qB}$$</p>
+<p>Converting this into angular frequency, we end up with $$\omega_{cyclotron}=\frac{qB}{m}$$</p>
+<p>Here we also initialize the time, and set the timestep to 1 picosecond.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">q</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">/</span><span class="n">m</span> <span class="c1">#define the cyclotron frequency </span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#initialize time to 0</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mf">5e-12</span> <span class="c1">#Set timestep to 5 picoseconds</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, we are ready to begin to simulate the motion of the proton. We use a loop which runs while the magnitude of the proton's position, and create a vector (numpy array) that represents the force on the particle.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">while</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">particlepos</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">r_cyclotron</span><span class="p">):</span> <span class="c1">#loop while the magnitude of the proton&#39;s position remains within the cyclotron radius</span>
+    
+    <span class="n">Fnet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">])</span> <span class="c1">#create a vector for the net force on the particle.</span>
+    
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">particlepos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">d</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span> <span class="c1">#if the particle is between the two D&#39;s calculate the electric force</span>
+        <span class="n">Fnet</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">q</span><span class="o">*</span><span class="n">E_0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="n">t</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1">#if the particle is not, calculate the magnetic force</span>
+        <span class="n">Fnet</span> <span class="o">=</span> <span class="n">q</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">particlev</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+
+    <span class="n">particlev</span> <span class="o">=</span> <span class="n">particlev</span> <span class="o">+</span> <span class="n">Fnet</span><span class="o">*</span><span class="n">dt</span><span class="o">/</span><span class="n">m</span> <span class="c1">#Update the velocity of the particle</span>
+    <span class="n">particlepos</span> <span class="o">=</span> <span class="n">particlepos</span> <span class="o">+</span> <span class="n">particlev</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#Use velocity to update the position of the particle</span>
+    
+    <span class="n">particleposx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">particleposx</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#append the x position to the x-position list</span>
+    <span class="n">particleposy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">particleposy</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#append the y position to the y-position list</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">dt</span> <span class="c1">#update the timestep</span>
+    
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The final speed of the particle is&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">particlev</span><span class="p">),</span> <span class="s2">&quot;m/s&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>The final speed of the particle is 6409852.675616209 m/s
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, we will plot the resulting motion of the particle in 2D. We expect that it should have a spiral shape (for example, see <a href="http://hyperphysics.phy-astr.gsu.edu/hbase/magnetic/cyclot.html">http://hyperphysics.phy-astr.gsu.edu/hbase/magnetic/cyclot.html</a>)</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span> <span class="c1">#create the figure</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposx</span><span class="p">,</span> <span class="n">particleposy</span><span class="p">)</span> <span class="c1">#create the plot</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[&lt;matplotlib.lines.Line2D at 0x10d73c470&gt;]</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/exercises/essayseeds/Cyclotron_12_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Additional-questions-you-might-investigate">Additional questions you might investigate<a class="anchor-link" href="#Additional-questions-you-might-investigate"> </a></h2><ol>
+<li>In real life, cyclotrons are used for treating cancer. How much voltage would you need to achieve the energy to destroy a cancer cell? (about 100-250 MeV, according to <em>Goitein, M., Lomax, A. J., &amp; Pedroni, E. S. (2002). Treating cancer with protons. Physics Today, 55(9), 45–50. <a href="http://doi.org/10.1063/1.1522215">http://doi.org/10.1063/1.1522215</a></em>)<ul>
+<li>Or, what size of cyclotron would you need at a given voltage?</li>
+</ul>
+</li>
+<li>These particles can quickly start to approach the speed of light. How does this result change with the addition of relativistic factors?</li>
+<li>Particle accelerators have been proposed as a possible method of disposing of spent nuclear fuel, as described here: <a href="https://www.symmetrymagazine.org/article/february-2012/taking-the-heat-out-of-nuclear-waste">https://www.symmetrymagazine.org/article/february-2012/taking-the-heat-out-of-nuclear-waste</a> Could a cyclotron be used for this type of application?</li>
+<li>What happens if you use a different kind of pulse, like a square wave instead of a sin wave? What if you alter the phase of the wave? </li>
+<li>What happens if you want to produce a stream of particles instead of just one? What if you use electrons instead of protons?</li>
+</ol>
+<p><em>(Note that these are just meant to be suggestions—feel free to investigate any question you find interesting!)</em></p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

@@ -1,0 +1,1067 @@
+---
+redirect_from:
+  - "/essays/studentessays/stormcloud-ls/3d-stormcloud-lassst-fys1120-h18"
+interact_link: content/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18.ipynb
+kernel_name: python3
+kernel_path: content/essays/studentessays/stormcloud_LS
+has_widgets: false
+title: |-
+  Hvor langt kan du trygt stå borte fra et lynnedslag?
+pagenum: 11
+prev_page:
+  url: /essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay.html
+next_page:
+  url: /exercisesets.html
+suffix: .ipynb
+search: og en er det som av til e p et med kan ved bakken fra strmmen feltet lynet lyn m spenningen blir de gir om ned dette opp ikke strm man sandstein vre har hvor skyen koden konduktivitet under strre ble slr unna gneiss skjer vil s nr gi mellom dermed html den andre langt st lynnedslag hyde f eks eller skya seg skylaget km videre beregner hva skal antatt slik mot overflaten nedslaget mer enn programmet www climate lightning edu stormsky mest grunn gjennom stormskyer trygt ulik sediment viss langs positivt skylag oppstr felt v beregningene fig underske disse
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Hvor langt kan du trygt stå borte fra et lynnedslag?</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="3-D-simulering-av-en-stormsky">3-D simulering av en stormsky<a class="anchor-link" href="#3-D-simulering-av-en-stormsky"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Skrevet-av-Lasse-Steinnes">Skrevet av Lasse Steinnes<a class="anchor-link" href="#Skrevet-av-Lasse-Steinnes"> </a></h3>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Introduksjon">Introduksjon<a class="anchor-link" href="#Introduksjon"> </a></h2><p>Mektige skyformasjoner er blant de mest fascinerende naturfemonene i atmosfæren. Under riktige omstendigheter kan skyformasjonene bidra til uvær og utløse sterke krefter, med opprivende konsekvenser for biomer og lokalsamfunn. Med økende ekstremvær følger også større økonomiske kostnader. Av den grunn er det viktig å forstå prosessene i atmosfæren.</p>
+<p>Lynet er en en av de kraftigste naturkreftene en skyformasjon kan by på. Lyn fører til branner, og i enkelte tilfeller  dødsfall og alvorlige skader på mennesker og dyr. På ett sekund gir et lynnedsslag en strøm på 30 kA. Det er mye sammenlignet med de 0.5 A som strømmer gjennom en vanlig lyspære hjemme i stua. Likevel er lynformasjon i stormskyer et forløp man har lite kunnskap om sammenlignet med andre naturfenomen.</p>
+<p>I denne beregningsbaserte artikkelen ble det undersøkt under hvilke forhold lynet slår ned, og hvor langt unna det er trygt å stå fra et lynnedslag på ulik type sediment (gneiss og sandstein).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Teori">Teori<a class="anchor-link" href="#Teori"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dannelsen av en stormsky skjer i flere trinn. Først må fuktige luftmasser stige til en viss høyde og akkumulere volum. Dette kan skje på flere måter, som f.eks. at luftmassene presses opp langs sidene på en dal, eller at luft langs bakken varmes opp ved konveksjon, og stiger.</p>
+<p>Ettersom kumulusskyen vokser vil vertikale luftstrømmer oppstå på grunn av at de øvre skylagene oppsamler vann over lagringskapasitetet til skya. Vannet faller ned som hagl, samtig som små isskrystaller transporteres oppover. Med superkjølte vanndråper (-10 til -20 C) som katalyastor, gir kollisjoner utveksling av ladning. Positivt ladde iskrystaller samler seg i det øvre skylaget (ca. 10 km over havnivå) , der kulden (-40 C) hindrer videre utveksling av ladning. De negative ladningene samler seg opp i nedre skylag (6-8 km over havnivå), rett over positivt ladet p-region, som er med på å frigi de negative ladningene ved lynutslag.</p>
+<p>Den modne Cumulonimbus-skyen er som regel 5-10 km i utstrekning vertikalt, og 6-10 km horisontal. Etthvert vil ladningsforskjellen i skya være så stor at en positivt ladet grunnskygge oppstår på bakken. Lynutslag skjer når spenningen er sterk nok til å gi et dielektrisk sammenbrudd i luften, som skjer ved et E-felt over (3*10^6 V/m). Når dette skjer kan en typisk tordensky gi lynnedslag hvert 20-30 sekund i en time.</p>
+<p>I beregningene som følger modelleres skyen som en parallell-platekondenstar, som skaper et E-felt (Fig 1). Koden beregner E-felt en viss distanse fra skyen, og hvor langt unna man kan stå uten å bli skadet, når lynet slår ned. Koden kan brukes til å undersøke hva som skal til for at lynet skal slå ned i en viss høyde, og hva som skjer ved disse høydene ved ulik høyde på sky og ulik ladningstetthet i skylagene. Det er antatt at lynet ikke er inne i skylag, eller mellom skylag, men mellom skylaget og bakken. Det er i tillegg antatt lineært medium og beregningene er basert på teori knyttet til FYS1120-emnet ved UiO.</p>
+<p><img src="modell1.png" alt="Fig1: Modell">
+Fig 1: Modellen det ble arbeidet med.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simulering-av-stormskyen-og-resultater">Simulering av stormskyen og resultater<a class="anchor-link" href="#Simulering-av-stormskyen-og-resultater"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">sympy</span> <span class="k">as</span> <span class="nn">sp</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Først importeres biblioteker: numba, sympy, numpy, and matplotlib</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Definerer konstanter: Dimensjonen til skyen,høyden, ladningen, og overflatene.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Definere hvor skyen stopper og slutter i x-retningen [m]  </span>
+<span class="n">startx</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2500</span> 
+<span class="n">endx</span> <span class="o">=</span> <span class="mi">2500</span>
+
+<span class="c1"># Det samme for z-retningen [m]  </span>
+<span class="n">startz</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2500</span>
+<span class="n">endz</span> <span class="o">=</span> <span class="mi">2500</span>
+
+<span class="c1"># Bestemmer høyden for den negative og positive delene av skya [m]</span>
+<span class="n">negheight</span> <span class="o">=</span> <span class="mi">6000</span> 
+<span class="n">posheight</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="c1"># belowground bestemmer direkte i utregning</span>
+
+<span class="c1"># Bestem ladningen på oversida og nedsida av skya, og polarisering av bakken [C]</span>
+<span class="n">Q</span> <span class="o">=</span> <span class="o">-</span><span class="mi">15</span> <span class="c1">#Q is the total charge on the bottom (negative) part of the cloud</span>
+<span class="n">Q2</span> <span class="o">=</span> <span class="mi">15</span> <span class="c1">#Q2 is the total charge of the top (positive) part of the cloud</span>
+<span class="n">Q3</span> <span class="o">=</span> <span class="mf">1.0001</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.4775</span><span class="p">)</span>  <span class="c1">#Q3 is total charge on the ground due to polarization 1e-11*10**(-1.478) 1500 m</span>
+
+<span class="n">k</span> <span class="o">=</span> <span class="mf">9e9</span> <span class="c1">#Coulomb&#39;s constant</span>
+
+
+<span class="c1"># ønsker å konstruere array med flere slike verdier, slik at E-feltet kan beregnes utover et grid, </span>
+<span class="c1">#slik kan man finne verdier der lynet kan slå ned</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1"># steps</span>
+<span class="n">x_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">startx</span><span class="p">,</span><span class="n">endx</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+<span class="n">z_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">startz</span><span class="p">,</span><span class="n">endz</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x_pos</span><span class="p">,</span><span class="n">z_pos</span><span class="p">,</span> <span class="n">indexing</span> <span class="o">=</span> <span class="s1">&#39;ij&#39;</span><span class="p">)</span>
+
+<span class="c1">#print(x[0]) # varierer x mellom -2500,og 2500</span>
+<span class="c1">#print(z[0]) # holder z = -2500 konstant</span>
+
+<span class="n">y_pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mf">4.5</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">z</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mf">4.5</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1200</span> <span class="c1"># Lager et dalføre</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For å beregne E-feltet må skyen og ladningen på overflatene deles opp i et grid.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Definerer hvor mange deler skyen skal deles opp i </span>
+<span class="n">nx</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">nz</span> <span class="o">=</span> <span class="mi">100</span> 
+
+<span class="c1"># Definerer hvor stor hver del er</span>
+<span class="n">stepx</span> <span class="o">=</span> <span class="p">(</span><span class="n">endx</span> <span class="o">-</span> <span class="n">startx</span><span class="p">)</span><span class="o">/</span><span class="n">nx</span> 
+<span class="n">stepz</span> <span class="o">=</span> <span class="p">(</span><span class="n">endz</span> <span class="o">-</span> <span class="n">startz</span><span class="p">)</span><span class="o">/</span><span class="n">nz</span> 
+
+<span class="c1"># Gjør om slik at ladningen blir fordelt på hver rute i grid</span>
+<span class="n">dQ</span> <span class="o">=</span> <span class="n">Q</span><span class="o">/</span><span class="p">(</span><span class="n">nx</span><span class="o">*</span><span class="n">nz</span><span class="p">)</span> <span class="c1"># Merk: denne vil få negativ verdi</span>
+<span class="n">dQ2</span> <span class="o">=</span> <span class="n">Q2</span><span class="o">/</span><span class="p">(</span><span class="n">nx</span><span class="o">*</span><span class="n">nz</span><span class="p">)</span> 
+<span class="n">dQ3</span> <span class="o">=</span> <span class="n">Q3</span><span class="o">/</span><span class="p">(</span><span class="n">nx</span><span class="o">*</span><span class="n">nz</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ladningstetthet for overflaten er </span><span class="si">{:.2e}</span><span class="s1"> (øvre skylag), </span><span class="si">{:}</span><span class="s1"> (nedre skylag) og </span><span class="si">{:}</span><span class="s1"> (substrat)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dQ</span><span class="p">,</span><span class="n">dQ2</span><span class="p">,</span><span class="n">dQ3</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Ladningstetthet for overflaten er -1.50e-03 (øvre skylag), 0.0015 (nedre skylag) og 3.3307606658497717e-06 (substrat)
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>E-feltet kan nå bestemmes ved å iterere over hver del, ved å initere E-feltet til å være null. Tre ulike metoder for å beregne E-feltet er nedenfor 1) For en variabel overflate (f.eks. dalføre) 2)For flatmark 3) For et observasjonspunkt. De to første programmene i dette settet gir en visuell oversikt over hvor lynet slår ned.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># 1) For et dalføre </span>
+<span class="c1"># ønsker å vektorisere finne ut hvor det mest sannsynlig slår ned</span>
+<span class="n">E_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+<span class="n">lightning</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">6</span>
+
+<span class="k">def</span> <span class="nf">efield</span><span class="p">():</span>
+    <span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">efieldsum</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">):</span>
+        <span class="n">efield</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">],</span><span class="n">y_pos</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">],</span><span class="n">z</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">]])</span> <span class="c1"># høyde h</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nx</span><span class="p">):</span> <span class="c1">#iterate over the x dimension of the cloud</span>
+            <span class="n">xloc</span> <span class="o">=</span> <span class="n">startx</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">stepx</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nz</span><span class="p">):</span> <span class="c1">#iterate over the z dimension of the cloud</span>
+                <span class="n">zloc</span> <span class="o">=</span> <span class="n">startz</span> <span class="o">+</span> <span class="n">j</span><span class="o">*</span><span class="n">stepz</span>
+
+                <span class="n">posfield</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">dQ2</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">posheight</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+                <span class="n">negfield</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">dQ</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">negheight</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+                <span class="n">groundfield</span> <span class="o">=</span> <span class="o">-</span><span class="n">k</span><span class="o">*</span><span class="n">dQ3</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+                <span class="n">efield</span> <span class="o">=</span> <span class="n">efield</span> <span class="o">+</span> <span class="n">negfield</span> <span class="o">+</span> <span class="n">posfield</span> <span class="o">+</span> <span class="n">groundfield</span>
+        <span class="k">return</span> <span class="n">efield</span>
+
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">E_arr</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">efieldsum</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">E_arr</span>
+
+<span class="n">E_arr</span> <span class="o">=</span>  <span class="n">efield</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">E_arr</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">plot_strikes</span><span class="p">():</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="mi">9999</span>
+    <span class="n">E_strike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span><span class="n">lightning</span><span class="p">)</span>
+    <span class="n">strike_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">E_arr</span><span class="p">,</span><span class="n">E_strike</span><span class="p">)</span>    <span class="c1"># mulig jeg må bruke en for løkke gjennom E_arrays her</span>
+    <span class="n">strike_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">strike_points</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">x_indices</span> <span class="o">=</span> <span class="n">strike_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">z_indices</span> <span class="o">=</span> <span class="n">strike_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">x_strike</span> <span class="o">=</span> <span class="n">x_pos</span><span class="p">[</span><span class="n">x_indices</span><span class="p">]</span>
+    <span class="n">z_strike</span> <span class="o">=</span> <span class="n">z_pos</span><span class="p">[</span><span class="n">z_indices</span><span class="p">]</span>
+    <span class="n">y_strike</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_strike</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mf">4.5</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">z_strike</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mf">4.5</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1200</span>
+    
+    <span class="c1">#print(len(x_strike),len(z_strike),len(y_scatter))</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_strike</span><span class="p">,</span><span class="n">z_strike</span><span class="p">,</span><span class="n">y_strike</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">y_pos</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fig2: Lynnedslag i et dalføre. Aksene i meter&#39;</span><span class="p">)</span>
+
+<span class="n">plot_strikes</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[-3.00001458e+06 -1.15466005e+05 -3.15074705e+04 ... -3.14796374e+04
+  -1.15424265e+05 -2.29300858e+03]
+ [-1.15454058e+05 -6.00517776e+04 -2.57788723e+04 ... -2.57485484e+04
+  -6.00039558e+04 -2.31718852e+03]
+ [-3.14835167e+04 -2.57668628e+04 -1.71023050e+04 ... -1.70703832e+04
+  -2.57165460e+04 -2.33611697e+03]
+ ...
+ [-3.14559846e+04 -2.57366901e+04 -1.70703832e+04 ... -1.70401144e+04
+  -2.56889082e+04 -2.31170765e+03]
+ [-1.15412472e+05 -6.00039558e+04 -2.57284009e+04 ... -2.57006142e+04
+  -5.99621972e+04 -2.28754194e+03]
+ [-2.29300858e+03 -2.32897867e+03 -2.35975623e+03 ... -2.33505051e+03
+  -2.29918124e+03 -2.25622467e+03]]
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_13_1.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fig2: Lynnedslag i et dalføre. Aksene i meter
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># 2) For flatmark</span>
+<span class="c1"># ønsker å vektorisere finne ut hvor det mest sannsynlig slår ned.</span>
+<span class="n">E_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span> <span class="c1"># i x,z planet</span>
+<span class="n">efield</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">h</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">lightning</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">6</span>
+
+<span class="k">def</span> <span class="nf">efield</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+    <span class="nd">@jit</span><span class="p">(</span><span class="n">nopython</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">efieldsum</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">):</span>
+        <span class="n">efield</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">],</span><span class="n">h</span><span class="p">,</span><span class="n">z</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">]])</span> <span class="c1"># høyde h</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nx</span><span class="p">):</span> <span class="c1">#iterate over the x dimension of the cloud</span>
+            <span class="n">xloc</span> <span class="o">=</span> <span class="n">startx</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">stepx</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nz</span><span class="p">):</span> <span class="c1">#iterate over the z dimension of the cloud</span>
+                <span class="n">zloc</span> <span class="o">=</span> <span class="n">startz</span> <span class="o">+</span> <span class="n">j</span><span class="o">*</span><span class="n">stepz</span>
+
+                <span class="n">posfield</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">dQ2</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">posheight</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+                <span class="n">negfield</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">dQ</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">negheight</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+                <span class="n">groundfield</span> <span class="o">=</span> <span class="o">-</span><span class="n">k</span><span class="o">*</span><span class="n">dQ3</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+                <span class="n">efield</span> <span class="o">=</span> <span class="n">efield</span> <span class="o">+</span> <span class="n">negfield</span> <span class="o">+</span> <span class="n">posfield</span> <span class="o">+</span> <span class="n">groundfield</span>
+        <span class="k">return</span> <span class="n">efield</span>
+
+    <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">E_arr</span><span class="p">[</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">efieldsum</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">E_arr</span>
+
+<span class="n">E_arr</span> <span class="o">=</span>  <span class="n">efield</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">E_arr</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">plot_strikes</span><span class="p">():</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span><span class="n">h</span><span class="p">)</span>
+
+    <span class="n">E_strike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span><span class="n">lightning</span><span class="p">)</span>
+    <span class="n">strike_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">E_arr</span><span class="p">,</span><span class="n">E_strike</span><span class="p">)</span> 
+    <span class="n">strike_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">strike_points</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">x_indices</span> <span class="o">=</span> <span class="n">strike_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">z_indices</span> <span class="o">=</span> <span class="n">strike_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">x_strike</span> <span class="o">=</span> <span class="n">x_pos</span><span class="p">[</span><span class="n">x_indices</span><span class="p">]</span>
+    <span class="n">z_strike</span> <span class="o">=</span> <span class="n">z_pos</span><span class="p">[</span><span class="n">z_indices</span><span class="p">]</span>
+    
+    <span class="n">n2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_strike</span><span class="p">)</span>
+    <span class="n">y_scatter</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
+    
+    <span class="c1">#print(len(x_strike),len(z_strike),len(y_scatter))</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_strike</span><span class="p">,</span><span class="n">z_strike</span><span class="p">,</span><span class="n">y_scatter</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fig3: Lynnedslag på flatmark. Aksene er i meter.&#39;</span><span class="p">)</span>
+
+<span class="n">plot_strikes</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[[-2.99930939e+06 -1.14746602e+05 -3.07738744e+04 ... -3.07542697e+04
+  -1.14713085e+05 -1.59602839e+03]
+ [-1.14746602e+05 -5.93300167e+04 -2.50428257e+04 ... -2.50207653e+04
+  -5.92904526e+04 -1.61797659e+03]
+ [-3.07738744e+04 -2.50428257e+04 -1.63638916e+04 ... -1.63402673e+04
+  -2.50008001e+04 -1.63475193e+03]
+ ...
+ [-3.07542697e+04 -2.50207653e+04 -1.63402673e+04 ... -1.63181873e+04
+  -2.49811663e+04 -1.61816208e+03]
+ [-1.14713085e+05 -5.92904526e+04 -2.50008001e+04 ... -2.49811663e+04
+  -5.92568415e+04 -1.59629011e+03]
+ [-1.59602839e+03 -1.61797659e+03 -1.63475193e+03 ... -1.61816208e+03
+  -1.59629011e+03 -1.56734310e+03]]
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_14_1.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fig3: Lynnedslag på flatmark. Aksene er i meter.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">### 3) For et observasjonspunkt</span>
+<span class="n">efield</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">height</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">500</span><span class="p">,</span><span class="n">height</span><span class="p">,</span><span class="mi">150</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nx</span><span class="p">):</span> <span class="c1">#iterate over the x dimension of the cloud</span>
+    <span class="n">xloc</span> <span class="o">=</span> <span class="n">startx</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">stepx</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nz</span><span class="p">):</span> <span class="c1">#iterate over the z dimension of the cloud</span>
+        <span class="n">zloc</span> <span class="o">=</span> <span class="n">startz</span> <span class="o">+</span> <span class="n">j</span><span class="o">*</span><span class="n">stepz</span>
+
+        <span class="n">negfield</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">dQ</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">negheight</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">posfield</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">dQ2</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">posheight</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">groundfield</span> <span class="o">=</span> <span class="o">-</span><span class="n">k</span><span class="o">*</span><span class="n">dQ3</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">efield</span> <span class="o">=</span> <span class="n">efield</span> <span class="o">+</span> <span class="n">negfield</span> <span class="o">+</span> <span class="n">posfield</span> <span class="o">+</span> <span class="n">groundfield</span>
+
+<span class="k">if</span> <span class="n">efield</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Lyn!! E-felt verdi:</span><span class="si">{:}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">efield</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;E-felt i observasjonspunktet er&quot;</span><span class="p">,</span> <span class="n">efield</span><span class="p">,</span> <span class="s2">&quot;N/C&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Lyn!! E-felt verdi:-3000077.93583371
+E-felt i observasjonspunktet er -3000077.93583371 N/C
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Videre ønskes det å beregne spenningen et punkt der lynet slår ned, slik at strømmen kan beregnes. Det er kjent at strømmen et lyn kan levere er 30kA, så hvilke resistans har lufta da, gitt at Ohms lov (V =RI) fortsatt gjelder? I beregningene er det benyttet at et lyn har diameter 2.5 cm og er en sylinder rett ned mot bakken.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># gjør beregninger for V og I her gitt R = rho*l/A_tverrsnitt og (electrical breakdown of air 3 x 10^6)</span>
+<span class="c1"># Da må man beregne integralet, dvs sum av E*dl, r = 2.5*10**-2 m /2 </span>
+<span class="c1"># må la y variere mellom 1 og 5995 for å beregne potensialet (vil ikke dele på 0)</span>
+<span class="n">efield</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">v_diff</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">dl</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5999</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span>
+<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">5999</span><span class="p">,</span><span class="mi">1000</span><span class="p">):</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dl</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5999</span><span class="p">)</span><span class="o">/</span><span class="mi">1000</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nx</span><span class="p">):</span> <span class="c1">#iterate over the x dimension of the cloud</span>
+        <span class="n">xloc</span> <span class="o">=</span> <span class="n">startx</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="n">stepx</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nz</span><span class="p">):</span> <span class="c1">#iterate over the z dimension of the cloud</span>
+            <span class="n">zloc</span> <span class="o">=</span> <span class="n">startz</span> <span class="o">+</span> <span class="n">j</span><span class="o">*</span><span class="n">stepz</span>
+        
+            <span class="n">negfield</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">dQ</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">negheight</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>        
+            <span class="n">posfield</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">dQ2</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">posheight</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+            <span class="n">groundfield</span> <span class="o">=</span> <span class="o">-</span><span class="n">k</span><span class="o">*</span><span class="n">dQ3</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xloc</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="n">zloc</span><span class="p">])))</span><span class="o">**</span><span class="mi">2</span>
+            <span class="n">efield</span> <span class="o">=</span> <span class="n">efield</span> <span class="o">+</span> <span class="n">negfield</span> <span class="o">+</span> <span class="n">posfield</span> <span class="o">+</span> <span class="n">groundfield</span>
+            <span class="n">v_diff</span> <span class="o">=</span> <span class="o">-</span><span class="n">efield</span><span class="o">*</span><span class="n">dl</span>
+            
+    
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Spenningen er &quot;</span><span class="p">,</span> <span class="n">v_diff</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">)</span>
+
+<span class="n">obs_point</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="c1"># Strømmen som går gjennom er </span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">negheight</span> <span class="o">-</span> <span class="n">obs_point</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.5</span><span class="o">*</span><span class="mi">10</span><span class="o">**-</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="c1">#[m]</span>
+<span class="n">A</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="mf">1.3</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3.65</span><span class="p">)</span>
+<span class="n">R</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="n">l</span><span class="o">/</span><span class="n">A</span>
+<span class="n">I</span> <span class="o">=</span> <span class="n">v_diff</span><span class="o">/</span><span class="n">R</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Det gir en strøm:&#39;</span><span class="p">,</span><span class="n">I</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Resistiviteten i luft er vanligvis 10**9 til 10**15, men pga. varmen bryter partiklene i </span><span class="se">\</span>
+<span class="s1">luften sammen til plasma, og resistivitet er da&#39;</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span><span class="s1">&#39;ohm meter. Dette gir en konduktivitet&#39;</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="n">rho</span><span class="p">,</span><span class="s1">&#39;S/m&#39;</span><span class="p">)</span>
+
+<span class="c1">#30,000 amperes (30 kA) kan lynet gi fra seg</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Spenningen er  108303138.65897325 V
+Det gir en strøm: 30445.025266765773 A
+Resistiviteten i luft er vanligvis 10**9 til 10**15, men pga. varmen bryter partiklene i luften sammen til plasma, og resistivitet er da 0.0002910337480138842 ohm meter. Dette gir en konduktivitet 3436.0276319304853 S/m
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Om man antar at strømmen spres jevnt utover overflaten til bakken, slik at Js = I/A_bakken, så vil dette gi E = Js/sigma, og integreres denne mhp dr, finner man et uttrykk for spenningen over bakken.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># dette spres til bakken og man kan beregne hvor langt unna man må stå for å være sikker.</span>
+<span class="c1"># bruk konduktivitet</span>
+<span class="c1"># Antar at Js = I/(pi*r**2) (I/A) sprer seg mest som en halvkule i bakken, </span>
+<span class="c1"># og at J = sigma*E, slik at E = J/sigma (1/sigma = rho)</span>
+<span class="c1"># En spenning mellom bena (potensialforskjell) er </span>
+<span class="c1"># int_r ^(r+d) I/sigma*pi*r**2 dr </span>
+<span class="n">sp</span><span class="o">.</span><span class="n">init_printing</span><span class="p">(</span><span class="n">use_unicode</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">wrap_line</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;sigma&#39;</span><span class="p">)</span>
+<span class="n">I_sym</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;I&#39;</span><span class="p">)</span>
+<span class="n">pi</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">Symbol</span><span class="p">(</span><span class="s1">&#39;pi&#39;</span><span class="p">)</span>
+<span class="n">sp</span><span class="o">.</span><span class="n">integrate</span><span class="p">(</span><span class="n">I_sym</span><span class="o">/</span><span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="mi">3</span><span class="o">*</span><span class="n">sigma</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="n">r</span><span class="p">)</span> <span class="c1"># som en disk</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_latex output_subarea output_execute_result">
+$$- \frac{0.1875 I}{\pi \sigma x^{2}}$$
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Følgende program undersøker hvordan spenningen blir i sediment med gneiss og sanstein, og beregner hvordan spenningen og strømmen gjennom kroppen til et menneske blir en gitt avstand fra lynnedslaget. Det antas at bakken nær nedslaget varmes opp, slik at konduktiviteten er lavere nær nedslaget, og at mye strøm går tapt direkte i nedslaget. Mer i sandstein enn gneis fordi sandstein har lavere ledningsevne.</p>
+<p>Siden bakken er ionisert antas at mest av strømmen spres utover langs overflaten av bakken. Før koden under kjøres, må I igjen defineres fra verdier av lynsylinderen (og ikke som symbol fra integrasjonen), så kjør den delen av koden om igjen.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">steps</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">rmaks</span> <span class="o">=</span> <span class="mi">1250</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="n">rmaks</span><span class="p">,</span><span class="n">steps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># radius</span>
+<span class="n">d</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># meter mellom benene </span>
+<span class="c1"># kvarts,feltspat vanlig i gneis</span>
+<span class="c1"># sandstein # kvart og feltspat, men bundet med leire</span>
+
+<span class="c1"># litt mindre konduktivitet pga. vegetasjon osv.</span>
+<span class="n">ground</span> <span class="o">=</span> <span class="mf">0.3e-3</span>
+
+<span class="c1">#gneiss</span>
+<span class="n">g_sigma100</span> <span class="o">=</span> <span class="mf">20e-3</span> <span class="o">-</span><span class="n">ground</span>
+<span class="n">g_sigma20</span> <span class="o">=</span> <span class="mf">80e-3</span> <span class="o">-</span><span class="n">ground</span>
+
+<span class="n">waist</span> <span class="o">=</span> <span class="mf">0.8</span> <span class="c1"># m</span>
+<span class="n">legs_r</span> <span class="o">=</span> <span class="mf">0.13</span><span class="o">/</span><span class="mi">2</span> <span class="c1"># m</span>
+
+<span class="c1">#sandstein</span>
+<span class="n">sigma100</span> <span class="o">=</span> <span class="mf">0.5e-3</span> <span class="o">-</span> <span class="n">ground</span> <span class="c1"># S/m til et spesielt rock  sandstein</span>
+<span class="n">sigma20</span> <span class="o">=</span> <span class="mf">5e-3</span> <span class="o">-</span> <span class="n">ground</span> <span class="c1"># til et annet  # varer ikke lenge, men rekker å varme opp litt</span>
+
+<span class="c1">## strøm</span>
+<span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">g_sigma100</span><span class="o">/</span><span class="n">sigma100</span><span class="p">)</span>
+<span class="c1">#print(ratio)</span>
+<span class="n">I_gneiss</span> <span class="o">=</span> <span class="n">I</span><span class="o">/</span><span class="mf">10.0</span>
+<span class="n">I_sandstein</span> <span class="o">=</span> <span class="n">I</span><span class="o">/</span><span class="n">ratio</span> <span class="c1"># strømmen er ikke likt fordelt i begge  J = I/A = I/pi*r**2, anta at strømmen er /20 i sandstein</span>
+
+<span class="k">def</span> <span class="nf">sigma</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">s20</span><span class="p">,</span><span class="n">s100</span><span class="p">):</span>   <span class="c1"># pga. varme  </span>
+    <span class="k">if</span>  <span class="n">r</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">s_val</span> <span class="o">=</span> <span class="n">s100</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="n">s_val</span> <span class="o">=</span> <span class="n">s20</span>
+    <span class="k">return</span> <span class="n">s_val</span>
+        
+<span class="c1"># Dersom man ønsker kan man benytte denne koden til å beregne strømmen i et punkt langs bakken</span>
+<span class="k">def</span> <span class="nf">find_stream</span><span class="p">(</span><span class="n">I</span><span class="p">,</span><span class="n">rmax</span><span class="p">):</span>
+    <span class="n">Js</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+        <span class="c1">#rho = 1/sigma(r[i],s20,s100)</span>
+        <span class="c1">#R = r[i]/(2*np.pi*rmax*0.001)</span>
+        <span class="c1">#Js[i] = V[i]/R</span>
+        <span class="n">Js</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">I</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">rmax</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Js</span> 
+
+<span class="c1">#  Beregner spenningen langs bakken</span>
+
+<span class="k">def</span> <span class="nf">evaluate_V</span><span class="p">(</span><span class="n">I</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">s20</span><span class="p">,</span><span class="n">s100</span><span class="p">,</span><span class="n">steps</span><span class="p">):</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">steps</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+        <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1875</span><span class="o">*</span><span class="n">I</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">sigma</span><span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">s20</span><span class="p">,</span><span class="n">s100</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">((</span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="p">((</span><span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">d</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">V</span>
+
+<span class="c1"># gjennom kroppen så blir strømmen avhengig av spenningen</span>
+<span class="k">def</span> <span class="nf">find_streambody</span><span class="p">(</span><span class="n">V</span><span class="p">,</span><span class="n">waist</span><span class="p">,</span><span class="n">legs_r</span><span class="p">):</span>
+    <span class="n">I_body</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+    <span class="n">rho</span> <span class="o">=</span> <span class="mf">171e-2</span> <span class="c1">#Ω/m til skjelettmuskler</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">rho</span><span class="o">*</span><span class="n">waist</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">legs_r</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>     <span class="c1"># R = rho*x/A # muskel # beregner strømmen som når mellomgulvet</span>
+        <span class="n">I_body</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">R</span>
+    <span class="k">return</span> <span class="n">I_body</span>
+
+<span class="n">gneiss</span> <span class="o">=</span> <span class="n">evaluate_V</span><span class="p">(</span><span class="n">I_gneiss</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">g_sigma20</span><span class="p">,</span><span class="n">g_sigma100</span><span class="p">,</span><span class="n">steps</span><span class="p">)</span>
+<span class="n">sandstein</span> <span class="o">=</span> <span class="n">evaluate_V</span><span class="p">(</span><span class="n">I_sandstein</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">sigma20</span><span class="p">,</span><span class="n">sigma100</span><span class="p">,</span><span class="n">steps</span><span class="p">)</span>
+
+<span class="c1">#print(gneiss)</span>
+<span class="c1">#print(sandstein)</span>
+
+<span class="c1"># Strømmen gjennom bakken og kropppen</span>
+<span class="n">stream_gneiss</span> <span class="o">=</span> <span class="n">find_stream</span><span class="p">(</span><span class="n">I_gneiss</span><span class="p">,</span><span class="n">rmaks</span><span class="p">)</span>
+<span class="n">stream_sandstein</span> <span class="o">=</span> <span class="n">find_stream</span><span class="p">(</span><span class="n">I_sandstein</span><span class="p">,</span><span class="n">rmaks</span><span class="p">)</span>
+<span class="n">streambody_gneiss</span> <span class="o">=</span> <span class="n">find_streambody</span><span class="p">(</span><span class="n">gneiss</span><span class="p">,</span><span class="n">waist</span><span class="p">,</span><span class="n">legs_r</span><span class="p">)</span>
+<span class="n">streambody_sandstein</span> <span class="o">=</span> <span class="n">find_streambody</span><span class="p">(</span><span class="n">sandstein</span><span class="p">,</span><span class="n">waist</span><span class="p">,</span><span class="n">legs_r</span><span class="p">)</span>
+
+<span class="c1"># Visuliser grafer for spenningen mellom bena og strømmen det gir.</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">gneiss</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Spenning gneiss (V)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">streambody_gneiss</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Strøm gjennom kropp (gneiss) (A)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">3</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">sandstein</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Spenning sandstein (V)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">streambody_sandstein</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Strøm gjennom kropp (sandstein) (A)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Avstand [m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fig4: Strømmen gjennom kroppen, og spenningsforskjellen&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="c1">#print(&#39;Strømmen gjennom kroppen for gneiss som sediment&#39;)</span>
+<span class="c1">#print(streambody_gneiss)</span>
+<span class="c1">#print(&#39;\n&#39;)</span>
+<span class="c1">#print(&#39;Strømmen gjennom kroppen for sandstein som sediment&#39;)</span>
+<span class="c1">#print(streambody_sandstein)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_21_0.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fig4: Strømmen gjennom kroppen, og spenningsforskjellen
+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Videre benyttes resultatene fra forrige program, og koden under beregner hvilken radius lynnedslaget vil gi et dødelig sjokk, som antas å være rundt 100e-3.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">## Plott overflaten med radius og lyn</span>
+<span class="k">def</span> <span class="nf">radius_lethal</span><span class="p">(</span><span class="n">I</span><span class="p">,</span><span class="n">r</span><span class="p">):</span>
+    <span class="n">A_lethal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">I</span><span class="p">),</span><span class="mf">100e-3</span><span class="p">)</span>
+    <span class="n">lethal_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">less</span><span class="p">(</span><span class="n">I</span><span class="p">,</span><span class="n">A_lethal</span><span class="p">)</span>
+    <span class="n">lethal_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">lethal_points</span> <span class="o">==</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">lethal_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+<span class="n">rlethal_gneiss</span> <span class="o">=</span> <span class="n">radius_lethal</span><span class="p">(</span><span class="n">streambody_gneiss</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
+<span class="n">rlethal_sandstein</span> <span class="o">=</span> <span class="n">radius_lethal</span><span class="p">(</span><span class="n">streambody_sandstein</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
+    
+<span class="k">def</span> <span class="nf">plot_lethal_strike</span><span class="p">(</span><span class="n">r_lethal</span><span class="p">):</span>
+    <span class="c1"># for flaten bakken</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">x_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">z_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">))</span>
+
+    <span class="n">x</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x_pos</span><span class="p">,</span><span class="n">z_pos</span><span class="p">,</span> <span class="n">indexing</span> <span class="o">=</span> <span class="s1">&#39;ij&#39;</span><span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;cyan&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># for skya</span>
+    <span class="n">x_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">z_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">30</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span><span class="n">negheight</span><span class="p">)</span>
+
+    <span class="n">x</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x_pos</span><span class="p">,</span><span class="n">z_pos</span><span class="p">,</span> <span class="n">indexing</span> <span class="o">=</span> <span class="s1">&#39;ij&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;grey&#39;</span><span class="p">)</span>
+    
+    
+    <span class="c1"># for lynet</span>
+    <span class="n">cyl_a</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">x</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cyl_a</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">z</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">negheight</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">Xcyl</span><span class="p">,</span> <span class="n">Zcyl</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+    <span class="n">Yc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cyl_a</span><span class="o">**</span><span class="mi">2</span><span class="o">-</span><span class="n">Xcyl</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">rstride</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">cstride</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">Xcyl</span><span class="p">,</span> <span class="n">Yc</span><span class="p">,</span> <span class="n">Zcyl</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="n">rstride</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="n">cstride</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">Xcyl</span><span class="p">,</span> <span class="o">-</span><span class="n">Yc</span><span class="p">,</span> <span class="n">Zcyl</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;yellow&#39;</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="n">rstride</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="n">cstride</span><span class="p">)</span>
+    
+
+    <span class="c1"># for dødelig radius</span>
+    <span class="n">groundheight</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cyl_a</span> <span class="o">=</span> <span class="n">r_lethal</span>
+    
+    <span class="n">rstride</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">cstride</span> <span class="o">=</span> <span class="mi">10</span>
+    
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cyl_a</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">),</span><span class="n">groundheight</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>  <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">u</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">))</span> 
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">rstride</span><span class="o">=</span><span class="n">rstride</span><span class="p">,</span> <span class="n">cstride</span><span class="o">=</span><span class="n">cstride</span><span class="p">)</span> <span class="c1"># z in case of disk which is parallel to XY plane is constant and you can directly use h</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">plot_lethal_strike</span><span class="p">(</span><span class="n">rlethal_gneiss</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fig5: Dødelig radius for gneiss som sediment&#39;</span><span class="p">,</span><span class="n">rlethal_gneiss</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">plot_lethal_strike</span><span class="p">(</span><span class="n">rlethal_sandstein</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fig 6: Dødelig radius for sandstein som sediment&#39;</span><span class="p">,</span><span class="n">rlethal_sandstein</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Merk at aksene er i meter&#39;</span><span class="p">)</span>
+
+            
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_23_1.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fig5: Dødelig radius for gneiss som sediment 6.753753753753753 m
+
+
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18_23_3.png"
+>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fig 6: Dødelig radius for sandstein som sediment 8.004504504504505 m
+Merk at aksene er i meter
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Diskusjon">Diskusjon<a class="anchor-link" href="#Diskusjon"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ved hjelp av en enkel parallellplatekondensator-modell for en stormsky, beregner programmet E-feltet fra skya, og spenningen feltet gir. Programmet kan benyttes til å undersøke hva som skal til for at det blir lynnedslag, og hvor langt unna det er trygt å stå fra nedslaget for å overleve.</p>
+<p>For at det skal lyne må spenningen overgå 3e6 V/m. Dette skjedde kun om bakken var polarisert, i samsvar med hvordan lyn oppstår i virkeligheten. Uten det ekstra bidraget til E-feltet, og dermed spenningen, blir det ikke lyn, og polariseringsstyrken i bakken er dermed bestemmende for hvor E-feltet blir sterkt nok (Test Q3 = 0 mot Q3 = 1e-1 f.eks). Siden E er proporsjonal med 1/r^2, blir E-feltet sterkere med høyde, slik at sannsynligheten for lyn, øker med høyden. Skyen er ikke uendelig i utstrekning, og har derfor ikke translasjonssymmetri. Et punkt midt under skya får mest bidrag fra hver E-feltet som oppstår fra hver del av skylaget i modellen. Dermed er det lurt å befinne seg i utkanten av skylaget, og helst utenfor, for å unngå lynet fullstendig.</p>
+<p>Ifølge programmet blir resistiviteten i luft tilnærmet 2.9e-4 ohm/m idet lynet slår ned. Dette tilsvarer en konduktivitet tilnærmet 3.4e3, en tiendedel unna hva man ville forvente i plasma (1.6-2.2e4). Det antyder at fysikken ikke er helt lineær i dette tilfellet, men konduktiviteten er fortsatt skyhøy. Det er kjent at gassen i lufta omdannes til plasma ved ekstremt høye temperaturer, som for eksempel ved dielektrisk sammenbrudd. Temperaturen i lyn kan være opp mot 27 000 celsius, hele fem ganger varmere enn soloverflaten. Da eksisterer gassen i form av frie, ioniserte elementærpartikler, som gir en ekstremt god ledningsevne. En konsekvens er at strøm kan transporteres over store avstander. Resultatet samsvarer dermed med tidligere kunnskap.</p>
+<p>Grunnet dårligere konduktivitet ble det antatt at mindre strøm fordeles over landoverflaten i sandstein enn gneiss. Det betyr at mindre strøm bidrar til spenningen som dannes i sedimentet. Imidlertid gir høyere resistivitet en større spenning mellom to punkter i sedimentet, fordi det er større ladningsforskjeller mellom punktene. Anta at en person står på bakken med en avtstand 0.5 meter mellom benene. Som følge av ladningsforskjellene blir strømmen opp til  mellomgulvet for personen større i sandstein på tross av mindre strøm. Dette gjenspeiler at i et materiale med lav konduktivitet, vil strømmen heller finne andre veier å gå, som for eksempel via huden på et menneske, eller enda mer skadelig; gjennom skjelettmusklene og indre organer. Den dødelige radius for sandstein blir dermed noe større enn for gneiss, som har høyere konduktivitet.</p>
+<p>24-30m ble dødsradiusen for materialene gitt at strømmen fordeles på overflaten. Det er ikke et dårlig anslag, da 10 meters avstand fra lynnedslag er kjent for å være dødelig, mens 20-30 meters avstand kan gi alvorlig skade. Dersom det hadde blitt antatt at strømmen ble fordelt nedover i bakken (som en halvkule), og ikke kun i overflaten, ville verdiene blitt 6.75 og 8.0 meter for henholdvis gneiss og sandstein (Det ser man om man setter Js = I/2V_halvkule). I en ekte grunn ville vegetasjon,luftlommer og urenhet i materialet hindret strømmen å spre seg ytterligere. Disse faktorene fanger modellen delvis opp.</p>
+<p>Koden kan benyttes videre for å undersøke strømmen i andre materialer, eller eventuelt andre egenskaper ved stormskyer og lyn.  En utvidelse av programmet kunne f.eks. beregnet og visualisert B-feltet som strømmen gir opphav til.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Takk">Takk<a class="anchor-link" href="#Takk"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>En takk rettes mot universitetet i Oslo som stiller med gode fasiliteter og ressurser. En spesiell takk til Tore Ole Odden (Postdoc, CCSE) ved fysisk institutt for hjelp med revidering og utforming av artikkelen.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Litteratur">Litteratur<a class="anchor-link" href="#Litteratur"> </a></h2><p>For mer informasjon om stormskyer og lyn kan du besøke noen av disse nettsidene</p>
+<ul>
+<li>Hvor langt unna det er trygt å stå fra lynet: <a href="https://www.canada.ca/en/environment-climate-change/services/lightning/safety/camping.html">https://www.canada.ca/en/environment-climate-change/services/lightning/safety/camping.html</a></li>
+<li>Mer om parallellkondensatormodellen: <a href="http://hyperphysics.phy-astr.gsu.edu/hbase/electric/lightning.html">http://hyperphysics.phy-astr.gsu.edu/hbase/electric/lightning.html</a></li>
+<li>Litt om kostnaden ved klimaforandringer: <a href="https://unfccc.int/news/the-cost-of-climate-change">https://unfccc.int/news/the-cost-of-climate-change</a></li>
+<li>Resistivitet i vev: <a href="https://www.ncbi.nlm.nih.gov/pubmed/10593226">https://www.ncbi.nlm.nih.gov/pubmed/10593226</a></li>
+<li>Konduktivitet og resistivitet til ulike steinformasjoner/sediment: <a href="https://em.geosci.xyz/content/physical_properties/electrical_conductivity/electrical_conductivity_values.html">https://em.geosci.xyz/content/physical_properties/electrical_conductivity/electrical_conductivity_values.html</a></li>
+<li>Dødelig strøm: <a href="https://www.physics.ohio-state.edu/~p616/safety/fatal_current.html">https://www.physics.ohio-state.edu/~p616/safety/fatal_current.html</a></li>
+<li>Lynets dimensjoner: <a href="https://curiosity.com/topics/how-big-is-a-lightning-bolt/">https://curiosity.com/topics/how-big-is-a-lightning-bolt/</a></li>
+<li>Feynman lektyre for de avanserte: <a href="http://www.feynmanlectures.caltech.edu/II_09.html">http://www.feynmanlectures.caltech.edu/II_09.html</a></li>
+<li>Konduktivitet til lynindusert plasma :<a href="http://iopscience.iop.org/article/10.1088/0031-8949/80/03/035901/meta">http://iopscience.iop.org/article/10.1088/0031-8949/80/03/035901/meta</a></li>
+<li>Formasjon av en tordensky: <a href="https://scied.ucar.edu/shortcontent/how-thunderstorms-form">https://scied.ucar.edu/shortcontent/how-thunderstorms-form</a></li>
+</ul>
+<p>Og følgende artikler gir et innblikk i noe av fysikken og forskningen som er benyttet:</p>
+<ul>
+<li>Michela Mariani, Andrés Holz, Thomas T. Veblen, Grant Williamson, Michael-Shawn Fletcher, David M. J. S. Bowman. Climate Change Amplifications of Climate-Fire Teleconnections in the Southern Hemisphere. Geophysical Research Letters, 2018; DOI: 10.1029/2018GL078294 </li>
+<li>The physics of lightning Joseph R.DwyeraMartin A.Umanb <a href="https://doi.org/10.1016/j.physrep.2013.09.004">https://doi.org/10.1016/j.physrep.2013.09.004</a>  </li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
