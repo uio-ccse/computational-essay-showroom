@@ -16,7 +16,7 @@
 
 #######################################################################################
 # Jekyll site settings
-title: Computational essays from the University of Oslo
+title: University of Oslo Computational Essay Showroom
 author: UiO
 email: t.o.odden@fys.uio.no
 description: >-
@@ -38,7 +38,7 @@ show_sidebar: true                # Show the sidebar. Only set to false if your 
 collapse_inactive_chapters: true  # Whether to collapse the inactive chapters in the sidebar
 collapse_inactive_sections: true  # Whether to collapse the sub-sections within a non-active section in the sidebar
 textbook_logo: assets/images/uio_logo_small.svg   # A logo to be displayed at the top of your textbook sidebar. Should be square
-textbook_logo_link: https://uio-ccse.github.io/computational-essay-showroom # A link for the logo.
+textbook_logo_link: https://uio-ccse.github.io/computational-essay-showroom/intro # A link for the logo.
 sidebar_footer_text: Powered by <a href="https://github.com/jupyter/jupyter-book">Jupyter
   Book</a>
 number_toc_chapters: true         # Whether to add numbers to chapterse in your Table of Contents. If true, you can control this at the Chapter level in _data/toc.yml
@@ -121,7 +121,7 @@ defaults:
     toc_label: '  On this page'
     toc_icon: list-ul
 
-favicon_path: assets/images/favicon.ico
+favicon_path: /assets/images/favicon.ico
 
 # Markdown Processing
 markdown: kramdown
