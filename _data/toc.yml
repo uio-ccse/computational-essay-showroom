@@ -16,8 +16,10 @@
 # - divider: true  # Will insert a divider in the sidebar  
 # - header: My Header  # Will insert a header with no link in the sidebar  
 
+- url: /intro
+
 - title: Example Essays
-  url: /index
+  url: /examples
   not_numbered: true
   expand_sections: true
   sections:
