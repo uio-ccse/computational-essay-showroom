@@ -1,0 +1,1288 @@
+---
+redirect_from:
+  - "/essays/studentessays/lightningcar/lightningcar"
+interact_link: content/essays/studentessays/lightningcar/LightningCar.ipynb
+kernel_name: python3
+kernel_path: content/essays/studentessays/lightningcar
+has_widgets: false
+title: |-
+  Hva skjer dersom lynet slår ned i noen som sitter i en bil?
+pagenum: 21
+prev_page:
+  url: /essays/studentessays/medcyclotron/MedicinalCyclotron.html
+next_page:
+  url: /exercisesets.html
+suffix: .ipynb
+search: vi er det som bilen en et og vil til p vre av dette inne har potensialet feltet s ser lynet m med fra kan dersom elektriske bakken siden lynnedslag bil hva v den jeg skjer vinduer vr slik skal ikke blir enn men setter tenker mellom simuleringen da dem ha hvis luft fr null lederen finne man n seg ved text nr vindu dielektrisk wikipedia faraday strmmen nsker ned ideel ut om noe modellen lynnedslaget betyr mv ogs potensial bur lite glasset leder hvordan poissons ligning enkelt si gitt sett mens oss konstant se lyn avlede endre f nedbrytning
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Hva skjer dersom lynet slår ned i noen som sitter i en bil?</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Modell-av-lynnedslag-p&#229;-en-bil">Modell av lynnedslag p&#229; en bil<a class="anchor-link" href="#Modell-av-lynnedslag-p&#229;-en-bil"> </a></h2><p>Et computational essay av Johan Emil Linnestad Larsson</p>
+<p>I dette essay-et ønsker jeg å utforske hva som skjer dersom lynet slår ned i noen som sitter i en bil. Fra før av vet vi at feltet inne i et hull i en ideel leder er null, men dette forutsetter at lederen er lukket. Jeg ønsker å finne ut av om man er trygg inne i en bil som har vinduer og hvordan dette påvirker feltet inne i bilen.</p>
+<p>Vi begynner med å skrive noe simuleringskode for å løse Poissons ligning for å finne det elektriske potensialet i et område. Metoden vi bruker kalles "method of relaxation", som enkelt forklart går ut på å finne potensialet i et punkt basert på potensialet i nabopunktene. Det vil si at dersom vi definerer grensebetingelsene så vil resten av feltet være gitt.</p>
+<p>Vi importerer de modulene vi trenger i Python.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numba</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Deretter lager vi en funksjon som kan løse Poissons ligning gitt et sett med grensebetingelser.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@numba</span><span class="o">.</span><span class="n">jit</span>
+<span class="k">def</span> <span class="nf">solve_poisson</span><span class="p">(</span><span class="n">Bfield</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The function takes Bfield which is a 2d-array of values, where the potential is given as a float for where</span>
+<span class="sd">    there are a boundary condition, and np.nan where there is no boundary condition. The dimension of Bfield will be the </span>
+<span class="sd">    dimension of Vfield. N is the number of iterations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">Vfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">Bfield</span><span class="p">)</span>
+    <span class="n">Vfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Bfield</span><span class="p">),</span> <span class="n">Vfield</span><span class="p">,</span> <span class="n">Bfield</span><span class="p">)</span>
+    <span class="n">dimx</span> <span class="o">=</span> <span class="n">Vfield</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dimy</span> <span class="o">=</span> <span class="n">Vfield</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">dimx</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">iy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">dimy</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Bfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">ix</span>  <span class="o">&gt;=</span> <span class="n">dimx</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">vupper</span> <span class="o">=</span> <span class="n">Vfield</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vupper</span> <span class="o">=</span> <span class="n">Vfield</span><span class="p">[</span><span class="n">ix</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span>
+                    
+                    <span class="k">if</span> <span class="n">ix</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">vlower</span> <span class="o">=</span> <span class="n">Vfield</span><span class="p">[</span><span class="n">dimx</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vlower</span> <span class="o">=</span> <span class="n">Vfield</span><span class="p">[</span><span class="n">ix</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span>
+                    
+                    <span class="k">if</span> <span class="n">iy</span>  <span class="o">&gt;=</span> <span class="n">dimy</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                        <span class="n">vright</span> <span class="o">=</span> <span class="n">Vfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vright</span> <span class="o">=</span> <span class="n">Vfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                    
+                    <span class="k">if</span> <span class="n">iy</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">vleft</span> <span class="o">=</span> <span class="n">Vfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">dimy</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">vleft</span> <span class="o">=</span> <span class="n">Vfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">Vfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">vlower</span><span class="o">+</span><span class="n">vupper</span><span class="o">+</span><span class="n">vright</span><span class="o">+</span><span class="n">vleft</span><span class="p">)</span><span class="o">/</span><span class="mi">4</span>
+                    
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Vfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="n">Bfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span>
+        
+    
+    <span class="k">return</span> <span class="n">Vfield</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Vi kan nå sjekke om funksjonen vår fungerer som vi ønsker, vi setter grensebetingelsene langs kantene til å være $V=0 V$, mens i toppen av boksen er $V=10 V$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span><span class="mi">50</span>
+<span class="n">Bfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span>
+<span class="n">Bfield</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">Vfield</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">Bfield</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Vfield</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd4a8a8780&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_5_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Videre må vi implementere selve lynet. Metoden benytter seg av og finner hvorhen det er mest sansynlig at ladningen beveger seg til. Der det er høyest sansynlighet setter vi potensialet i det punktet til null, og løser deretter poissons ligning engang til. Modellen arbeider fra bakken og oppover, det vil si at vi tenker at det er ladningsforskjell mellom bakken og himmelen. Lynet vil bevege seg til høyere potensialer som vi har i "taket" av simuleringen.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#@numba.jit</span>
+<span class="k">def</span> <span class="nf">LightningStrike</span><span class="p">(</span><span class="n">Vfield</span><span class="p">,</span> <span class="n">Bfield</span><span class="p">):</span>
+    <span class="c1"># Create a copy of the boundary conditions matrix which will be used to check </span>
+    <span class="c1">#for possible locations for the lightning&#39;s path</span>
+    <span class="n">zeroneighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">Bfield</span><span class="p">)</span> 
+    <span class="n">zeroneighbor</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1">#set all values in it equal to 0</span>
+    <span class="c1">#set the values next to the ground equal to &#39;nan&#39;. This is where the lightning can start</span>
+    <span class="n">zeroneighbor</span><span class="p">[:,</span><span class="n">Ly</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span> 
+    
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">Vfield</span><span class="p">)</span>
+
+
+    <span class="n">nrep</span> <span class="o">=</span> <span class="mi">3000</span> <span class="c1"># Number of jacobi steps</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Vfield</span><span class="p">)</span> <span class="c1">#A factor that will be used in probability calculation</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">Ly</span><span class="o">-</span><span class="mi">1</span> <span class="c1">#The y value where we will stop (just above the ground)</span>
+    <span class="n">ns</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">ymin</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span> 
+        <span class="c1"># First find potential on the entire grid, based on the original boundary conditions</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">Bfield</span><span class="p">,</span><span class="n">nrep</span><span class="p">)</span>
+
+        <span class="c1"># Probability that lightning will move to a new position may depend on potential to power eta</span>
+        <span class="n">sprob</span> <span class="o">=</span> <span class="n">s</span><span class="o">**</span><span class="n">eta</span>
+        <span class="c1"># We also multiply by a random number, uniform between 0 and 1, to introduce some randomness</span>
+        <span class="c1"># And we multiply with isnan(zeroneighbor) to ensure only &#39;nan&#39; points can be chosen</span>
+        <span class="n">sprob</span> <span class="o">=</span> <span class="n">sprob</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,(</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">zeroneighbor</span><span class="p">)</span> 
+
+        <span class="c1">#now, find the point with max probability </span>
+        <span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sprob</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span><span class="n">sprob</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="c1"># Update the boundary condition array to set the potential where the lightning is to 0</span>
+        <span class="n">Bfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Update neighbor positions of the lightning path to &#39;nan&#39; (making them possible choices for the next iteration) </span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ix</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ix</span><span class="o">&lt;</span><span class="n">Lx</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&lt;</span><span class="n">Ly</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+
+        <span class="n">ns</span> <span class="o">=</span> <span class="n">ns</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">c</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="n">ns</span> <span class="c1">#create an array of the lightning&#39;s path, scaled by the number of loops</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&lt;</span><span class="n">ymin</span><span class="p">):</span> <span class="c1">#iterate to the next set of y-values</span>
+            <span class="n">ymin</span> <span class="o">=</span> <span class="n">iy</span>
+    <span class="k">return</span> <span class="n">c</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">sprob</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">c</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">sprob</span> <span class="o">=</span> <span class="n">LightningStrike</span><span class="p">(</span><span class="n">Vfield</span><span class="p">,</span><span class="n">Bfield</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Lyn som slår opp.&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;avstand&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;avstand&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Text(0, 0.5, &#39;avstand&#39;)</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_9_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dette viser oss hvordan lynnedslaget ser ut. Lynnedslaget er derimot et såkalt ground-to-cloud lynnedslag. Vi kan modellere et cloud-to-ground lynnedslag ved å ganske enkelt snu y-aksen vår og sette potensialet slik at bakken har et potensialet $V=10$ og skyen $V=0$. Dette står vi helt fritt til å gjøre siden vi kan fritt velge hva vi setter som referanse for potensialet, samt at det viktige for den fysiske effekten er potensialforskjellen mellom bakken og jorden.</p>
+<p>Vi ønsker nå å tegne en boks, som skal være "bilen" vår. For å simulere en ideel leder så vet vi at feltet inne i lederen skal være null, det betyr at potensialet skal være konstant, så da setter vi alle punktene i det som utgjør en boks til å være konstant lik null.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span><span class="mi">100</span>
+<span class="n">Bfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span>
+<span class="n">Bfield</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">createcarbox</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span>
+    
+
+
+<span class="n">createcarbox</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Bfield</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd4a862a20&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_11_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Legg merke til at bilen ikke er i kontakt med bakken. Dette er i tråd med virkeligheten der bilen er isolert fra bakken siden den har gummidekk. En vanlig misforståelse er at biler beskytter mot lynnedslag siden gummihjulene isolerer deg fra bakken, men dette er feil. Vi kan se hva som egentlig skjer av simuleringen under. Vi setter potensialet til å være lik $10 \text{MV}$ som er et anslått potensialdifferanse i et lyn.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span><span class="mi">100</span>
+<span class="n">Bfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span>
+<span class="n">Bfield</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_00</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">createcarbox</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    
+
+
+<span class="n">createcarbox</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">Vfield</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">Bfield</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+
+<span class="c1">#plt.imshow(Vfield.T[::-1,:])</span>
+
+<span class="n">c</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">sprob</span> <span class="o">=</span> <span class="n">LightningStrike</span><span class="p">(</span><span class="n">Vfield</span><span class="p">,</span><span class="n">Bfield</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Bfield</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd4a834c18&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_13_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Det elektriske potensialet idet lynet slår ned.&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;avstand&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;avstand&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.colorbar.Colorbar at 0x7fcd4a7b3550&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_14_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Av denne simuleringen ser vi at når lynet treffer bilen så vil bilen avlede lynet rundt bilrammen og ned i bakken, som gir mening mtp at den metalliske lederen er tenkt ideel og vil beskytte dem som sitter inne bilen fra et lynnedslag som vi ser siden potensialet er tilnærmet konstant inne i kabinen av bilen vår noe som betyr at feltet også nødevendigvis må være null. Offisielle råd fra AccuWeather i USA er at dersom man plutselig blir fanget i en tordenstorm skal man være inne i bilen, men man skal ikke ta på bilens metalldeler. En person som er inne i bilen vil før lynnedslaget ha et potensial $V_0$ som er likt det som bilen har. Men som vi ser av simuleringen så vil, under lynnedslaget, bilen endre potensial til $V_b \neq V_0$. Hvis personen også skal endre potensialet betyr det at det må utveklses ladninger, og dersom dette skjer vil det ha fatale konsekvenser. Derfor tenker vi at personen som er inne i bilen er isolert fra bilen metalldeler. Dette er da i tråd med rådet fra AccuWeather.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Hva-skjer-hvis-bilen-har-&#229;pne-vinduer?">Hva skjer hvis bilen har &#229;pne vinduer?<a class="anchor-link" href="#Hva-skjer-hvis-bilen-har-&#229;pne-vinduer?"> </a></h3><p>Vi modifiserer modellen vår av en bil til å ha et åpent vindu.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span><span class="mi">100</span>
+<span class="n">Bfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span>
+<span class="n">Bfield</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">createcarboxwithwindow</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    
+
+
+<span class="n">createcarboxwithwindow</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">Vfield</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">Bfield</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+
+<span class="c1">#plt.imshow(Vfield.T[::-1,:])</span>
+
+<span class="n">c</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">sprob</span> <span class="o">=</span> <span class="n">LightningStrike</span><span class="p">(</span><span class="n">Vfield</span><span class="p">,</span><span class="n">Bfield</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Bfield</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd4a71bdd8&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_17_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd4a6ed160&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_18_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I dette tilfellet ser vi at det er en sterk gradient til potensialfeltet inne i bilen, som betyr at dem som er inne i bilen vil bli utsatt for sterke elektriske krefter som vil være skadelig dersom feltet blir sterkt nok til å få dielektrisk nedbrytning. Fra Wikipedia om Faraday bur, ser vi at for at et faraday-bur skal være fullstendig beskyttende må det være sammenhengde, og hvis det er hull i dem så må hullet være "lite nok" for å blokkere det elektriske feltet.
+I vårt tilfelle er tydeligvis vinduet for stort og vil være fatalt for dem som er inne i bilen.
+Vi tester å ser hva som er tilfelle hvis vinduet blir lite.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span><span class="mi">100</span>
+<span class="n">Bfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span>
+<span class="n">Bfield</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">createcarboxwithsmallwindow</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    
+
+
+<span class="n">createcarboxwithsmallwindow</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">Vfield</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">Bfield</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+
+<span class="c1">#plt.imshow(Vfield.T[::-1,:])</span>
+
+<span class="n">c</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">sprob</span> <span class="o">=</span> <span class="n">LightningStrike</span><span class="p">(</span><span class="n">Vfield</span><span class="p">,</span><span class="n">Bfield</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd4a93a0b8&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_20_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd4aa23978&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_21_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dette bekrefter det vi leste på wikipedia, her har vi et lite vindu, og lynet klarer å "hoppe" over, slik at det elektriske potensialet er det samme i hele lederen og vi får ikke noe elektrisk felt inne i lederen.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Modellere-vindu">Modellere vindu<a class="anchor-link" href="#Modellere-vindu"> </a></h2><p>Til nå har vi sett på hva som skjer dersom hullet i bilen bare er luft. Vi vil nå se på hva som skjer dersom vi setter inn glass i åpningen. Vi antar at glasset er et dielektrisk, lineært medium. I modellen vår for lyn ser vi at lynet velger vei basert på hvor stort det elektriske potensialet er i et punkt, opphøyd i en potens eta.</p>
+<p>Luft er vanligvis en isolator, fram til det når sitt dielektriske nedbrytningspunkt og mister sine isolerende egenskaper. Kvalitativt kan vi tenke at det skjer når elektronene i atomene i luften ikke lenger er bundet, og vi får et plasma. Luft har en dielektrisk styrke på $3 \text{MV/m}$.</p>
+<p>Ser vi på tilsvarende tall for glass kan vi ser at typiske verdier ligger på mellom $9.8 - 13.8 \text{MV/m}$.</p>
+<p>Det vil si at det elektriske feltet som kreves for å få dielektrisk nedbrytning må være $3-4$ ganger sterker enn for luft. Vi kan nå gå tilbake å endre det slik at lynet trenger $\approx 4$ ganger større potensial enn det vill trengt for lufta. (Husk at lynet har potensial $V_l = 0 $ i vår simulering slik at hvis vi tenker på det elektriske feltet rett ved lynet så vil det være potensialforskjellen mellom lynet og punktet vi ser på slik at $3-4$ ganger sterkere felt da vil svare til samme forskjell i potensialet.)</p>
+<p>Vi endrer lynnedslag simuleringen:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">LightningStrikeWithGlas</span><span class="p">(</span><span class="n">Vfield</span><span class="p">,</span> <span class="n">Bfield</span><span class="p">,</span> <span class="n">glassfield</span><span class="p">):</span>
+    <span class="c1"># Create a copy of the boundary conditions matrix which will be used to check </span>
+    <span class="c1">#for possible locations for the lightning&#39;s path</span>
+    <span class="n">zeroneighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">Bfield</span><span class="p">)</span> 
+    <span class="n">zeroneighbor</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1">#set all values in it equal to 0</span>
+    <span class="c1">#set the values next to the ground equal to &#39;nan&#39;. This is where the lightning can start</span>
+    <span class="n">zeroneighbor</span><span class="p">[:,</span><span class="n">Ly</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span> 
+    
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">Vfield</span><span class="p">)</span>
+
+
+    <span class="n">nrep</span> <span class="o">=</span> <span class="mi">3000</span> <span class="c1"># Number of jacobi steps</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Vfield</span><span class="p">)</span> <span class="c1">#A factor that will be used in probability calculation</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">Ly</span><span class="o">-</span><span class="mi">1</span> <span class="c1">#The y value where we will stop (just above the ground)</span>
+    <span class="n">ns</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">ymin</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span> 
+        <span class="c1"># First find potential on the entire grid, based on the original boundary conditions</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">Bfield</span><span class="p">,</span><span class="n">nrep</span><span class="p">)</span>
+
+        <span class="c1"># Probability that lightning will move to a new position may depend on potential to power eta</span>
+        <span class="n">sprob</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">glassfield</span><span class="p">)</span><span class="o">**</span><span class="n">eta</span>
+        
+        <span class="c1"># We also multiply by a random number, uniform between 0 and 1, to introduce some randomness</span>
+        <span class="c1"># And we multiply with isnan(zeroneighbor) to ensure only &#39;nan&#39; points can be chosen</span>
+        <span class="n">sprob</span> <span class="o">=</span> <span class="n">sprob</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,(</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">zeroneighbor</span><span class="p">)</span> 
+
+        <span class="c1">#now, find the point with max probability </span>
+        <span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sprob</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span><span class="n">sprob</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="c1"># Update the boundary condition array to set the potential where the lightning is to 0</span>
+        <span class="n">Bfield</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Update neighbor positions of the lightning path to &#39;nan&#39; (making them possible choices for the next iteration) </span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ix</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ix</span><span class="o">&lt;</span><span class="n">Lx</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&lt;</span><span class="n">Ly</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+
+        <span class="n">ns</span> <span class="o">=</span> <span class="n">ns</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">c</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="n">ns</span> <span class="c1">#create an array of the lightning&#39;s path, scaled by the number of loops</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&lt;</span><span class="n">ymin</span><span class="p">):</span> <span class="c1">#iterate to the next set of y-values</span>
+            <span class="n">ymin</span> <span class="o">=</span> <span class="n">iy</span>
+    <span class="k">return</span> <span class="n">c</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">sprob</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span><span class="mi">100</span>
+<span class="n">Bfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span>
+<span class="n">Bfield</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">createcarboxwithwindow</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    
+    <span class="k">global</span> <span class="n">glassfield</span>
+    <span class="n">glassfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Bfield</span><span class="p">)</span>
+    <span class="n">glassfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="p">:</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">4</span>
+    
+
+
+<span class="n">createcarboxwithwindow</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">Vfield</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">Bfield</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+
+<span class="c1">#plt.imshow(Vfield.T[::-1,:])</span>
+
+<span class="n">c</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">sprob</span> <span class="o">=</span> <span class="n">LightningStrikeWithGlas</span><span class="p">(</span><span class="n">Vfield</span><span class="p">,</span><span class="n">Bfield</span><span class="p">,</span><span class="n">glassfield</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Bfield</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd49d2c320&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_25_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd49cf2d30&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_26_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Hvor-stort-er-feltet?-D&#248;delig?">Hvor stort er feltet? D&#248;delig?<a class="anchor-link" href="#Hvor-stort-er-feltet?-D&#248;delig?"> </a></h3><p>Vi ser fra Wikipedia at den dielektriske styrken til vann er ca. $65-70 \text{MV / m}$
+Vi kan regne ut feltet inne i bilen ved å se på gradienten til spenningen.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">fieldsinsidecar</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">E</span><span class="p">[:,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">gradient</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">))</span>
+    <span class="n">Estrength</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">E</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Estrength</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">fieldsinsidecar</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Elektrisk feltstyrke&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.colorbar.Colorbar at 0x7fcd49972e10&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_28_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Her ser vi at feltstyrken ligger på $\approx 0.2 \text{GV/m}$ på enkelte steder.
+Dette er definitivt mer enn den dieletriske nedbrythetskonstanten for vann og jeg vil anta at den er større enn hud også siden kroppen jo består av 70% vann.</p>
+<p>For å finne gradienten må vi gi en lengdeenhet, vi tenker oss her at et steg er 10 cm, slik at hele bilen da er 6 m lang. Er bilen mindre blir feltet større.</p>
+<p>Vi prøver igjen med mindre vindu.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span><span class="mi">100</span>
+<span class="n">Bfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span>
+<span class="n">Bfield</span><span class="p">[:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+<span class="n">Bfield</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="k">def</span> <span class="nf">createcarboxwithwindow</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    <span class="n">Bfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">:</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">size</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10_000_000</span>
+    
+    <span class="k">global</span> <span class="n">glassfield</span>
+    <span class="n">glassfield</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">Bfield</span><span class="p">)</span>
+    <span class="n">glassfield</span><span class="p">[</span><span class="n">Lx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="p">:</span><span class="n">size</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">4</span>
+
+
+<span class="n">createcarboxwithwindow</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">Vfield</span> <span class="o">=</span> <span class="n">solve_poisson</span><span class="p">(</span><span class="n">Bfield</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+
+
+<span class="c1">#plt.imshow(Vfield.T[::-1,:])</span>
+
+<span class="n">c</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">sprob</span> <span class="o">=</span> <span class="n">LightningStrikeWithGlas</span><span class="p">(</span><span class="n">Vfield</span><span class="p">,</span><span class="n">Bfield</span><span class="p">,</span><span class="n">glassfield</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">Bfield</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">cmap</span> <span class="o">=</span> <span class="s2">&quot;cool&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd49e664e0&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_30_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">T</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,:])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.image.AxesImage at 0x7fcd49e2ef28&gt;</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/lightningcar/LightningCar_31_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Dette er et heller slående resultat. Selv ikke med et så lite vindu vil bilen være et fullstendig faraday-bur.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Konklusjon">Konklusjon<a class="anchor-link" href="#Konklusjon"> </a></h1>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Det virker som at det blir farligere å ha vinduer i bilen siden glasset er mer isolerende enn luft og vil da gjøre Faraday-buret vårt enda dårligere og mindre egnet til å beskytte bilens passasjerer. Ved første øyekast kan dette virke motsigende siden vi tenker at en bedre isolator burde isolere det elektriske feltet bedre men slik er det ikke i dette tilfelle, siden vi aller helst vil ha en ideel leder rundt oss for å avlede strømmen trygt ned i bakken.</p>
+<p>Jeg tenker at noe av begrensningene ved denne simuleringen er at den var i 2D. Jeg tror at vi bedre kunne får testet mer reelle geometrier dersom vi hadde simulert i 3D. Modellen for forskjellen mellom glass og luft tror jeg er rimelig god gitt de antakelsene vi har. Det som er vanskeligere er at hvis glasset når sin nedbrytning, så vil det generere enormt med varme som vil føre til ekspansjon i glasset som sannsynligvis vil knuse det.</p>
+<p>Vi har svært enkelt prøvd å finne det elektriske feltet inne i bilen. Dette viser seg å ha potensialet til å være dødelig, men er svært avhengig av geometrien til hvordan lynet slår ned i bilen.</p>
+<p>Det som også gjør lynnedslag så farlig er når strømmen blir ledet gjennom kroppen. Vi antok at bilpassasjerene ikke var i kontakt med metallet i bilen, så dermed er det ingen fare for bilpassasjerene å få strømmen direkte ladet gjennom seg selv. Jeg har i all hovedsak sett på om passasjerene blir utsatt for et elektrisk felt.
+Da ser vi med engang at man er mye tryggere inne i en bil enn på flatmark, siden bilen vil avlede strømmen, mens på flatmark vil strømmen gå gjennom mennesket. Allikevel, var valget mellom en bil med store vinduer og ingen vinduer, så er det åpenbart hva som er tryggest.</p>
+<p>Den endelige konklusjonen er at bilen sansynligvis hadde vært tryggere uten vinduer og dersom du har vinduer så burde dem være så små som mulige.</p>
+<p>Bilde: en bil som faktisk har blitt truffet av et lyn:
+(Dagens funfact, det er flere som drukner i biler enn som dør av lynnedslag mens dem er i en bil)</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="http://bestride.com/wp-content/uploads/2018/07/odyssey-lightning-collier-county-3.jpg" alt="title"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Kilder">Kilder<a class="anchor-link" href="#Kilder"> </a></h3><p>Faraday- bur : <a href="https://en.wikipedia.org/wiki/Faraday_cage">https://en.wikipedia.org/wiki/Faraday_cage</a></p>
+<p>Dielektrisk nebrytningskonstanter: <a href="https://en.wikipedia.org/wiki/Dielectric_strength">https://en.wikipedia.org/wiki/Dielectric_strength</a></p>
+<p>Bilde og funfact : <a href="http://bestride.com/news/are-you-really-safe-from-lightning-inside-a-vehicle">http://bestride.com/news/are-you-really-safe-from-lightning-inside-a-vehicle</a></p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
