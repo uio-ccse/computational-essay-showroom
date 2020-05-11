@@ -47,24 +47,24 @@
     url: /essays/studentessays/LHC/LHC_CompEssay
   - title: Can we trap a high-energy particle in a magnetic bottle?
     url: /essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay
+  - title: How does the electric field look around a fractal?
+    url: /essays/studentessays/fractals/Fractals
+  - title: Simulating water molecules in 3D
+    url: /essays/studentessays/3Dwater/3DWater
+  - title: Simulating a relativistic cyclotron
+    url: /essays/studentessays/relativcyclotron/RelativisticCyclotron
+  - title: Could we use the concept of a rail gun to make a Space Elevator?
+    url: /essays/studentessays/spaceelevator/SpaceElevator
   - title: Kan vi bruke en railgun til å akselerere et tog i Oslo t-banen?
     url: /essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay
   - title: Hvor langt kan du trygt stå borte fra et lynnedslag?
     url: /essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18
-  - title: How does the electric field look around a fractal?
-    url: /essays/studentessays/fractals/Fractals
-  - title: Simulating a relativistic cyclotron
-    url: /essays/studentessays/relativcyclotron/RelativisticCyclotron
   - title: Hvordan beveger prosjektilet til en railgun ved gitt makshastighet?
     url: /essays/studentessays/railgunmaxspeed/RailgunMaxSpeed
   - title: Hvorfor er eksempelet med en railgun en veldig dårlig idè?
     url: /essays/studentessays/railguncritique/RailgunCritique
-  - title: Could we use the concept of a rail gun to make a Space Elevator?
-    url: /essays/studentessays/spaceelevator/SpaceElevator
   - title: Hvor sterkt er elektriske feltet som kreves for å separere kvarkene i et nøyralt meson?
     url: /essays/studentessays/pimeson/PiMeson
-  - title: Simulating water molecules in 3D
-    url: /essays/studentessays/3Dwater/3DWater
   - title: Hvordan kan vi bruke en cyclotron til å lage protonstråling for behandlig av kreft celler?
     url: /essays/studentessays/medcyclotron/MedicinalCyclotron
   - title: Hva skjer dersom lynet slår ned i noen som sitter i en bil?
