@@ -1,0 +1,2393 @@
+---
+redirect_from:
+  - "/essays/studentessays/stormcloud/2d-stormcloud-lightning-sisandst-jrevense"
+interact_link: content/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense.ipynb
+kernel_name: python3
+kernel_path: content/essays/studentessays/stormcloud
+has_widgets: false
+title: |-
+  What is the best material for a lightning rod?
+pagenum: 8
+prev_page:
+  url: /studentessays.html
+next_page:
+  url: /essays/studentessays/LHC/LHC_CompEssay.html
+suffix: .ipynb
+search: lightning rod br potential wire ground m where strike conductor kg h c gauges temperature sigma our different materials insulation values across copper path calculate pvc set s rho resistance e points energy wires melting point boundary not connected means com cdot j k text silver iron best grid rods currents strikes calculations method conditions well b cloud charge entire decided frac move lightnings due gold through t storey increase electric based handle being amount safe resistances range system specified defined get value nan figure constant since case also holds second plots cases degree cone protection below britannica source metal
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">What is the best material for a lightning rod?</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Computational-Essay-Project-FYS1120">Computational Essay Project FYS1120<a class="anchor-link" href="#Computational-Essay-Project-FYS1120"> </a></h1><h2 id="Contact-info:">Contact info:<a class="anchor-link" href="#Contact-info:"> </a></h2><h4 id="Synn&#248;ve-Isabel-Wallentin-Sandstr&#248;m">Synn&#248;ve Isabel Wallentin Sandstr&#248;m<a class="anchor-link" href="#Synn&#248;ve-Isabel-Wallentin-Sandstr&#248;m"> </a></h4><p>E-mail: sisandst@student.matnat.uio.no</p>
+<h4 id="Jarl-Robin-Bjerkg&#229;rd-Evensen">Jarl-Robin Bjerkg&#229;rd Evensen<a class="anchor-link" href="#Jarl-Robin-Bjerkg&#229;rd-Evensen"> </a></h4><p>E-mail: jrevense@student.matnat.uio.no</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Introduction:-2D-Stormcloud,-with-lightning-and-lightning-rod">Introduction: 2D Stormcloud, with lightning and lightning rod<a class="anchor-link" href="#Introduction:-2D-Stormcloud,-with-lightning-and-lightning-rod"> </a></h1><p>In this notebook, we will model the path of a bolt of lightning when there is a lightning rod present. This simulation will create a grid of points and then solve Poisson's equation on that grid in order to find the electric potential throughout the 2D space. Based on that electric potential, it will predict where the lightning strike begins, then repeat the process to see how it advances.</p>
+<p>After we've modelled the lightning strike we will see how a lightning rod setup will handle being struck by lightning, more specifically how it will handle the amount of energy in the strike and then evaluate whether the setups seem safe.</p>
+<p>To calculate this we make simplified models of the rods and wires, calculate the resistances for different materials and gauges of wire, calculate for a range of currents in the strikes and finally compare the temperature rise in the system to the melting point of the PVC insulation around the wires.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First, we import the essential tools: numpy, matplotlib, pandas and numba to speed up calculations, and handle data.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">from</span> <span class="nn">numba</span> <span class="kn">import</span> <span class="n">jit</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next, we define a function that will solve Poisson's equation on a rectangular grid, using a method called the "method of relaxation." This method relies on the fact that, as long as there are no charges in a region, the potential in that region will only change gradually. So, given a set of boundary conditions (places where the potential is specified or well defined) we can find the values of electric potential at certain points by averaging the potential of neighboring points. By doing this over and over, we eventually get a stable solution.</p>
+<p>In the following function, the boundary conditions are given by the array b. In the points where b is defined (has a value), the boundary conditions are assumed to be this value. Where b is 'nan' (not defined—that is, we have yet to find it) we use the method of relaxation to find the value.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nd">@jit</span><span class="p">(</span><span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">solvepoisson</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">nrep</span><span class="p">):</span>
+    <span class="c1"># b = boundary conditions</span>
+    <span class="c1"># nrep = number of iterations</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>     <span class="c1"># z = electric potential field</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">b</span><span class="p">))</span> <span class="c1">#checks for where the points have no value, assigns them the value 0</span>
+    <span class="n">z</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    
+    <span class="n">znew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">Lx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># determine the x range of the point grid</span>
+    <span class="n">Ly</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># determine the y range of the point grid</span>
+    
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrep</span><span class="p">):</span> 
+        <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Lx</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">iy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ly</span><span class="p">):</span>
+                <span class="n">ncount</span> <span class="o">=</span> <span class="mf">0.0</span> 
+                <span class="n">pot</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">])):</span> <span class="c1"># check for cases in which the value is unspecified in the original grid</span>
+                    <span class="c1"># Now, add up the potentials of all the the points around it</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">ix</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span> 
+                        <span class="n">ncount</span> <span class="o">=</span> <span class="n">ncount</span> <span class="o">+</span> <span class="mf">1.0</span>
+                        <span class="n">pot</span> <span class="o">=</span> <span class="n">pot</span> <span class="o">+</span> <span class="n">z</span><span class="p">[</span><span class="n">ix</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">ix</span><span class="o">&lt;</span><span class="n">Lx</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                        <span class="n">ncount</span> <span class="o">=</span> <span class="n">ncount</span> <span class="o">+</span> <span class="mf">1.0</span>
+                        <span class="n">pot</span> <span class="o">=</span> <span class="n">pot</span> <span class="o">+</span> <span class="n">z</span><span class="p">[</span><span class="n">ix</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+                        <span class="n">ncount</span> <span class="o">=</span> <span class="n">ncount</span> <span class="o">+</span> <span class="mf">1.0</span>
+                        <span class="n">pot</span> <span class="o">=</span> <span class="n">pot</span> <span class="o">+</span> <span class="n">z</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&lt;</span><span class="n">Ly</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                        <span class="n">ncount</span> <span class="o">=</span> <span class="n">ncount</span> <span class="o">+</span> <span class="mf">1.0</span>
+                        <span class="n">pot</span> <span class="o">=</span> <span class="n">pot</span> <span class="o">+</span> <span class="n">z</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">znew</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="n">pot</span><span class="o">/</span><span class="n">ncount</span> <span class="c1"># Divide by the number of contributing </span>
+                                             <span class="c1"># surrounding points to find average potential</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">znew</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span><span class="o">=</span><span class="n">z</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="c1"># If the value is specified, keep it</span>
+        <span class="n">tmp_z</span> <span class="o">=</span> <span class="n">znew</span> <span class="c1"># Swapping the field used for the calucaltions with the field from the previous iteration</span>
+        <span class="n">znew</span> <span class="o">=</span> <span class="n">z</span>     <span class="c1"># (to prepare for the next iteration)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">tmp_z</span>     
+    <span class="k">return</span> <span class="n">z</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, we will use the poisson solver to simulate lightning. First, we will set up the boundary conditions, creating a grid of 50 by 50 points, setting all values to 'nan' (meaning they need to be solved for) except at the top (the cloud) where the potential is specified to be 2, and at the bottom (the ground) where it is specified to be zero.
+<br></p>
+<p>We have to calculate the surface potential of the conductor first, this might seem daunting at first, we did a lot of back and forth to figure this out to be honest, untill we realised that we only need to deal with a constant potential. Since the lightning rod is connected to ground all charge within it and the conductor connecting it to ground will be evenly distributed across the surface of the rod, this means that the entire system will have a constant potential. We decided to set the potential to be $\frac{1}{10}$ of the top potential.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">set_conditions</span><span class="p">(</span><span class="n">Lx</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">Ly</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">L</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">top_pot</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">bot_pot</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">):</span>
+
+    <span class="c1"># First, we set up the boundary conditions</span>
+    <span class="c1"># and the necessary variables for our lightning rod</span>
+
+    <span class="n">rod_pot</span> <span class="o">=</span> <span class="n">top_pot</span><span class="o">/</span><span class="mf">10.0</span>
+    <span class="n">rod_height</span> <span class="o">=</span> <span class="n">L</span><span class="o">/</span><span class="n">Ly</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">),</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">b</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Set the potential at the top of the grid to top_pot</span>
+    <span class="n">b</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">top_pot</span>
+    <span class="c1"># Set the potential at the bottom of the grid to bot_pot</span>
+    <span class="n">b</span><span class="p">[:,</span><span class="n">Ly</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">bot_pot</span>
+
+    <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Lx</span><span class="p">,</span> <span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, to add in the lightning. To simulate the path of the lightning strike we will work backwards, starting with some charge on the ground and seeing where it moves to in order to get up to the cloud (this is simulating so-called "ground to cloud" lightning). This charge, because it is negative, prefers to stay at low potential, in this case V = 0. So, to find the path of the lightning, we will proceed as follows:</p>
+<ol>
+<li>Use the poisson solver to find the potential across the entire space, ground to cloud, starting with the ground</li>
+<li>Find where the charge is most likely to move to, based on the potential values multiplied by a random factor</li>
+<li>Set that location's potential equal to 0</li>
+<li>Update the neighboring positions to the lightning's path, making them possible locations for the lightning's next move</li>
+<li>We also set the potential where the lightning rod is placed, constant for each iteration of the loop.</li>
+</ol>
+<p>In practice, this means we will be working with three arrays: The first holds the boundary values and the lightning's path (we call that one <strong>b</strong>; it was already defined, but will be updated based on the lightning's path). The second holds the possible places the lightning can move, stored as 'nan' values (we call that one <strong>zeroneighbor</strong>). The last holds the probabilistic values that lighting will move to particular positions (we call that one <strong>sprob</strong>).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a function to calculate the bolt</span>
+
+<span class="k">def</span> <span class="nf">calc_bolt</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Lx</span><span class="p">,</span> <span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span><span class="p">):</span>
+    <span class="c1"># Create a copy of the boundary conditions matrix which will be used to check</span>
+    <span class="c1">#for possible locations for the lightning&#39;s path</span>
+    <span class="n">zeroneighbor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">zeroneighbor</span><span class="p">[:]</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1">#set all values in it equal to 0</span>
+    <span class="c1">#set the values next to the ground equal to &#39;nan&#39;. This is where the lightning can start</span>
+    <span class="n">zeroneighbor</span><span class="p">[:,</span><span class="n">Ly</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+
+
+    <span class="n">nrep</span> <span class="o">=</span> <span class="mi">3000</span> <span class="c1"># Number of jacobi steps</span>
+    <span class="n">eta</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1">#A factor that will be used in probability calculation</span>
+    <span class="n">ymin</span> <span class="o">=</span> <span class="n">Ly</span><span class="o">-</span><span class="mi">1</span> <span class="c1">#The y value where we will stop (just above the ground)</span>
+    <span class="n">ns</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">ymin</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+        <span class="c1"># First find potential on the entire grid, based on the original boundary conditions</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">solvepoisson</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">nrep</span><span class="p">)</span>
+
+        <span class="c1"># Probability that lightning will move to a new position may depend on potential to power eta</span>
+        <span class="n">sprob</span> <span class="o">=</span> <span class="n">s</span><span class="o">**</span><span class="n">eta</span>
+        <span class="c1"># We also multiply by a random number, uniform between 0 and 1, to introduce some randomness</span>
+        <span class="c1"># And we multiply with isnan(zeroneighbor) to ensure only &#39;nan&#39; points can be chosen</span>
+        <span class="n">sprob</span> <span class="o">=</span> <span class="n">sprob</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,(</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">))</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">zeroneighbor</span><span class="p">)</span>
+
+        <span class="c1">#now, find the point with max probability</span>
+        <span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unravel_index</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">sprob</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span><span class="n">sprob</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="c1"># Update the boundary condition array to set the potential where the lightning is to 0</span>
+        <span class="n">b</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Update neighbor positions of the lightning path to &#39;nan&#39; </span>
+        <span class="c1">#(making them possible choices for the next iteration)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ix</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">ix</span><span class="o">&lt;</span><span class="n">Lx</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&lt;</span><span class="n">Ly</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+
+        <span class="n">x_pos</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">y_pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">b</span><span class="p">[</span><span class="n">x_pos</span><span class="p">:</span><span class="n">x_pos</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">y_pos</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rod_height</span><span class="p">)):</span><span class="n">y_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">rod_pot</span>  
+        <span class="n">zeroneighbor</span><span class="p">[</span><span class="n">x_pos</span><span class="p">:</span><span class="n">x_pos</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">y_pos</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rod_height</span><span class="p">)):</span><span class="n">y_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">rod_pot</span>
+        <span class="c1"># sets the potential around the lightning rod in both b and zeroneighbour</span>
+        <span class="c1"># this is to make sure that the lightning goes past the rod.</span>
+
+
+        <span class="n">ns</span> <span class="o">=</span> <span class="n">ns</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">c</span><span class="p">[</span><span class="n">ix</span><span class="p">,</span><span class="n">iy</span><span class="p">]</span> <span class="o">=</span> <span class="n">ns</span> <span class="c1">#create an array of the lightning&#39;s path, scaled by the number of loops</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">iy</span><span class="o">&lt;</span><span class="n">ymin</span><span class="p">):</span> <span class="c1">#iterate to the next set of y-values</span>
+            <span class="n">ymin</span> <span class="o">=</span> <span class="n">iy</span>
+
+        <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">sprob</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">15</span><span class="p">))</span>
+<span class="n">z</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Lx</span><span class="p">,</span> <span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span> <span class="o">=</span> <span class="n">set_conditions</span><span class="p">(</span><span class="n">Lx</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">c1</span><span class="p">,</span><span class="n">s1</span><span class="p">,</span><span class="n">sprob1</span> <span class="o">=</span> <span class="n">calc_bolt</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span><span class="p">)</span>
+<span class="n">z</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Lx</span><span class="p">,</span> <span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span> <span class="o">=</span> <span class="n">set_conditions</span><span class="p">(</span><span class="n">Lx</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">c2</span><span class="p">,</span><span class="n">s2</span><span class="p">,</span><span class="n">sprob2</span> <span class="o">=</span> <span class="n">calc_bolt</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span><span class="p">)</span>
+<span class="n">z</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Lx</span><span class="p">,</span> <span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span> <span class="o">=</span> <span class="n">set_conditions</span><span class="p">(</span><span class="n">Lx</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">c3</span><span class="p">,</span><span class="n">s3</span><span class="p">,</span><span class="n">sprob3</span> <span class="o">=</span> <span class="n">calc_bolt</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span><span class="p">)</span>
+<span class="n">z</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">Lx</span><span class="p">,</span> <span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span> <span class="o">=</span> <span class="n">set_conditions</span><span class="p">(</span><span class="n">Lx</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">Ly</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">c4</span><span class="p">,</span><span class="n">s4</span><span class="p">,</span><span class="n">sprob4</span> <span class="o">=</span> <span class="n">calc_bolt</span><span class="p">(</span><span class="n">z</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">Lx</span><span class="p">,</span><span class="n">Ly</span><span class="p">,</span> <span class="n">rod_pot</span><span class="p">,</span> <span class="n">rod_height</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">c1</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Purples_r&quot;</span><span class="p">)</span> <span class="c1">#create a plot of the lightning&#39;s path</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">s1</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Purples_r&quot;</span><span class="p">)</span> <span class="c1">#create a plot of the final potential</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">c2</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Purples_r&quot;</span><span class="p">)</span> <span class="c1">#create a plot of the lightning&#39;s path</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">s2</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Purples_r&quot;</span><span class="p">)</span> <span class="c1">#create a plot of the final potential</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">c3</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Purples_r&quot;</span><span class="p">)</span> <span class="c1">#create a plot of the lightning&#39;s path</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">s3</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Purples_r&quot;</span><span class="p">)</span> <span class="c1">#create a plot of the final potential</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">c4</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Purples_r&quot;</span><span class="p">)</span> <span class="c1">#create a plot of the lightning&#39;s path</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">s4</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;Purples_r&quot;</span><span class="p">)</span> <span class="c1">#create a plot of the final potential</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_10_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After running these simulations and plots dozens of times, we see that the majority of the lightning strikes will strike the lightning rod. Occasionally we get a lightning strike that does not strike the rod, and in these cases we noted that the strike struck quite a distance from the rod. This is due to the rod making a 45 degree "cone of protection" under it, as shown in the figure below.</p>
+<p>This means that if we want to protect large structures, we have to set up several rods to protect it well enough. (see figure below with overhead ground wire)</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="https://cdn.britannica.com/s:700x450/31/24031-004-8D61DAC0.jpg" alt="45 degree cone of protection image" title="Image from Britannica.com" /></p>
+<p><strong><a href="https://www.britannica.com/technology/lightning-rod">Source</a></strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We'll now look at these types of metals with conductivity $\sigma$, specific heat $H_{C}$ and density $\rho$.</p>
+<p>Gold: 
+<br>
+$\sigma = 4.1 \cdot 10^{7}\ S/m$
+<br>
+$H_{C} = 125.604\ J / (kg K)$
+<br>
+$\rho = 19300\ \text{kg/m}^{3}$</p>
+<p>Copper: 
+<br>
+$\sigma = 5.96 \cdot 10^{7}\ S/m$
+<br>
+$H_{C} = 376.812\ J / (kg K) $
+<br>
+$\rho = 8960\ \text{kg/m}^{3}$</p>
+<p>Aliminium: 
+<br>
+$\sigma = 3.77 \cdot 10^{7}\ S/m$
+<br>
+$H_{C} = 921.096\ J / (kg K)$
+<br>
+$\rho = 2600\ \text{kg/m}^{3}$</p>
+<p>Silver: 
+<br>
+$\sigma = 6.3 \cdot 10^{7}\ S/m$
+<br>
+$ H_{C} = 238.6476\ J / (kg K) $
+<br>
+$\rho = 10500\ \text{kg/m}^{3}$</p>
+<p>Iron: 
+<br>
+$\sigma = 1 \cdot 10^{7}\ S/m$
+<br>
+$ H_{C} = 460.548\ J / (kg K)$
+<br>
+$\rho = 7870\ \text{kg/m}^{3}$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can calculate the resistance in a conductor with the formula: $R = \frac{L}{A\sigma}$ where $L$ is the length of the conductor, $A$ is the cross sectional area and $\sigma$ is the conductivity of the conductor.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We want to calculate the energy going through a conductor(the lightning rod and wire in this case), to do this we can use the formula $T = \frac{E}{H_{C}\ m}$, where E is the energy being passed through the system, $H_{C}$ is the specific heat of the conductor and $m$ is the mass of the conductor.
+<br></p>
+<p>We know that $E = P t$ where $P = I^2R$, $t$ is the time the current is passed, inserting all this gives us:
+<br></p>
+$$ T = \frac{I^{2}Rt}{H_{C}m}  $$<p><br></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We now have to find some baseline currents for our lightning strikes, through our research we found that lightning strikes can have very varying currents, from as low as 3kA to as high as 200kA. We decided to test the entire range of currents for a couple of different lengths of materials</p>
+<p><strong><a href="https://hypertextbook.com/facts/1997/BrookeHaramija.shtml">Source</a></strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Lightning rods are connected to ground by a lot of different means, some are connected to the plumbing of the building, some are connected to structural metal frames and some are simply connected to ground by a wire from the rod.</p>
+<p>Estimating the amount of metal in a house's plumbing or structural frames is not that interesting in this case, since the amount of metal will easily be able to dissipate the energy from a lightning strike. We decided to look at some standard gauge wire, with PVC insulation, of different lengths.</p>
+<p>We deem a setup safe if the temperature rise in the wire is below the melting point of the PVC insulation, which is 
+105 degrees celcius, if the conductor material heats up more than this we would deem it unsafe for use in this application.</p>
+<p><strong><a href="https://www.awcwire.com/insulation-materials">Source</a></strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Here we define a dictionary with the values of the different properties</span>
+
+<span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Gold&quot;</span><span class="p">,</span> <span class="s2">&quot;Copper&quot;</span><span class="p">,</span> <span class="s2">&quot;Aluminium&quot;</span><span class="p">,</span> <span class="s2">&quot;Silver&quot;</span><span class="p">,</span> <span class="s2">&quot;Iron&quot;</span><span class="p">]</span> <span class="c1"># Conductor names</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">4.1</span><span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mf">5.96</span><span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mf">3.77</span><span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mf">6.3</span><span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="o">*</span> <span class="mi">10</span><span class="o">**</span><span class="mi">7</span><span class="p">)]</span> <span class="c1"># S/m</span>
+<span class="n">spec_heat</span> <span class="o">=</span> <span class="p">[</span><span class="mf">125.604</span><span class="p">,</span> <span class="mf">376.812</span><span class="p">,</span> <span class="mf">921.096</span><span class="p">,</span> <span class="mf">238.6476</span><span class="p">,</span> <span class="mf">460.548</span><span class="p">]</span> <span class="c1"># J / (kg K)</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="p">[</span><span class="mi">19300</span><span class="p">,</span> <span class="mi">8960</span><span class="p">,</span> <span class="mi">2600</span><span class="p">,</span> <span class="mi">10500</span><span class="p">,</span> <span class="mi">7870</span><span class="p">]</span> <span class="c1"># kg/m^3</span>
+
+<span class="n">materials</span> <span class="o">=</span> <span class="p">{}</span>               <span class="c1"># setup an empty dictionary to populate</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)):</span>  <span class="c1"># populate the dictionary with the given values</span>
+    <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">values</span><span class="p">[</span><span class="s2">&quot;sigma&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">values</span><span class="p">[</span><span class="s2">&quot;spec_heat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec_heat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">values</span><span class="p">[</span><span class="s2">&quot;rho&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rho</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">materials</span><span class="p">[</span><span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">values</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Define a couple of functions for calculating Ohm&#39;s law and the temperature increase</span>
+<span class="c1"># in a wire for a given wire</span>
+
+<span class="k">def</span> <span class="nf">resistance</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the resistance of a given length of wire</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">L</span> <span class="o">/</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">sigma</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">temp</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">Hc</span><span class="p">,</span> <span class="n">Vol</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the increase in temperature based </span>
+<span class="sd">    on the energy passed in the conductor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">R</span> <span class="o">*</span> <span class="p">(</span><span class="n">I</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">Hc</span> <span class="o">*</span> <span class="n">Vol</span> <span class="o">*</span> <span class="n">rho</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We found differing regulations about roof heights in Norway, from our research we decided that 4.5 meters and 8.0 meters were sensible values for single storey and two storey buildings respectively.</p>
+<p>In our calculations we choose to assume that the cable connecting the rod to ground goes straight down to ground from the roof, to account for the length of wire that needs to be in the ground for a proper grounding to take place we assumed 0.5 metres would be sufficient.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Setup the one storey and two storey house parameters.</span>
+
+<span class="n">one_storey_rod</span> <span class="o">=</span> <span class="mf">1.0</span>    <span class="c1">#m</span>
+<span class="n">two_storey_rod</span> <span class="o">=</span> <span class="mf">1.5</span>    <span class="c1">#m</span>
+<span class="n">rod_gauge</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.01</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="c1"># m^2</span>
+
+<span class="n">one_storey_wire</span> <span class="o">=</span> <span class="mf">5.0</span>   <span class="c1">#m</span>
+<span class="n">two_storey_wire</span> <span class="o">=</span> <span class="mf">8.5</span>   <span class="c1">#m</span>
+
+<span class="n">wire_gauge</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">120</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">70</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mi">10</span><span class="o">**-</span><span class="mi">6</span><span class="p">)</span> <span class="c1">#m^2   </span>
+<span class="c1"># These values are AWG 4/0, 3/0, 2/0, 1/0, 1, 2, 4, 6, 8 and 10 in m^2</span>
+
+<span class="k">for</span> <span class="n">conductor</span> <span class="ow">in</span> <span class="n">materials</span><span class="p">:</span>
+    <span class="n">R_rod_os</span> <span class="o">=</span> <span class="n">resistance</span><span class="p">(</span><span class="n">one_storey_rod</span><span class="p">,</span> <span class="n">rod_gauge</span><span class="p">,</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;sigma&quot;</span><span class="p">])</span><span class="c1"># Calc resistance of one storey rod</span>
+    <span class="n">R_rod_ts</span> <span class="o">=</span> <span class="n">resistance</span><span class="p">(</span><span class="n">two_storey_rod</span><span class="p">,</span> <span class="n">rod_gauge</span><span class="p">,</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;sigma&quot;</span><span class="p">])</span><span class="c1"># Calc resistance of two storey rod</span>
+    
+    <span class="n">R_os</span> <span class="o">=</span> <span class="n">resistance</span><span class="p">(</span><span class="n">one_storey_wire</span><span class="p">,</span> <span class="n">wire_gauge</span><span class="p">,</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;sigma&quot;</span><span class="p">])</span><span class="c1"># Calc resistance of one storey wire</span>
+    <span class="n">R_ts</span> <span class="o">=</span> <span class="n">resistance</span><span class="p">(</span><span class="n">two_storey_wire</span><span class="p">,</span> <span class="n">wire_gauge</span><span class="p">,</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;sigma&quot;</span><span class="p">])</span><span class="c1"># Calc resistance of one storey wire</span>
+    
+    <span class="n">resistances</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">resistances</span><span class="p">[</span><span class="s2">&quot;os&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">R_rod_os</span> <span class="o">+</span> <span class="n">R_os</span><span class="p">)</span> <span class="c1"># sums the rod and wire resistances</span>
+    <span class="n">resistances</span><span class="p">[</span><span class="s2">&quot;ts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">R_rod_ts</span> <span class="o">+</span> <span class="n">R_ts</span><span class="p">)</span> <span class="c1"># sums the rod and wire resistances</span>
+    
+    <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">resistances</span> <span class="c1"># adds the resistances into our main dictionary</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Here we make a couple of nice looking tables using pandas</span>
+
+<span class="n">gauges</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;4/0&quot;</span><span class="p">,</span><span class="s2">&quot;3/0&quot;</span><span class="p">,</span><span class="s2">&quot;2/0&quot;</span><span class="p">,</span><span class="s2">&quot;1/0&quot;</span><span class="p">,</span><span class="s2">&quot;1&quot;</span><span class="p">,</span><span class="s2">&quot;2&quot;</span><span class="p">,</span><span class="s2">&quot;4&quot;</span><span class="p">,</span><span class="s2">&quot;6&quot;</span><span class="p">,</span><span class="s2">&quot;8&quot;</span><span class="p">,</span><span class="s2">&quot;10&quot;</span><span class="p">]</span>  <span class="c1"># wire gauges</span>
+<span class="n">mat_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$Gold\ R(\Omega)$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$Copper\ R(\Omega)$&quot;</span><span class="p">,</span><span class="sa">r</span><span class="s2">&quot;$Aluminium\ R(\Omega)$&quot;</span><span class="p">,</span>
+            <span class="sa">r</span><span class="s2">&quot;$Silver\ R(\Omega)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$Iron\ R(\Omega)$&quot;</span><span class="p">]</span>    <span class="c1"># names with latex syntax for the plots and tables</span>
+
+<span class="n">resistances_os</span> <span class="o">=</span> <span class="p">[]</span> 
+<span class="n">resistances_ts</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">conductor</span> <span class="ow">in</span> <span class="n">materials</span><span class="p">:</span>
+    <span class="n">resistances_os</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">][</span><span class="s2">&quot;os&quot;</span><span class="p">])</span>
+    <span class="n">resistances_ts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">][</span><span class="s2">&quot;ts&quot;</span><span class="p">])</span>
+    
+
+<span class="n">res_table_os</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resistances_os</span><span class="p">,</span> 
+                            <span class="n">columns</span><span class="o">=</span><span class="n">gauges</span><span class="p">,</span> 
+                            <span class="n">index</span><span class="o">=</span><span class="n">mat_list</span><span class="p">)</span>
+
+<span class="n">res_table_ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resistances_ts</span><span class="p">,</span> 
+                            <span class="n">columns</span><span class="o">=</span><span class="n">gauges</span><span class="p">,</span> 
+                            <span class="n">index</span><span class="o">=</span><span class="n">mat_list</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">highlight_min</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    highlight the minimum in a Series.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">is_min</span> <span class="o">=</span> <span class="n">s</span> <span class="o">==</span> <span class="n">s</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;background-color: lightblue&#39;</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">is_min</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">highlight_max</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    highlight the max in a Series.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">is_max</span> <span class="o">=</span> <span class="n">s</span> <span class="o">==</span> <span class="n">s</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;background-color: red&#39;</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">is_max</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">color_val</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a scalar and returns a string with</span>
+<span class="sd">    the css property `&#39;color: red&#39;` for values over 1</span>
+<span class="sd">    strings, black otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;pink&#39;</span>
+    <span class="k">elif</span> <span class="mi">1</span> <span class="o">&gt;=</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mf">0.75</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;darkorange&#39;</span>
+    <span class="k">elif</span> <span class="mf">0.75</span> <span class="o">&gt;=</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;orange&#39;</span>
+    <span class="k">elif</span> <span class="mf">0.25</span> <span class="o">&gt;=</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;green&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;black&#39;</span>
+    <span class="k">return</span> <span class="s1">&#39;color: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">color</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we can see a couple of tables which lists the resistances of our different situations, the first is the resistances of the different wire gauges, and materials, for one storey buildings, the second is for two storey buildings.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res_table_os</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">highlight_min</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">highlight_max</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<style  type="text/css" >
+    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col0 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col1 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col2 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col3 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col4 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col5 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col6 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col7 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col8 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col9 {
+            background-color:  lightblue;
+            : ;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col0 {
+            : ;
+            background-color:  red;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col1 {
+            : ;
+            background-color:  red;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col2 {
+            : ;
+            background-color:  red;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col3 {
+            : ;
+            background-color:  red;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col4 {
+            : ;
+            background-color:  red;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col5 {
+            : ;
+            background-color:  red;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col6 {
+            : ;
+            background-color:  red;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col7 {
+            : ;
+            background-color:  red;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col8 {
+            : ;
+            background-color:  red;
+        }    #T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col9 {
+            : ;
+            background-color:  red;
+        }</style>  
+<table id="T_acdc8edc_1a60_11e9_b616_0a580ae941de" > 
+<thead>    <tr> 
+        <th class="blank level0" ></th> 
+        <th class="col_heading level0 col0" >4/0</th> 
+        <th class="col_heading level0 col1" >3/0</th> 
+        <th class="col_heading level0 col2" >2/0</th> 
+        <th class="col_heading level0 col3" >1/0</th> 
+        <th class="col_heading level0 col4" >1</th> 
+        <th class="col_heading level0 col5" >2</th> 
+        <th class="col_heading level0 col6" >4</th> 
+        <th class="col_heading level0 col7" >6</th> 
+        <th class="col_heading level0 col8" >8</th> 
+        <th class="col_heading level0 col9" >10</th> 
+    </tr></thead> 
+<tbody>    <tr> 
+        <th id="T_acdc8edc_1a60_11e9_b616_0a580ae941delevel0_row0" class="row_heading level0 row0" >$Gold\ R(\Omega)$</th> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col0" class="data row0 col0" >0.0010939</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col1" class="data row0 col1" >0.00136133</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col2" class="data row0 col2" >0.0018198</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col3" class="data row0 col3" >0.00229493</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col4" class="data row0 col4" >0.00251666</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col5" class="data row0 col5" >0.00356196</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col6" class="data row0 col6" >0.00495569</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col7" class="data row0 col7" >0.00769959</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col8" class="data row0 col8" >0.0122728</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow0_col9" class="data row0 col9" >0.0204028</td> 
+    </tr>    <tr> 
+        <th id="T_acdc8edc_1a60_11e9_b616_0a580ae941delevel0_row1" class="row_heading level0 row1" >$Copper\ R(\Omega)$</th> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col0" class="data row1 col0" >0.000752513</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col1" class="data row1 col1" >0.000936488</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col2" class="data row1 col2" >0.00125187</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col3" class="data row1 col3" >0.00157873</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col4" class="data row1 col4" >0.00173126</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col5" class="data row1 col5" >0.00245034</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col6" class="data row1 col6" >0.00340911</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col7" class="data row1 col7" >0.0052967</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col8" class="data row1 col8" >0.00844267</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow1_col9" class="data row1 col9" >0.0140355</td> 
+    </tr>    <tr> 
+        <th id="T_acdc8edc_1a60_11e9_b616_0a580ae941delevel0_row2" class="row_heading level0 row2" >$Aluminium\ R(\Omega)$</th> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col0" class="data row2 col0" >0.00118965</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col1" class="data row2 col1" >0.0014805</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col2" class="data row2 col2" >0.00197909</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col3" class="data row2 col3" >0.00249581</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col4" class="data row2 col4" >0.00273695</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col5" class="data row2 col5" >0.00387375</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col6" class="data row2 col6" >0.00538947</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col7" class="data row2 col7" >0.00837356</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col8" class="data row2 col8" >0.013347</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow2_col9" class="data row2 col9" >0.0221888</td> 
+    </tr>    <tr> 
+        <th id="T_acdc8edc_1a60_11e9_b616_0a580ae941delevel0_row3" class="row_heading level0 row3" >$Silver\ R(\Omega)$</th> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col0" class="data row3 col0" >0.000711901</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col1" class="data row3 col1" >0.000885947</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col2" class="data row3 col2" >0.00118431</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col3" class="data row3 col3" >0.00149353</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col4" class="data row3 col4" >0.00163783</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col5" class="data row3 col5" >0.0023181</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col6" class="data row3 col6" >0.00322513</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col7" class="data row3 col7" >0.00501084</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col8" class="data row3 col8" >0.00798703</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow3_col9" class="data row3 col9" >0.013278</td> 
+    </tr>    <tr> 
+        <th id="T_acdc8edc_1a60_11e9_b616_0a580ae941delevel0_row4" class="row_heading level0 row4" >$Iron\ R(\Omega)$</th> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col0" class="data row4 col0" >0.00448498</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col1" class="data row4 col1" >0.00558147</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col2" class="data row4 col2" >0.00746117</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col3" class="data row4 col3" >0.00940922</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col4" class="data row4 col4" >0.0103183</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col5" class="data row4 col5" >0.014604</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col6" class="data row4 col6" >0.0203183</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col7" class="data row4 col7" >0.0315683</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col8" class="data row4 col8" >0.0503183</td> 
+        <td id="T_acdc8edc_1a60_11e9_b616_0a580ae941derow4_col9" class="data row4 col9" >0.0836516</td> 
+    </tr></tbody> 
+</table> 
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">res_table_ts</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">highlight_min</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">highlight_max</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<style  type="text/css" >
+    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col0 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col1 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col2 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col3 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col4 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col5 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col6 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col7 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col8 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col9 {
+            background-color:  lightblue;
+            : ;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col0 {
+            : ;
+            background-color:  red;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col1 {
+            : ;
+            background-color:  red;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col2 {
+            : ;
+            background-color:  red;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col3 {
+            : ;
+            background-color:  red;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col4 {
+            : ;
+            background-color:  red;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col5 {
+            : ;
+            background-color:  red;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col6 {
+            : ;
+            background-color:  red;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col7 {
+            : ;
+            background-color:  red;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col8 {
+            : ;
+            background-color:  red;
+        }    #T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col9 {
+            : ;
+            background-color:  red;
+        }</style>  
+<table id="T_ace6b4b6_1a60_11e9_b616_0a580ae941de" > 
+<thead>    <tr> 
+        <th class="blank level0" ></th> 
+        <th class="col_heading level0 col0" >4/0</th> 
+        <th class="col_heading level0 col1" >3/0</th> 
+        <th class="col_heading level0 col2" >2/0</th> 
+        <th class="col_heading level0 col3" >1/0</th> 
+        <th class="col_heading level0 col4" >1</th> 
+        <th class="col_heading level0 col5" >2</th> 
+        <th class="col_heading level0 col6" >4</th> 
+        <th class="col_heading level0 col7" >6</th> 
+        <th class="col_heading level0 col8" >8</th> 
+        <th class="col_heading level0 col9" >10</th> 
+    </tr></thead> 
+<tbody>    <tr> 
+        <th id="T_ace6b4b6_1a60_11e9_b616_0a580ae941delevel0_row0" class="row_heading level0 row0" >$Gold\ R(\Omega)$</th> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col0" class="data row0 col0" >0.0018441</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col1" class="data row0 col1" >0.00229874</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col2" class="data row0 col2" >0.00307813</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col3" class="data row0 col3" >0.00388586</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col4" class="data row0 col4" >0.0042628</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col5" class="data row0 col5" >0.0060398</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col6" class="data row0 col6" >0.00840914</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col7" class="data row0 col7" >0.0130738</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col8" class="data row0 col8" >0.0208482</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow0_col9" class="data row0 col9" >0.0346693</td> 
+    </tr>    <tr> 
+        <th id="T_ace6b4b6_1a60_11e9_b616_0a580ae941delevel0_row1" class="row_heading level0 row1" >$Copper\ R(\Omega)$</th> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col0" class="data row1 col0" >0.00126859</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col1" class="data row1 col1" >0.00158135</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col2" class="data row1 col2" >0.0021175</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col3" class="data row1 col3" >0.00267316</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col4" class="data row1 col4" >0.00293246</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col5" class="data row1 col5" >0.0041549</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col6" class="data row1 col6" >0.00578481</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col7" class="data row1 col7" >0.0089937</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col8" class="data row1 col8" >0.0143419</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow1_col9" class="data row1 col9" >0.0238497</td> 
+    </tr>    <tr> 
+        <th id="T_ace6b4b6_1a60_11e9_b616_0a580ae941delevel0_row2" class="row_heading level0 row2" >$Aluminium\ R(\Omega)$</th> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col0" class="data row2 col0" >0.00200552</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col1" class="data row2 col1" >0.00249996</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col2" class="data row2 col2" >0.00334757</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col3" class="data row2 col3" >0.004226</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col4" class="data row2 col4" >0.00463593</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col5" class="data row2 col5" >0.00656848</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col6" class="data row2 col6" >0.00914522</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col7" class="data row2 col7" >0.0142182</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col8" class="data row2 col8" >0.0226731</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow2_col9" class="data row2 col9" >0.037704</td> 
+    </tr>    <tr> 
+        <th id="T_ace6b4b6_1a60_11e9_b616_0a580ae941delevel0_row3" class="row_heading level0 row3" >$Silver\ R(\Omega)$</th> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col0" class="data row3 col0" >0.00120013</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col1" class="data row3 col1" >0.00149601</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col2" class="data row3 col2" >0.00200323</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col3" class="data row3 col3" >0.00252889</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col4" class="data row3 col4" >0.0027742</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col5" class="data row3 col5" >0.00393066</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col6" class="data row3 col6" >0.00547261</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col7" class="data row3 col7" >0.00850833</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col8" class="data row3 col8" >0.0135679</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow3_col9" class="data row3 col9" >0.0225626</td> 
+    </tr>    <tr> 
+        <th id="T_ace6b4b6_1a60_11e9_b616_0a580ae941delevel0_row4" class="row_heading level0 row4" >$Iron\ R(\Omega)$</th> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col0" class="data row4 col0" >0.0075608</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col1" class="data row4 col1" >0.00942483</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col2" class="data row4 col2" >0.0126203</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col3" class="data row4 col3" >0.015932</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col4" class="data row4 col4" >0.0174775</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col5" class="data row4 col5" >0.0247632</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col6" class="data row4 col6" >0.0344775</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col7" class="data row4 col7" >0.0536025</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col8" class="data row4 col8" >0.0854775</td> 
+        <td id="T_ace6b4b6_1a60_11e9_b616_0a580ae941derow4_col9" class="data row4 col9" >0.142144</td> 
+    </tr></tbody> 
+</table> 
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Here we make a quick graphical representation of the values shown above</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;One Storey System&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">conductor</span> <span class="ow">in</span> <span class="n">materials</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wire_gauge</span><span class="p">,</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">][</span><span class="s2">&quot;os&quot;</span><span class="p">],</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wire_gauge</span><span class="p">,</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">][</span><span class="s2">&quot;os&quot;</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">conductor</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Cross Sectional Area of the wire $(m^</span><span class="si">{2}</span><span class="s2">)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Resistance\ (\Omega)$&quot;</span><span class="p">)</span>
+    
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Two Storey System&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">conductor</span> <span class="ow">in</span> <span class="n">materials</span><span class="p">:</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wire_gauge</span><span class="p">,</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">][</span><span class="s2">&quot;ts&quot;</span><span class="p">],</span> <span class="s2">&quot;-&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wire_gauge</span><span class="p">,</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">][</span><span class="s2">&quot;ts&quot;</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">conductor</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Cross Sectional Area of the wire $(m^</span><span class="si">{2}</span><span class="s2">)$&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Resistance\ (\Omega)$&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_27_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As we can see from these tables and plots Silver has the least resistance, followed by Copper, then Gold, then Aliminium and finally Iron. We can also take note that the resistance of the wires increases as the wire gauge becomes smaller. (4/0 is the largest wire, while 4 is the smallest)</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculates the volume of our conductors</span>
+
+<span class="k">for</span> <span class="n">conductor</span> <span class="ow">in</span> <span class="n">materials</span><span class="p">:</span>
+    <span class="n">vol</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">vol_os</span> <span class="o">=</span> <span class="p">(</span><span class="n">rod_gauge</span> <span class="o">*</span> <span class="n">one_storey_rod</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">wire_gauge</span> <span class="o">*</span> <span class="n">one_storey_wire</span><span class="p">)</span>
+    <span class="n">vol_ts</span> <span class="o">=</span> <span class="p">(</span><span class="n">rod_gauge</span> <span class="o">*</span> <span class="n">two_storey_rod</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">wire_gauge</span> <span class="o">*</span> <span class="n">two_storey_wire</span><span class="p">)</span>
+    
+    <span class="n">vol</span><span class="p">[</span><span class="s2">&quot;os&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol_os</span>
+    <span class="n">vol</span><span class="p">[</span><span class="s2">&quot;ts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol_ts</span>
+    
+    <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;vol&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">volumes_os</span> <span class="o">=</span> <span class="p">[</span><span class="n">materials</span><span class="p">[</span><span class="s2">&quot;Gold&quot;</span><span class="p">][</span><span class="s2">&quot;vol&quot;</span><span class="p">][</span><span class="s2">&quot;os&quot;</span><span class="p">]]</span>
+<span class="n">volumes_ts</span> <span class="o">=</span> <span class="p">[</span><span class="n">materials</span><span class="p">[</span><span class="s2">&quot;Gold&quot;</span><span class="p">][</span><span class="s2">&quot;vol&quot;</span><span class="p">][</span><span class="s2">&quot;ts&quot;</span><span class="p">]]</span>
+
+<span class="n">vol_os</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">volumes_os</span><span class="p">,</span>
+                      <span class="n">columns</span><span class="o">=</span><span class="n">gauges</span><span class="p">,</span> 
+                      <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s2">&quot;Volume $m^</span><span class="si">{3}</span><span class="s2">$&quot;</span><span class="p">])</span>
+
+<span class="n">vol_ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">volumes_ts</span><span class="p">,</span>
+                      <span class="n">columns</span><span class="o">=</span><span class="n">gauges</span><span class="p">,</span> 
+                      <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="sa">r</span><span class="s2">&quot;Volume $m^</span><span class="si">{3}</span><span class="s2">$&quot;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vol_os</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>4/0</th>
+      <th>3/0</th>
+      <th>2/0</th>
+      <th>1/0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>4</th>
+      <th>6</th>
+      <th>8</th>
+      <th>10</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Volume $m^{3}$</th>
+      <td>0.000914</td>
+      <td>0.000789</td>
+      <td>0.000664</td>
+      <td>0.000589</td>
+      <td>0.000564</td>
+      <td>0.000489</td>
+      <td>0.000439</td>
+      <td>0.000394</td>
+      <td>0.000364</td>
+      <td>0.000344</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">vol_ts</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>4/0</th>
+      <th>3/0</th>
+      <th>2/0</th>
+      <th>1/0</th>
+      <th>1</th>
+      <th>2</th>
+      <th>4</th>
+      <th>6</th>
+      <th>8</th>
+      <th>10</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>Volume $m^{3}$</th>
+      <td>0.001491</td>
+      <td>0.001279</td>
+      <td>0.001066</td>
+      <td>0.000939</td>
+      <td>0.000896</td>
+      <td>0.000769</td>
+      <td>0.000684</td>
+      <td>0.000607</td>
+      <td>0.000556</td>
+      <td>0.000522</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we can see the volumes of the different setups.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Calculate the temperature rise </span>
+
+<span class="n">currents</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># setting up the currents with a linspace from 3-200 kA</span>
+<span class="n">time_strike</span> <span class="o">=</span> <span class="mi">65</span> <span class="o">*</span> <span class="p">(</span><span class="mi">10</span><span class="o">**-</span><span class="mi">6</span><span class="p">)</span> <span class="c1"># microseconds</span>
+
+<span class="k">for</span> <span class="n">conductor</span> <span class="ow">in</span> <span class="n">materials</span><span class="p">:</span>
+    <span class="n">os</span> <span class="o">=</span> <span class="p">{}</span> <span class="p">;</span> <span class="n">ts</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">][</span><span class="s2">&quot;os&quot;</span><span class="p">])):</span>
+        
+        <span class="c1"># Calculates the temperature rise in the one storey setup</span>
+        <span class="n">temp_os</span> <span class="o">=</span> <span class="n">temp</span><span class="p">(</span><span class="n">R</span> <span class="o">=</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">][</span><span class="s2">&quot;os&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                       <span class="n">I</span> <span class="o">=</span> <span class="n">currents</span><span class="p">,</span>
+                       <span class="n">t</span> <span class="o">=</span> <span class="n">time_strike</span><span class="p">,</span>
+                       <span class="n">Hc</span> <span class="o">=</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;spec_heat&quot;</span><span class="p">],</span>
+                       <span class="n">Vol</span> <span class="o">=</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;vol&quot;</span><span class="p">][</span><span class="s2">&quot;os&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                       <span class="n">rho</span> <span class="o">=</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;rho&quot;</span><span class="p">])</span>
+        
+        <span class="c1"># Calculates the temperature rise in the Two storey setup</span>
+        <span class="n">temp_ts</span> <span class="o">=</span> <span class="n">temp</span><span class="p">(</span><span class="n">R</span> <span class="o">=</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;resistances&quot;</span><span class="p">][</span><span class="s2">&quot;ts&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                       <span class="n">I</span> <span class="o">=</span> <span class="n">currents</span><span class="p">,</span>
+                       <span class="n">t</span> <span class="o">=</span> <span class="n">time_strike</span><span class="p">,</span>
+                       <span class="n">Hc</span> <span class="o">=</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;spec_heat&quot;</span><span class="p">],</span>
+                       <span class="n">Vol</span> <span class="o">=</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;vol&quot;</span><span class="p">][</span><span class="s2">&quot;ts&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">],</span>
+                       <span class="n">rho</span> <span class="o">=</span> <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;rho&quot;</span><span class="p">])</span>
+        
+        
+        <span class="n">os</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">temp_os</span>
+        <span class="n">ts</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">temp_ts</span>
+    
+    <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;temps_os&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span>
+    <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;temps_ts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ts</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">material</span><span class="p">,</span><span class="n">current</span><span class="p">):</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: &quot;</span><span class="o">%</span><span class="p">(</span><span class="n">material</span><span class="p">))</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;One Storey System&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="n">material</span><span class="p">][</span><span class="s2">&quot;temps_os&quot;</span><span class="p">])):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">current</span><span class="p">,</span><span class="n">materials</span><span class="p">[</span><span class="n">material</span><span class="p">][</span><span class="s2">&quot;temps_os&quot;</span><span class="p">][</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;AWG: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">gauges</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Current\ (A)$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Temperature\ Rise\ (K)$&quot;</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Two Storey System&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="n">material</span><span class="p">][</span><span class="s2">&quot;temps_ts&quot;</span><span class="p">])):</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">current</span><span class="p">,</span><span class="n">materials</span><span class="p">[</span><span class="n">material</span><span class="p">][</span><span class="s2">&quot;temps_ts&quot;</span><span class="p">][</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)],</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;AWG: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">gauges</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>  
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Current\ (A)$&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$Temperature\ Rise\ (K)$&quot;</span><span class="p">)</span>
+    
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;Gold&quot;</span><span class="p">,</span> <span class="n">currents</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Gold: 
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_36_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;Copper&quot;</span><span class="p">,</span> <span class="n">currents</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Copper: 
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_37_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;Aluminium&quot;</span><span class="p">,</span> <span class="n">currents</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Aluminium: 
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_38_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;Silver&quot;</span><span class="p">,</span> <span class="n">currents</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Silver: 
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_39_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="s2">&quot;Iron&quot;</span><span class="p">,</span> <span class="n">currents</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Iron: 
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense_40_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From these plots we can see that in all cases, the temperature goes up more the thinner the wire. This is quite intuitive, since there's less material to pass the energy through.</p>
+<p>We can also note that copper seems to be the best conductor, it's temperatures are the lowest across all wire gauges, while iron is the worst due to it's temperatures being the highest across all wire gauges.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now we will compare the maximum temperature increases to the melting point of the PVC insulation used on the wires.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Gets the maximum temperature increase for each material and gauge</span>
+
+<span class="n">melt_point_pvc</span> <span class="o">=</span> <span class="mi">105</span> <span class="c1"># degrees C</span>
+
+<span class="k">for</span> <span class="n">conductor</span> <span class="ow">in</span> <span class="n">materials</span><span class="p">:</span>
+    <span class="n">max_temps_os</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">max_temps_ts</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;temps_os&quot;</span><span class="p">])):</span>
+        <span class="c1"># We add 20 degrees C to each max temp rise, since we assume we&#39;re working in an environment with</span>
+        <span class="c1"># a temperature of 20 degrees</span>
+        <span class="n">max_temps_os</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;temps_os&quot;</span><span class="p">][</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)])</span> <span class="o">+</span> <span class="mi">20</span> <span class="c1"># add 20 degrees C</span>
+        <span class="n">max_temps_ts</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;temps_ts&quot;</span><span class="p">][</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)])</span> <span class="o">+</span> <span class="mi">20</span>
+    
+    <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;max_temp_os&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_temps_os</span>
+    <span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;max_temp_ts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_temps_ts</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">melt_compare_os</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">melt_compare_ts</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">conductor</span> <span class="ow">in</span> <span class="n">materials</span><span class="p">:</span>
+    <span class="n">temp_list_os</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">temp_list_ts</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;max_temp_os&quot;</span><span class="p">])):</span>
+        <span class="n">temp_list_os</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;max_temp_os&quot;</span><span class="p">][</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">/</span> <span class="n">melt_point_pvc</span><span class="p">))</span>
+        <span class="n">temp_list_ts</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">materials</span><span class="p">[</span><span class="n">conductor</span><span class="p">][</span><span class="s2">&quot;max_temp_ts&quot;</span><span class="p">][</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="p">)]</span> <span class="o">/</span> <span class="n">melt_point_pvc</span><span class="p">))</span>
+
+    <span class="n">melt_compare_os</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_list_os</span><span class="p">)</span>
+    <span class="n">melt_compare_ts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp_list_ts</span><span class="p">)</span>
+
+<span class="n">melt_os</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">melt_compare_os</span><span class="p">,</span>
+                       <span class="n">columns</span> <span class="o">=</span> <span class="n">gauges</span><span class="p">,</span>
+                       <span class="n">index</span> <span class="o">=</span> <span class="n">mat_list</span><span class="p">)</span>
+
+<span class="n">melt_ts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">melt_compare_ts</span><span class="p">,</span>
+                       <span class="n">columns</span> <span class="o">=</span> <span class="n">gauges</span><span class="p">,</span>
+                       <span class="n">index</span> <span class="o">=</span> <span class="n">mat_list</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">melt_os</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.2%}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">highlight_min</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">highlight_max</span><span class="p">)</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">color_val</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<style  type="text/css" >
+    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col0 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col1 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col2 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col3 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col4 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col5 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col6 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col7 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col8 {
+            : ;
+            : ;
+            color:  orange;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow0_col9 {
+            : ;
+            : ;
+            color:  darkorange;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col0 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col1 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col2 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col3 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col4 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col5 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col6 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col7 {
+            background-color:  lightblue;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col8 {
+            background-color:  lightblue;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow1_col9 {
+            background-color:  lightblue;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col0 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col1 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col2 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col3 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col4 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col5 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col6 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col7 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col8 {
+            : ;
+            : ;
+            color:  orange;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow2_col9 {
+            : ;
+            : ;
+            color:  darkorange;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col0 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col1 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col2 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col3 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col4 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col5 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col6 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col7 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col8 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow3_col9 {
+            : ;
+            : ;
+            color:  orange;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col0 {
+            : ;
+            background-color:  red;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col1 {
+            : ;
+            background-color:  red;
+            color:  green;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col2 {
+            : ;
+            background-color:  red;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col3 {
+            : ;
+            background-color:  red;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col4 {
+            : ;
+            background-color:  red;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col5 {
+            : ;
+            background-color:  red;
+            color:  black;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col6 {
+            : ;
+            background-color:  red;
+            color:  orange;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col7 {
+            : ;
+            background-color:  red;
+            color:  orange;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col8 {
+            : ;
+            background-color:  red;
+            color:  pink;
+        }    #T_af633598_1a60_11e9_b616_0a580ae941derow4_col9 {
+            : ;
+            background-color:  red;
+            color:  pink;
+        }</style>  
+<table id="T_af633598_1a60_11e9_b616_0a580ae941de" > 
+<thead>    <tr> 
+        <th class="blank level0" ></th> 
+        <th class="col_heading level0 col0" >4/0</th> 
+        <th class="col_heading level0 col1" >3/0</th> 
+        <th class="col_heading level0 col2" >2/0</th> 
+        <th class="col_heading level0 col3" >1/0</th> 
+        <th class="col_heading level0 col4" >1</th> 
+        <th class="col_heading level0 col5" >2</th> 
+        <th class="col_heading level0 col6" >4</th> 
+        <th class="col_heading level0 col7" >6</th> 
+        <th class="col_heading level0 col8" >8</th> 
+        <th class="col_heading level0 col9" >10</th> 
+    </tr></thead> 
+<tbody>    <tr> 
+        <th id="T_af633598_1a60_11e9_b616_0a580ae941delevel0_row0" class="row_heading level0 row0" >$Gold\ R(\Omega)$</th> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col0" class="data row0 col0" >20.27%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col1" class="data row0 col1" >20.81%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col2" class="data row0 col2" >21.85%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col3" class="data row0 col3" >23.03%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col4" class="data row0 col4" >23.60%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col5" class="data row0 col5" >26.49%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col6" class="data row0 col6" >30.57%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col7" class="data row0 col7" >39.00%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col8" class="data row0 col8" >53.47%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow0_col9" class="data row0 col9" >79.60%</td> 
+    </tr>    <tr> 
+        <th id="T_af633598_1a60_11e9_b616_0a580ae941delevel0_row1" class="row_heading level0 row1" >$Copper\ R(\Omega)$</th> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col0" class="data row1 col0" >19.65%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col1" class="data row1 col1" >19.92%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col2" class="data row1 col2" >20.43%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col3" class="data row1 col3" >21.01%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col4" class="data row1 col4" >21.30%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col5" class="data row1 col5" >22.72%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col6" class="data row1 col6" >24.74%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col7" class="data row1 col7" >28.90%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col8" class="data row1 col8" >36.05%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow1_col9" class="data row1 col9" >48.96%</td> 
+    </tr>    <tr> 
+        <th id="T_af633598_1a60_11e9_b616_0a580ae941delevel0_row2" class="row_heading level0 row2" >$Aluminium\ R(\Omega)$</th> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col0" class="data row2 col0" >20.39%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col1" class="data row2 col1" >20.99%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col2" class="data row2 col2" >22.13%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col3" class="data row2 col3" >23.43%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col4" class="data row2 col4" >24.06%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col5" class="data row2 col5" >27.24%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col6" class="data row2 col6" >31.74%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col7" class="data row2 col7" >41.01%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col8" class="data row2 col8" >56.94%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow2_col9" class="data row2 col9" >85.71%</td> 
+    </tr>    <tr> 
+        <th id="T_af633598_1a60_11e9_b616_0a580ae941delevel0_row3" class="row_heading level0 row3" >$Silver\ R(\Omega)$</th> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col0" class="data row3 col0" >19.82%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col1" class="data row3 col1" >20.16%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col2" class="data row3 col2" >20.81%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col3" class="data row3 col3" >21.55%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col4" class="data row3 col4" >21.92%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col5" class="data row3 col5" >23.73%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col6" class="data row3 col6" >26.30%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col7" class="data row3 col7" >31.61%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col8" class="data row3 col8" >40.72%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow3_col9" class="data row3 col9" >57.17%</td> 
+    </tr>    <tr> 
+        <th id="T_af633598_1a60_11e9_b616_0a580ae941delevel0_row4" class="row_heading level0 row4" >$Iron\ R(\Omega)$</th> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col0" class="data row4 col0" >22.40%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col1" class="data row4 col1" >23.88%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col2" class="data row4 col2" >26.72%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col3" class="data row4 col3" >29.96%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col4" class="data row4 col4" >31.54%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col5" class="data row4 col5" >39.44%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col6" class="data row4 col6" >50.66%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col7" class="data row4 col7" >73.76%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col8" class="data row4 col8" >113.45%</td> 
+        <td id="T_af633598_1a60_11e9_b616_0a580ae941derow4_col9" class="data row4 col9" >185.10%</td> 
+    </tr></tbody> 
+</table> 
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">melt_ts</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:.2%}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">highlight_min</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">highlight_max</span><span class="p">)</span><span class="o">.</span><span class="n">applymap</span><span class="p">(</span><span class="n">color_val</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<style  type="text/css" >
+    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col0 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col1 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col2 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col3 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col4 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col5 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col6 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col7 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col8 {
+            : ;
+            : ;
+            color:  orange;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col9 {
+            : ;
+            : ;
+            color:  darkorange;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col0 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col1 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col2 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col3 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col4 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col5 {
+            background-color:  lightblue;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col6 {
+            background-color:  lightblue;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col7 {
+            background-color:  lightblue;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col8 {
+            background-color:  lightblue;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col9 {
+            background-color:  lightblue;
+            : ;
+            color:  orange;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col0 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col1 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col2 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col3 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col4 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col5 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col6 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col7 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col8 {
+            : ;
+            : ;
+            color:  orange;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col9 {
+            : ;
+            : ;
+            color:  darkorange;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col0 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col1 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col2 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col3 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col4 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col5 {
+            : ;
+            : ;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col6 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col7 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col8 {
+            : ;
+            : ;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col9 {
+            : ;
+            : ;
+            color:  orange;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col0 {
+            : ;
+            background-color:  red;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col1 {
+            : ;
+            background-color:  red;
+            color:  green;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col2 {
+            : ;
+            background-color:  red;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col3 {
+            : ;
+            background-color:  red;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col4 {
+            : ;
+            background-color:  red;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col5 {
+            : ;
+            background-color:  red;
+            color:  black;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col6 {
+            : ;
+            background-color:  red;
+            color:  orange;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col7 {
+            : ;
+            background-color:  red;
+            color:  darkorange;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col8 {
+            : ;
+            background-color:  red;
+            color:  pink;
+        }    #T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col9 {
+            : ;
+            background-color:  red;
+            color:  pink;
+        }</style>  
+<table id="T_af6e95be_1a60_11e9_b616_0a580ae941de" > 
+<thead>    <tr> 
+        <th class="blank level0" ></th> 
+        <th class="col_heading level0 col0" >4/0</th> 
+        <th class="col_heading level0 col1" >3/0</th> 
+        <th class="col_heading level0 col2" >2/0</th> 
+        <th class="col_heading level0 col3" >1/0</th> 
+        <th class="col_heading level0 col4" >1</th> 
+        <th class="col_heading level0 col5" >2</th> 
+        <th class="col_heading level0 col6" >4</th> 
+        <th class="col_heading level0 col7" >6</th> 
+        <th class="col_heading level0 col8" >8</th> 
+        <th class="col_heading level0 col9" >10</th> 
+    </tr></thead> 
+<tbody>    <tr> 
+        <th id="T_af6e95be_1a60_11e9_b616_0a580ae941delevel0_row0" class="row_heading level0 row0" >$Gold\ R(\Omega)$</th> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col0" class="data row0 col0" >20.31%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col1" class="data row0 col1" >20.88%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col2" class="data row0 col2" >22.00%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col3" class="data row0 col3" >23.28%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col4" class="data row0 col4" >23.91%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col5" class="data row0 col5" >27.07%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col6" class="data row0 col6" >31.61%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col7" class="data row0 col7" >41.04%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col8" class="data row0 col8" >57.33%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow0_col9" class="data row0 col9" >86.86%</td> 
+    </tr>    <tr> 
+        <th id="T_af6e95be_1a60_11e9_b616_0a580ae941delevel0_row1" class="row_heading level0 row1" >$Copper\ R(\Omega)$</th> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col0" class="data row1 col0" >19.67%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col1" class="data row1 col1" >19.95%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col2" class="data row1 col2" >20.50%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col3" class="data row1 col3" >21.14%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col4" class="data row1 col4" >21.45%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col5" class="data row1 col5" >23.01%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col6" class="data row1 col6" >25.25%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col7" class="data row1 col7" >29.91%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col8" class="data row1 col8" >37.96%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow1_col9" class="data row1 col9" >52.54%</td> 
+    </tr>    <tr> 
+        <th id="T_af6e95be_1a60_11e9_b616_0a580ae941delevel0_row2" class="row_heading level0 row2" >$Aluminium\ R(\Omega)$</th> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col0" class="data row2 col0" >20.44%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col1" class="data row2 col1" >21.07%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col2" class="data row2 col2" >22.29%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col3" class="data row2 col3" >23.70%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col4" class="data row2 col4" >24.40%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col5" class="data row2 col5" >27.88%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col6" class="data row2 col6" >32.88%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col7" class="data row2 col7" >43.26%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col8" class="data row2 col8" >61.19%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow2_col9" class="data row2 col9" >93.70%</td> 
+    </tr>    <tr> 
+        <th id="T_af6e95be_1a60_11e9_b616_0a580ae941delevel0_row3" class="row_heading level0 row3" >$Silver\ R(\Omega)$</th> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col0" class="data row3 col0" >19.84%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col1" class="data row3 col1" >20.20%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col2" class="data row3 col2" >20.90%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col3" class="data row3 col3" >21.71%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col4" class="data row3 col4" >22.11%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col5" class="data row3 col5" >24.10%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col6" class="data row3 col6" >26.96%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col7" class="data row3 col7" >32.89%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col8" class="data row3 col8" >43.15%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow3_col9" class="data row3 col9" >61.74%</td> 
+    </tr>    <tr> 
+        <th id="T_af6e95be_1a60_11e9_b616_0a580ae941delevel0_row4" class="row_heading level0 row4" >$Iron\ R(\Omega)$</th> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col0" class="data row4 col0" >22.51%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col1" class="data row4 col1" >24.08%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col2" class="data row4 col2" >27.13%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col3" class="data row4 col3" >30.64%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col4" class="data row4 col4" >32.37%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col5" class="data row4 col5" >41.05%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col6" class="data row4 col6" >53.50%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col7" class="data row4 col7" >79.35%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col8" class="data row4 col8" >124.03%</td> 
+        <td id="T_af6e95be_1a60_11e9_b616_0a580ae941derow4_col9" class="data row4 col9" >205.00%</td> 
+    </tr></tbody> 
+</table> 
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>These tables show how close to the melting point of the PVC insulation that the cables got as a percentage of the melting point of the PVC insulation.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion"> </a></h1><h2 id="Lightning-Rod-Simulation">Lightning Rod Simulation<a class="anchor-link" href="#Lightning-Rod-Simulation"> </a></h2><p>From our simulations we see that having a lightning rod present will in the majority of the cases cause the lightning to strike the rod. As we noted earlier the rod will make a 45 degree "cone of protection" under it, this means that one should take this into account when setting up lightning rods for practical applications.</p>
+<h2 id="Lightning-Rod-Materials">Lightning Rod Materials<a class="anchor-link" href="#Lightning-Rod-Materials"> </a></h2><p>We chose to test a few metals for these calculations, Gold, Copper, Aluminium, Silver and Iron were our materials of choice.</p>
+<p>From our calculations of resistance silver seemed to be the best candidate, due to it having the lowest resistance across all wire gauges. The difference in resistance between silver and the second best material(copper) was small, thus both are good conductors.</p>
+<p>However when it came to the final result with the temperature increase, copper was clearly the best candidate, due to it having the lowest temperature increase across all wire gauges. The difference in temperature increase was not that large when it came to the bigger wire gauges, but as the wires became smaller the differences became significantly greater.</p>
+<p>Most of the materials were well within safe temperature increase across the entire range of current, iron however was not for the thinnest gauges, aluminium and gold got dangerously close for the thinnest gauge.</p>
+<p>For all applications copper seems to be the best alternative.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Words-of-wisdom:">Words of wisdom:<a class="anchor-link" href="#Words-of-wisdom:"> </a></h2><p>Check your units, always, always, always, check your units!</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

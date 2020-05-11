@@ -1,0 +1,90 @@
+# This file contains the order and numbering for all sections in the book.
+#
+# Each entry has the following schema:
+#
+# - title: mytitle   # Title of chapter or section
+#   url: /myurl  # URL of section relative to the /content/ folder.
+#   sections:  # Contains a list of more entries that make up the chapter's sections
+#   not_numbered: true  # if the section shouldn't have a number in the sidebar
+#     (e.g. Introduction or appendices)
+#   expand_sections: true  # if you'd like the sections of this chapter to always
+#     be expanded in the sidebar.
+#   external: true  # Whether the URL is an external link or points to content in the book
+#
+# Below are some special values that trigger specific behavior:
+# - search: true  # Will provide a link to a search page
+# - divider: true  # Will insert a divider in the sidebar  
+# - header: My Header  # Will insert a header with no link in the sidebar  
+
+- url: /intro
+  not_numbered: true
+
+- title: Example Essays
+  url: /examples
+  not_numbered: true
+  expand_sections: true
+  sections:
+  - title: How much electric current would you need to use a railgun to launch a package up to the ISS?
+    url: /essays/exampleessays/railgun_TOO/Railgun_V1_9
+  - title: How would ion drives compare to conventional rockets on a trip to Mars?
+    url: /essays/exampleessays/iondrives/ExploringTheMartian_V2_5
+  - title: How long would it take to fall through a non-uniform Earth?
+    url: /essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative
+  - title: How long would it take to fall into Space?
+    url: /essays/exampleessays/intoSpace/FallingIntoSpace
+  - title: What is the fastest possible volleyball serve?
+    url: /essays/exampleessays/volleyball/Volleyball
+
+- divider: true
+- title: Student Essays
+  url: /studentessays
+  not_numbered: true
+  expand_sections: true
+  sections:
+  - title: What is the best material for a lightning rod?
+    url: /essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense
+  - title: What are the effects of relativity on particles in the LHC?
+    url: /essays/studentessays/LHC/LHC_CompEssay
+  - title: Can we trap a high-energy particle in a magnetic bottle?
+    url: /essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay
+  - title: How does the electric field look around a fractal?
+    url: /essays/studentessays/fractals/Fractals
+  - title: Simulating water molecules in 3D
+    url: /essays/studentessays/3Dwater/3DWater
+  - title: Simulating a relativistic cyclotron
+    url: /essays/studentessays/relativcyclotron/RelativisticCyclotron
+  - title: Could we use the concept of a rail gun to make a Space Elevator?
+    url: /essays/studentessays/spaceelevator/SpaceElevator
+  - title: Kan vi bruke en railgun til å akselerere et tog i Oslo t-banen?
+    url: /essays/studentessays/railgun_FG_IK/Train_Railgun_CompEssay
+  - title: Hvor langt kan du trygt stå borte fra et lynnedslag?
+    url: /essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18
+  - title: Hvordan beveger prosjektilet til en railgun ved gitt makshastighet?
+    url: /essays/studentessays/railgunmaxspeed/RailgunMaxSpeed
+  - title: Hvorfor er eksempelet med en railgun en veldig dårlig idè?
+    url: /essays/studentessays/railguncritique/RailgunCritique
+  - title: Hvor sterkt er elektriske feltet som kreves for å separere kvarkene i et nøyralt meson?
+    url: /essays/studentessays/pimeson/PiMeson
+  - title: Hvordan kan vi bruke en cyclotron til å lage protonstråling for behandlig av kreft celler?
+    url: /essays/studentessays/medcyclotron/MedicinalCyclotron
+  - title: Hva skjer dersom lynet slår ned i noen som sitter i en bil?
+    url: /essays/studentessays/lightningcar/LightningCar
+
+- divider: true
+- title: Exercise Sets and Templates
+  url: /exercisesets
+  not_numbered: true
+  expand_sections: true
+  sections:
+  - title: How long would it take to fall through the Earth?
+    url: /essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth
+  - title: Falling through the Earth - Example Solution
+    url: /essays/exercises/FallingThroughTheEarth/FallingThroughTheEarth-Solution
+  - title: Cyclotron Template
+    url: /essays/exercises/essayseeds/Cyclotron
+  - title: Magnetic Bottle Template
+    url: /essays/exercises/essayseeds/MagneticBottle_Numpy
+  - title: Storm Cloud Template
+    url: /essays/exercises/essayseeds/StormCloud
+  - title: Lightning Template
+    url: /essays/exercises/essayseeds/Stormcloud_Lightning

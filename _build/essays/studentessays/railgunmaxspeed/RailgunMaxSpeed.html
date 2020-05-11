@@ -1,0 +1,887 @@
+---
+redirect_from:
+  - "/essays/studentessays/railgunmaxspeed/railgunmaxspeed"
+interact_link: content/essays/studentessays/railgunmaxspeed/RailgunMaxSpeed.ipynb
+kernel_name: python3
+kernel_path: content/essays/studentessays/railgunmaxspeed
+has_widgets: false
+title: |-
+  Hvordan beveger prosjektilet til en railgun ved gitt makshastighet?
+pagenum: 17
+prev_page:
+  url: /essays/studentessays/stormcloud_LS/3D_StormCloud_lassst_FYS1120_H18.html
+next_page:
+  url: /essays/studentessays/railguncritique/RailgunCritique.html
+suffix: .ipynb
+search: en til og p er prosjektilet frac som cdot av v det x den broen railgun ved br t kraften theta modellen med et vil y blir gitt sin m mellom luftmotstand w corioliskraften g com r nr de km f gr fra skinnene bten cos om s ca systemet langs retning beregne vre kan mu pi hastigheten avstand avstanden www har akselerere seg ut kg noen bevegelsen treffe gjennom b virker programmet flgende d big ln railgunen align vinkel ha opp science frste magnetfelt ble skal dette ledende slik aksen strmmen z kunne finne utgangshastighet defineres settes lange dermed
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">Hvordan beveger prosjektilet til en railgun ved gitt makshastighet?</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Railgun---Distance-(Ocean/Air)">Railgun - Distance (Ocean/Air)<a class="anchor-link" href="#Railgun---Distance-(Ocean/Air)"> </a></h1><h2 id="Hvordan-beveger-prosjektilet-til-en-railgun-ved-gitt-makshastighet?">Hvordan beveger prosjektilet til en railgun ved gitt makshastighet?<a class="anchor-link" href="#Hvordan-beveger-prosjektilet-til-en-railgun-ved-gitt-makshastighet?"> </a></h2><h4 id="Et-computational-essay-av-Elias-T.-Ruud-og-Mira-Mors">Et computational essay av Elias T. Ruud og Mira Mors<a class="anchor-link" href="#Et-computational-essay-av-Elias-T.-Ruud-og-Mira-Mors"> </a></h4><h2 id="Introduksjon">Introduksjon<a class="anchor-link" href="#Introduksjon"> </a></h2><p>Krutt har i mange år vært militærets mest gunstige måte å akselerere prosjektiler retter mot sine fiender. En skulle forvente at en ny metode vil dukke opp i nær fremtid. Railgun er en av de potensielle mulighetene. Selv om ordet railgun i seg selv høres ut som det er plukket ut av vokabularet til en som ser eksklusivt på science fiction, har modellen bak våpenet eksistert i mange år. Den første formen å akselerere et objekt ved et magnetfelt ble først utført av UIOs Kristian Birkeland rundt 1845 ved navnet coil gun. Konseptet ble videreført og i 2010 konstruerte marinen i USA en railgun som klarte å akselerere et objekt på 3.2kg til 2400 m/s (8600 km/t). Nylig utvikling har sett landbaserte railguns skuddrekkevidde nå over 160 km, ca distansen mellom Oslo og Kristiansand.</p>
+<p>Denne oppgaven er ute etter å svare på noen få spørsmål. Hva er bevegelsen til prosjektilet? Hvor skal en sikte for å treffe? Hvordan påvirker ting som luftmotstand og coriioliskraften simuleringen? Dette er det oppgaven går ut på å løse. Istedenfor å se på alle de kompliserte faktorene som inngår i en moderne railgun, skal den initielle modellen se bort fra friksjon, høy varmeutvikling i systemet, elektromagnetisk induksjon, frastøtning mellom skinnene og potensiell strømning i vannet og luften.</p>
+<h2 id="Oppbygning-til-en-railgun">Oppbygning til en railgun<a class="anchor-link" href="#Oppbygning-til-en-railgun"> </a></h2><p>I motsetning til en typisk kanon som tar i bruk kjemiske reaksjoner, baseres railgunnen på elektromagnetiske prinsipper. Oppbygning til systemet er relativt enkelt. To parallelle ledende skinner er knyttet sammen av en bevegelig ledende bro. En potensialforskjell kobles til de to skinnene slik at det går strøm gjennom systemet (illustrert på figuren under). De to skinnene (langs “x-aksen”) danner et magnetfelt, pga. strømmen, i “z-retning”, slik at B-vektoren peker oppover i koordinatsystemet. Strømmen gjennom broen beveger seg langs “y-aksen” og ved kryssproduktet (qv x B) ser en at kraften på den bevegelige broen virker i x-retning(kjent som Lorenzkraften). Dette vil kunne akselerere objekter plassert på broen opp i veldig høye hastigheter. <br>
+<img src="data:image/gif;base64,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" alt="figure_railgun-7.gif"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">HTML</span>
+<span class="n">HTML</span><span class="p">(</span><span class="s1">&#39;&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/58MmOpSm4LY?start=60;controls=0&amp;amp;showinfo=0&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/anaconda3/lib/python3.7/site-packages/IPython/core/display.py:701: UserWarning: Consider using IPython.display.IFrame instead
+  warnings.warn(&#34;Consider using IPython.display.IFrame instead&#34;)
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/58MmOpSm4LY?start=60;controls=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Enkel-modellering-av-en-railgun">Enkel modellering av en railgun<a class="anchor-link" href="#Enkel-modellering-av-en-railgun"> </a></h2><p>Programmet som utledes for å besvare problemstillingen, baseres på den gitte modellen av en railgun for å finne utgangshastighet.</p>
+<p>Starter med å importere numpy for beregningene og matpolotlib for den grafiske framstillingen.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Systemets parametere defineres etter en marine railgun. Distansen mellom skinnene settes til 15cm, deres tykkelse og lengde til henholdsvis 10cm og 10m. Prosjektilet veier  12.5kg, broen 2.5kg og strømmen settes til 2500kAmps.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">D</span> <span class="o">=</span> <span class="o">.</span><span class="mi">15</span> <span class="c1">#separation of the rails and width of the bar. Set to 15cm</span>
+<span class="n">w</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1">#width of the rails. Set to 10cm each</span>
+<span class="n">L</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1">#length of the rails. Set to 10m</span>
+<span class="n">m_tot</span> <span class="o">=</span> <span class="mf">2.5</span><span class="o">+</span><span class="mf">12.5</span> <span class="c1">#set mass to 15kg</span>
+<span class="n">I_max</span> <span class="o">=</span> <span class="mi">2500000</span> <span class="c1">#starting current. Set to 2500000 Amps</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Følgende bestemmes initialverdiene.
+Til å begynne med (ved t=0) er broen i ro og plasseret ved origo.
+For de numeriske bevegelseslikningene må det defineres et visst tidssteg dt.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">barpos</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">dt</span><span class="o">=</span><span class="mf">0.00001</span> <span class="c1">#initial timestep 0.00001s</span>
+<span class="n">t</span><span class="o">=</span><span class="mi">0</span> <span class="c1">#time starts at 0</span>
+<span class="n">v</span><span class="o">=</span><span class="mi">0</span> <span class="c1">#initial velocity set to 0</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Videre trengs det en modell for å beregne kraften på broen og prosjektilet.</p>
+<h4>Kraften på broen <br></h4>
+<p>Det gjøres først noen forenklinger. Hvis skinnenene antas å være lange, kan de ansees som uendelig lange ledninger. Magnetfeltet for en skinne blir dermed
+$$B_{rail} = \frac{\mu_0}{2\pi}\frac{I}{r}$$
+For å kunne beregne kraften på broen, deles broen i små deler av lengde dr. Hvis det går en strøm $I$ gjennom systemet, er størrelsen til kraften,$\mid dF_B\mid$, på en liten bro-del definert som
+$$dF_B = IdrB$$
+Som beskrevet over, virker kraften i x-retning.
+Kraften (fra en skinne) som virker på broen beregnes ved å ingegrere $dF_B$ langs lengden til broen. Gitt tykkelsen w til skinnen og legnden D til broen fås at kraften blir
+$$\frac{\mu_0}{2 \pi}I^2 \int_{\frac{w}{2}}^{D+\frac{w}{2}} \frac{1}{r}dr$$ $$=\frac{\mu_0}{2 \pi}I^2 \big(\ln(D+\frac{w}{2})-\ln(\frac{w}{2})\big)$$</p>
+<p>Siden begge skinnene utover en like rettet kraft på broen, kan den funnete kraften ganges med to og det stårs igjen med
+$$F_{B}=2\frac{\mu_0}{2 \pi}I^2 \big(\ln(D+\frac{w}{2})-\ln(\frac{w}{2})\big)$$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I tillegg vises det å være lurt å definere $\frac{\mu_0}{2 \pi}$ som en konstant.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Muover2pi</span> <span class="o">=</span> <span class="mf">2e-7</span> <span class="c1">#magnetic constant</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Nå er alt klart for å kunne beregne hastigheten til broen i det forenklede systemet: et friskjonsfritt området med uendelig lange og ledende skinner, der effekter på randen neglisjeres. 
+Den magnetiske kraften på broen langs x-aksen beregnes ved hjelp av en løkke. Kraften benyttes så videre for å beregne hastigheten til broen.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">while</span> <span class="n">barpos</span> <span class="o">&lt;</span> <span class="n">L</span><span class="p">:</span>
+    <span class="n">Fnet</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">Muover2pi</span><span class="o">*</span><span class="p">(</span><span class="n">I_max</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="o">+</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">w</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span> <span class="c1">#Based on our calculated expression for the force on the bar</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">Fnet</span><span class="o">/</span><span class="n">m_tot</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#Update the velocity of the bar</span>
+    <span class="n">barpos</span> <span class="o">=</span> <span class="n">barpos</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#Use velocity to update position</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="c1">#Print the final value of the velocity</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>2148.7562597357905
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;En strøm på </span><span class="si">{0}</span><span class="s2">kAmps gir dermed en hastighet lik </span><span class="si">{1:.1f}</span><span class="s2">m/s.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">I_max</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span><span class="n">v</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>En strøm på 2500.0kAmps gir dermed en hastighet lik 2148.8m/s.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2>Treffe en stasjonær båt; med gravitasjon <br></h2>
+<p>I det følgende eksemplet utelates vannmotstand, luftmotstand og corioliskraften. Gravitasjonen, når prosjektilet er i fritt fall, inkulderes i modellen. <br>
+Eksemplet går ut på å treffe en stasjonær båt. Programmet beregner kollisjonshastighet og utskytningsvinkel til railgunen. Railgunen og båten antas å være på samme høyde. Railgunen befinner seg ved ekvator, mens båten befinner seg en avstand, $dis$, nordover. <br>
+Gitt utgangshastigheten fra programmet over, kan vi beregne utskytningsvinkelen.</p>
+<h4 id="Utregning-for-&#229;-finne-vinkelen-som-en-funksjon-av-utgangshastighet-og-avstanden-til-b&#229;ten">Utregning for &#229; finne vinkelen som en funksjon av utgangshastighet og avstanden til b&#229;ten<a class="anchor-link" href="#Utregning-for-&#229;-finne-vinkelen-som-en-funksjon-av-utgangshastighet-og-avstanden-til-b&#229;ten"> </a></h4><p>Origo settes ved railgunen, y er høyden til prosjektilet og x er avstanden til båten. Gitt kollisjonshastighet $v_0$ (som er lik utgangshastigheten) får vi
+\begin{align*}
+v_{0,y} &amp;= v_0 \cdot sin(\theta) &amp; v_{0,x} &amp;= v_0 \cdot cos(\theta) \\
+y &amp;= v_{0,y}\cdot t - \frac{1}{2}g\cdot t^2 = v_0 \cdot sin(\theta)\cdot t - \frac{1}{2}g\cdot t^2  &amp; x &amp;= v_{0,x}\cdot t = v_0 \cdot cos(\theta)\cdot t \\
+&amp; &amp; t &amp;= \frac{x}{v_0\cdot cos(\theta)}\\
+\end{align*}</p>
+<p>Når prosjektilet treffer båten er y = 0. Satt inn for y og t gitt ovenfor gir det
+\begin{align*}
+0 &amp;=v_0 \cdot sin(\theta)\cdot t - \frac{1}{2}g\cdot t^2 \\
+v_0 \cdot sin(\theta)\cdot \frac{x}{v_0\cdot cos(\theta)} &amp;= \frac{1}{2}g\cdot \left(\frac{x}{v_0\cdot cos(\theta)}\right)^2\\
+sin(\theta) \cdot cos(\theta) &amp;= \frac{g\cdot x}{2v_0^2}\\
+sin(2\theta) &amp;= \frac{g\cdot x}{v_0^2}\\
+\theta &amp;= \frac{1}{2} sin^{-1} \left(\frac{g\cdot x}{v_0^2}\right)
+\end{align*}</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I det følgende defineres noen parametre som er nødvendig for simuleringen.  Så beregnes vinkelen som en funksjon av utgangshastighet og avstanden til båten.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="mf">9.81</span> <span class="c1">#gravitasjonskonstanten [m/s^2]</span>
+<span class="n">eps</span> <span class="o">=</span> <span class="mf">0.0001</span> <span class="c1">#feilmargin</span>
+<span class="n">dis</span> <span class="o">=</span> <span class="mi">350000</span> <span class="c1">#eksempel distansen [m] mellom railgun og målet</span>
+<span class="nb">max</span> <span class="o">=</span> <span class="mi">2500000</span> <span class="c1">#valgt maksimal avstand mellom railgunen og båten</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">max</span><span class="p">,</span><span class="nb">round</span><span class="p">((</span><span class="nb">max</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">5000</span><span class="p">))</span> <span class="c1">#ulike avstander mellom railgunen og båten</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mf">12.5</span> <span class="c1">#massen til prosjektilet</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">find_theta</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">v0</span><span class="p">):</span> <span class="c1">#funksjonen finner vinkelen prosjektilet skytes ut ved en gitt avstand</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="n">v0</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">&gt;=</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">eps</span><span class="p">):</span> <span class="c1">#acrcsin(x) er ikke definert for x&gt;=1</span>
+       <span class="n">deg</span> <span class="o">=</span> <span class="s2">&quot;ikke tilgjengelig, siden arcsin(x) ikke er definert for x&gt;=1&quot;</span>
+       <span class="n">dis</span> <span class="o">=</span>  <span class="s2">&quot;not available&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+       <span class="n">rad</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">g</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="p">(</span><span class="n">v0</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+       <span class="n">deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rad</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+       <span class="n">dis</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">deg</span><span class="p">,</span> <span class="n">dis</span>
+<span class="n">theta_val</span><span class="p">,</span> <span class="n">rekkevidde</span> <span class="o">=</span> <span class="n">find_theta</span><span class="p">(</span><span class="n">dis</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> 
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Utskytningsvinkel er </span><span class="si">{0}</span><span class="s2">° ved avstand </span><span class="si">{1}</span><span class="s2">km.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta_val</span><span class="p">,</span><span class="n">dis</span><span class="o">/</span><span class="mi">1000</span><span class="p">))</span> 
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Utskytningsvinkel er 24.02120890824163° ved avstand 350.0km.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Her plottes forholdet mellom vinkel og avstand.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">v0</span><span class="p">):</span> <span class="c1">#funksjon som finner forhold mellom vinkel of avstand</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#liste med forskjellige avstands-verdier mellom railgunen og båten</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#liste med tilsvarende vinkel-verdier</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">x</span><span class="p">:</span> <span class="c1">#beregne vinkelen for hver avstand</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">g</span><span class="o">*</span><span class="n">i</span><span class="o">/</span><span class="p">(</span><span class="n">v0</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">&lt;</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">eps</span><span class="p">):</span> <span class="c1">#acrcsin(x) er ikke definert for x&gt;=1</span>
+           <span class="n">rad</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">g</span><span class="o">*</span><span class="n">i</span><span class="o">/</span><span class="p">(</span><span class="n">v0</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+           <span class="n">deg</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rad</span><span class="o">*</span><span class="mi">180</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+           <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span>
+           <span class="n">d</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">deg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span>
+
+<span class="n">x_ver</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="c1">#Verdier med samsvarnde avstand og vinkel</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_ver</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+<span class="c1">#Plotte forholdet mellom vinkel og avstand</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_ver</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Forhold mellom vinkel og avstand&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;avstand [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;vinkel [°]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;Forhold mellom vinkel og avstand&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgunmaxspeed/RailgunMaxSpeed_19_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Ved større vinkel går prosjektilet lengre. Den maksimale avstanden nås ved en vinkel på ca 45°. <br></p>
+<p>I neste steg bergenges bevegelsen til prosjektilet med en funkjson som tar inn variabler: avstand, startfart, tidssteg, antall interasjoner, tilhørende vinkel, tettheten til mediet prosjketilet går gjennom og jordas rotasjonshastighet. I første eksemplet sees bort fra luftmotstand og corioliskraften som er avhengig av medietetthet og rotasjonshastigheten til jorden. Det tas hensyn til gravitasjon.<br></p>
+<p>Det legges til ekstra parametre som brukes senere.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Parametre for posjektilet</span>
+<span class="n">C_d</span> <span class="o">=</span> <span class="mf">0.295</span> <span class="c1">#drag coefficient for a bullet, regnes som konstant</span>
+<span class="n">r</span> <span class="o">=</span> <span class="mf">0.075</span>  <span class="c1">#radius til sylinderen og kulen</span>
+<span class="n">A_front</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">r</span><span class="o">**</span><span class="mi">2</span> <span class="c1">#front arealet til prosjektilet</span>
+<span class="n">rho_vann</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1">#tettheten til vann [kg/m^3]</span>
+<span class="n">rho_luft</span> <span class="o">=</span> <span class="mf">1.2754</span> <span class="c1">#tettheten til luft [kg/m^3]</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="mf">7.2921</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span> <span class="c1">#jordas rotasjon [rad/s], z-retning(ut av sentrum)</span>
+
+<span class="k">def</span> <span class="nf">posi</span><span class="p">(</span><span class="n">avstand</span><span class="p">,</span><span class="n">startfart</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">vinkel</span><span class="p">,</span> <span class="n">medietetthet</span><span class="p">,</span><span class="n">insys_omega</span><span class="p">):</span> <span class="c1">#funksjonen finner bevegelsen til prosjektilet, tetthhet til luft/vann etc, intertialsystemrotasjon</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="nb">float</span><span class="p">)</span> <span class="c1">#posisjonen til prosjektilet</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span><span class="nb">float</span><span class="p">)</span> <span class="c1">#hastigheten til prosjektilet</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="nb">float</span><span class="p">)</span> <span class="c1">#tid </span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="nb">float</span><span class="p">)</span> <span class="c1">#akselerasjonen til prosjektilet </span>
+    <span class="n">omega_rot</span> <span class="o">=</span> <span class="n">insys_omega</span>
+    <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#startposisjon</span>
+    <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">startfart</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">vinkel</span><span class="p">)),</span> <span class="n">startfart</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">vinkel</span><span class="p">)),</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#starthastighet i x,y retning, gjør om vinkel i grader til radianer</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">t_tot</span><span class="o">-</span><span class="mf">0.02</span><span class="p">:</span> <span class="c1">#bevegelsen mens porsjektilet er i luften</span>
+        <span class="k">if</span> <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#stopper iterasjonen når prosjektilet treffer båten ved høyden y = 0</span>
+            <span class="k">break</span>
+        <span class="n">cor_f</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="o">*</span><span class="p">(</span><span class="n">omega_rot</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#corioliskraft virker østover</span>
+        <span class="n">drag</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span><span class="o">*</span><span class="n">medietetthet</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">*</span><span class="n">C_d</span><span class="o">*</span><span class="n">A_front</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">m</span><span class="p">)</span> <span class="c1">#drag deceleration [m/s^2]</span>
+        <span class="n">Fy</span> <span class="o">=</span> <span class="n">m</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="n">g</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#kraften på porsjektilet i y-retning gitt akselerasjonen</span>
+        <span class="n">Fnet</span> <span class="o">=</span> <span class="n">Fy</span><span class="o">+</span><span class="n">drag</span><span class="o">+</span><span class="n">cor_f</span> <span class="c1">#netto kraften</span>
+        <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">Fnet</span><span class="o">/</span><span class="n">m</span> <span class="c1">#acceleration vector</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">dt</span><span class="o">*</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="c1">#velocity vector</span>
+        <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">dt</span><span class="o">*</span><span class="n">v</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:]</span> <span class="c1">#position vector</span>
+        <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">dt</span> 
+        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">r</span><span class="p">,</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span>
+
+<span class="n">t_tot</span> <span class="o">=</span> <span class="mi">2000</span> <span class="c1">#hensiktemssig tid slik at banene til prosjektilet fullføres</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="c1">#tidssteg</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">t_tot</span><span class="o">/</span><span class="n">dt</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span><span class="mi">3</span><span class="p">):</span> <span class="c1">#for å plotte noen av beregningene for utskytningsvinkelen, hentes ut hver tredje verdi i de tilsvarende listene</span>
+    <span class="n">pos</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">posi</span><span class="p">(</span><span class="n">x_ver</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">v</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">#posisjonen til prosjektilet for k-vinkler</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span> <span class="c1">#plotter bevegelsen til prosjektilet for en gitt utskytningsvinkel</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Avstand [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Høyde [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Bevegelsen til prosjektilet for en gitt utskytningsvinkel&quot;</span><span class="p">)</span>
+<span class="c1">#plt.savefig(&quot;Bevegelsen til prosjektilet for gitte utskytningsvinkeler&quot;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgunmaxspeed/RailgunMaxSpeed_21_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Siden x-komponenten til farten er konstant, er hver bevegelseskurve symmetrisk med en forksyvning av topppunktet.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Utvidet-modell-med-luftmotstand-og-corioliskraft">Utvidet modell med luftmotstand og corioliskraft<a class="anchor-link" href="#Utvidet-modell-med-luftmotstand-og-corioliskraft"> </a></h2><p>I neste steg forbedres modellen ved å inkludere luftmotstanden og corioliskraften om prosjektilet skytes mot rett nord. <br>
+Vi antar at prosjektilet ligner på en lang kule som består av en halvkule og en sylinder. Da kan luftmostanden, $F_{Drag}$, simuleres på følgende måte
+$$ F_{Drag} = \frac{1}{2}C_d \rho V^2 A $$
+der $\rho$ er tettheten, $V$ er hastigheten til prosjektilet, $C_d$ er en konstant og $A$ er frontarealet.
+Ifølge NASAs nettside er $C_d$ for en kule lik 0,295. <br>
+Gitt kulens radius av 0.075m, blir frontarelet blir 0,035$m^2$. Massen til prosjektilet er 20kg.
+ <br></p>
+<p>Om en skal være presis over en lang avstand, er det hensiktmessig å inkludere corioliskraften i modellen. Kraften blir utrykt ved $$F_{Cor} = -2m\Omega \times v' $$
+hvor $\Omega$ er lik rotasjonshastigheten til jorden og $v'$ er hastigheten til prosjektilet. Når x legges nordover, y vestover og z radielt utover fra jorden, så vil $\Omega$ vare i z-retning. Prosjektilet beveges nordover i x-retning og dermed vil det negativet kryssproduktet ha en komponent østover. Med andre ord virker $F_{Cor}$ til høyre. (NB i prommgrammet tilsvarer y høden til prosjektilet.)
+<br></p>
+<p>Programmet inkludert luftmotstand blir dermed</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span><span class="mi">7</span><span class="p">):</span> <span class="c1">#for å plotte noen av beregningene for utskytningsvinkelen, hentes ut hver tredje verdi i de tilsvarende listene</span>
+    <span class="n">pos</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span><span class="n">i</span> <span class="o">=</span> <span class="n">posi</span><span class="p">(</span><span class="n">x_ver</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">v</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">rho_luft</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span> <span class="c1">#plotter bevegelsen til prosjektilet for en gitt utskytningsvinkel</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Avstand [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Høyde [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Bevegelsen til prosjektilet inkludert luftmotstand&quot;</span><span class="p">)</span>
+<span class="c1">#plt.savefig(&quot;Bevegelsen til prosjektilet inkludert luftmotstand&quot;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgunmaxspeed/RailgunMaxSpeed_24_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>På grunn av luftmotstand vil kurvene bli avbøyd, slik at den maksimale avstanden blir mye kortere enn den i første simulasjonen. I tillegg kommer prosjektilet ikke like langt opp.<br></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#Plotter forholdet mellom maks avstand til prosjektilet og dets sluttfart(ved vannets overflate).</span>
+<span class="n">sluttfart</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">maks_avstand</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">pos</span><span class="p">,</span> <span class="n">vel</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">posi</span><span class="p">(</span><span class="n">x_ver</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">v</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">rho_luft</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">sluttfart</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">vel</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">maks_avstand</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">maks_avstand</span><span class="p">,</span><span class="n">sluttfart</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Avstand [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Hastighet [m/s]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Rekkevidde mot sluttfart&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">70</span><span class="p">])</span>
+<span class="c1">#plt.savefig(&quot;Rekkevidde mot sluttfart&quot;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgunmaxspeed/RailgunMaxSpeed_26_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Grafen over viser forholdet mellom rekkevidde og hastigheten prosjektilet har når den treffer vannoverflaten.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Plottet under viser effekten av luftmotstanden for en gitt utskytningsvinkel lik </span><span class="si">{:.1f}</span><span class="s2">°.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Plottet under viser effekten av luftmotstanden for en gitt utskytningsvinkel lik 40.9°.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#sammenligne bevegelsen med og uten luftmotstand ved en bestemt vinkel</span>
+<span class="n">pos0</span><span class="p">,</span> <span class="n">fart0</span><span class="p">,</span> <span class="n">i0</span> <span class="o">=</span> <span class="n">posi</span><span class="p">(</span><span class="n">x_ver</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">v</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> 
+<span class="n">posl</span><span class="p">,</span> <span class="n">fartl</span><span class="p">,</span> <span class="n">il</span> <span class="o">=</span> <span class="n">posi</span><span class="p">(</span><span class="n">x_ver</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">v</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">rho_luft</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos0</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">pos0</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;u/luftmotstand&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">posl</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">il</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">posl</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">il</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;m/luftmotstand&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;avstand [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;høyde [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;bevegelsen til prosjektilet&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgunmaxspeed/RailgunMaxSpeed_29_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I koden under legges corioliseffekten til i modellen.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span><span class="mi">5</span><span class="p">):</span> <span class="c1">#for å plotte noen av beregningene for utskytningsvinkelen, hentes ut hver tredje verdi i de tilsvarende listene</span>
+    <span class="n">pos</span><span class="p">,</span> <span class="n">fart</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">posi</span><span class="p">(</span><span class="n">x_ver</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">v</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">theta</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">rho_luft</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">,</span> <span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="mi">1000</span><span class="p">)</span> <span class="c1">#plotter bevegelsen til prosjektilet for en gitt utskytningsvinkel</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Østover  [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Avstand nordover [km]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Bevegelsen til prosjektilet inkludert luftmotstand og corioliskraften&quot;</span><span class="p">)</span>
+<span class="c1">#plt.savefig(&quot;bevegelsen til prosjektilet inkludert luftmotstand og corioliskraften&quot;)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/railgunmaxspeed/RailgunMaxSpeed_31_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Grafen viser effekten av corioliskraften på prosjektilet. Om prosjektilet skytes rett nord, vil corioliskraften avbøye prosjektilet til øst. Med uskytningsvinkel på ca. 40°, vil den bli avbøyd hele 1.2 kilometer. <br></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Konklusjon">Konklusjon<a class="anchor-link" href="#Konklusjon"> </a></h2><p>Formålet var å finnne bevegelsen til et prosjektil gitt en maksimal hastighet og andre relevante sammenhenger for banene. For å finne den elektromagnetiske kraften utført på prosjektilet, bruktes den gitte modellen til en railgun. Kraften akselerer prosjektilet til en hastighet på 2148.8m/s. For å treffe ulike mål langs havet, ble tilhørende vinkler kalkulert. Naturligvis gir vinkelen nærmest 45° størst rekkevide. Ved gitt avstand og utskytningsvinkel plottes bevegelsen til prosjektilet. Inkludert luftmotstand blir prosjektilets bane avbøyd betydelig. Fra en rekkevide på ca. 450km, ga den nye modellen bare en distanse på 70km. Ca 15% av den oprinnelige modellen. <br>
+På grunn av den store farten, vil corioliskraften ha en vesentlig innflyttlese på banen. Om prosjektilet skytes rett nord, blir banen forskjøvet 1.2km østver. <br></p>
+<p>Modellen brukt i dette essayet er basert på en forenklet virkelighet. Faktorer som indusert magnetfelt, ekstrem varme, begrenset kapitans, mangel på nøyaktige dimensjoner til railgunnen, friksjon mellom skinnenene og broen, frastøtning mellom skinnene og luftmotstandkonstanten som varierer med hastighet er ikke inkludert i modellen. På tross av disse forenklingene er det ikke helt urealistisk at denne rekkevidden på 120 km kan være oppnålig i nær fremtid. I følge USA vil Kina ha fullført sin testing av skipbaserte railguns i løpet av noen år og ha et ferdig produkt montert innen 2025.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Kilder">Kilder<a class="anchor-link" href="#Kilder"> </a></h4><p><a href="https://science.howstuffworks.com/rail-gun1.htm">https://science.howstuffworks.com/rail-gun1.htm</a>
+<a href="http://www.navweaps.com/Weapons/WNUS_Rail_Gun.php">http://www.navweaps.com/Weapons/WNUS_Rail_Gun.php</a>
+<a href="https://www.baesystems.com/en/product/electromagnetic--em--railgun">https://www.baesystems.com/en/product/electromagnetic--em--railgun</a>
+<a href="https://www.wired.com/2014/04/electromagnetic-railgun-launcher/">https://www.wired.com/2014/04/electromagnetic-railgun-launcher/</a>
+<a href="https://thediplomat.com/2019/06/us-navys-railgun-entering-new-testing-phases/">https://thediplomat.com/2019/06/us-navys-railgun-entering-new-testing-phases/</a>
+<a href="https://www.businessinsider.com/us-navy-talking-about-finally-testing-railgun-at-sea-2019-5?r=US&amp;IR=T">https://www.businessinsider.com/us-navy-talking-about-finally-testing-railgun-at-sea-2019-5?r=US&amp;IR=T</a>
+<a href="https://www.economist.com/news/science-and-technology/21650519-americas-navy-wants-arm-its-ships-electrically-powered-superguns-rail?fsrc=scn/fb/te/pe/ed/railguntestvid">https://www.economist.com/news/science-and-technology/21650519-americas-navy-wants-arm-its-ships-electrically-powered-superguns-rail?fsrc=scn/fb/te/pe/ed/railguntestvid</a></p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

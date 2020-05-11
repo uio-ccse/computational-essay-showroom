@@ -1,0 +1,985 @@
+---
+redirect_from:
+  - "/essays/studentessays/lhc/lhc-compessay"
+interact_link: content/essays/studentessays/LHC/LHC_CompEssay.ipynb
+kernel_name: python3
+kernel_path: content/essays/studentessays/LHC
+has_widgets: false
+title: |-
+  What are the effects of relativity on particles in the LHC?
+pagenum: 9
+prev_page:
+  url: /essays/studentessays/stormcloud/2D_Stormcloud_Lightning-sisandst_jrevense.html
+next_page:
+  url: /essays/studentessays/magnetic_bottle_MBP_KG/MagneticBottle_Trap_ComputationalEssay.html
+suffix: .ipynb
+search: protons accelerator linac ps velocity relativistic speed frac factors proton lhc field magnetic particle complex model c v desired synchrotron must m not our into potential force motion set reach position functions cerns consists however electric beam exit beams also variables path dipoles simulation lorentz factor able included code below simplified cyclotron since actual using accelerates before acceleration cern end compare defined difference u given l mv final input circular mini through keep increase strength same want arrays observe gamma mass simulate linear large hadron collider uses focus investigation accelerate particles light sps machine outreach aim including although components possible
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">What are the effects of relativity on particles in the LHC?</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Simulating-CERNs-Particle-Accelerator">Simulating CERNs Particle Accelerator<a class="anchor-link" href="#Simulating-CERNs-Particle-Accelerator"> </a></h1><p><strong>A Computational Essay by Erlend Tiberg North and Linn Margrethe Rykkje, University of Oslo</strong></p>
+<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction"> </a></h2><p>The code below aims to simulate a version of CERNs accelerator complex, which, in our simplified model, consists of a linear accelerator (LINAC), a proton synchrotron (PS) and the large hadron collider (LHC).
+Initially, the provided code concerned a cyclotron; however, since CERNs actual particle accelerator uses a synchrotron, an adaptation descended from the cyclotron, this is the primary focus of the investigation.</p>
+<p><strong>Background</strong></p>
+<p>Explained simply, the accelerator complex consists of a sequence of machines that cumulatively accelerate particles close to the speed of light. In the case of protons, the protons are retrieved from a bottle of hydrogen gas by using an electric field to strip away their electrons. LINAC 2, the first accelerator in the chain, accelerates the protons to a determined velocity, before sending the beam into a Proton Synchrotron Booster (PBS), followed by the Proton Synchrotron (PS) and then the Super Proton Synchrotron (SPS). When protons exit the SPS, they are injected into two beam pipes of the LHC at a speed of 0.87c. After further acceleration to their maximum kinetic energy, the beams are brought into collision at a speed of 0.99999c!</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="https://lhc-machine-outreach.web.cern.ch/lhc-machine-outreach/images/complex/Cern-complex.gif" alt="Diagram of the Cern Complex"></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Aim</strong></p>
+<p>Our aim is to simulate the particle accelerator; in doing so we have simplified the complex by only including the first LINAC, the PS and the LHC, although the actual system consists of many more components. We attempted to model LINAC2, the PS and the LHC as closely as possible from real values, but also had to make some assumptions. In the end we consider relativistic factors and compare the effects of these to the perfectly ideal situation.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Developing-the-Model">Developing the Model<a class="anchor-link" href="#Developing-the-Model"> </a></h2><p><strong>Linear Accelerator 2</strong></p>
+<p>The regular LINAC uses an electric field, indirectly defined by a potential difference, $U_0$, and accelerates the proton over a given distance $l$ such that it enters the first PS with a speed of $0.3c$. First we need to know what potential difference must be applied in order to achieve this. Using the relation between electric field, potential and force, we derive the following:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$ 
+F = qE = ma
+\\
+E = \frac{U_0}{l}
+\\
+a = \frac{qE}{m} = \frac{qU_0}{lm} 
+\\
+$$<p>Then, using motion equations: 
+$$
+v^2 = v_0 + 2al 
+\\
+v^2 = 2\frac{qU_0}{lm}l 
+\\
+U_0 = \frac{1}{2} \frac{mv^2}{q} 
+$$</p>
+<p>where $v$ is the desired final speed.</p>
+<p>We import the standard libraries and define the input variables for the potential to calculate the initial voltage.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+
+<span class="sd">&quot;&quot;&quot;Defining variables for LINAC2&quot;&quot;&quot;</span>
+<span class="n">c</span> <span class="o">=</span> <span class="mf">2.99</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="mi">8</span> <span class="c1">#Set the speed of light</span>
+<span class="n">q</span> <span class="o">=</span> <span class="mf">1.6e-19</span> <span class="c1">#Set the charge of the particle to the charge of a proton</span>
+<span class="n">m0</span> <span class="o">=</span> <span class="mf">1.67e-27</span> <span class="c1">#Set mass of the particle to the mass of a proton</span>
+
+<span class="n">v0</span> <span class="o">=</span> <span class="mf">0.3</span><span class="o">*</span><span class="n">c</span> <span class="c1">#Set wanted exit speed of LINAC2</span>
+<span class="n">l0</span> <span class="o">=</span> <span class="mi">500</span> <span class="c1">#Set length of LINAC2</span>
+<span class="n">U0</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">m0</span><span class="o">*</span><span class="n">v0</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="c1">#Set voltage of LINAC2</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Voltage of LINAC2 is: </span><span class="si">%e</span><span class="s2"> V&quot;</span> <span class="o">%</span> <span class="n">U0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Voltage of LINAC2 is: 4.199053e+07 V
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Proton Synchrotron</strong></p>
+<p>The PS accelerates the protons whilst also keeping them on a circular path with constant radius, as opposed to the cyclotron where the particles spiral outwards. In our model, the protons are briefly accelerated by a "mini-LINAC" before passing through a set of dipoles. These dipoles are what keep the radius of the motion constant; they direct the beams around the ring by applying a magnetic field proportional to the velocity of the protons. In real life, CERNs PS consists of 100 of such dipoles in addition to 277 conventional electromagnets, distributed over a circumference of 628 meters. Since the conventional electromagnets' sole purpose is to focus the protons into a fine beam, we decided to not include them in our model. We also assume that the mini-LINAC and dipole appear alternatingly.</p>
+<p>Since the protons' velocity increase in each mini-LINAC, the magnetic field strength must increase proportionately to keep bending the beam the same number of degrees. We thus need a magnetic field strength that varies with the velocity $v$.</p>
+<p>For the protons to stay on a circular path, they must have a sentripetal acceleration, which we want the magnetic force to be responsible for; i.e. the magnetic force points radially in towards the center of the PS. The relevant velocity will always be tangential to the circle and thus perpendicular to the magnetic force. If the protons circulate clockwise, the magnetic field we set up must be in the positive $\hat{z}$-direction (out of the plane).</p>
+<p>First considering the magnitudes we find that the magnetic field strength must be given by,</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$
+F = ma = qvB = m\frac{v^2}{r} \\
+B = \frac{mv}{qr} \\
+\implies \vec{B} = \frac{mv}{qr} \hat{z}
+$$<p>Again, we set the condition that the protons must reach a desired velocity (this time 0.87c) before they are released to the LHC through a proton transfer tube (PTT). This time we choose the potential difference arbitrarily.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Defining variables for the PS&quot;&quot;&quot;</span>
+<span class="n">v1</span> <span class="o">=</span> <span class="mf">0.87</span><span class="o">*</span><span class="n">c</span> <span class="c1">#Set wanted exit speed of PS</span>
+<span class="n">l1</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1">#Set length of MINI-LINACs for the PS</span>
+<span class="n">U1</span> <span class="o">=</span> <span class="mf">4.2e4</span> <span class="c1">#Set voltage of MINI-LINACs for the PS</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Voltage of PS is: </span><span class="si">%e</span><span class="s2"> V&quot;</span>  <span class="o">%</span> <span class="n">U1</span><span class="p">)</span>
+<span class="n">r1</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1">#Set radius of PS</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Voltage of PS is: 4.200000e+04 V
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Large Hadron Collider</strong></p>
+<p>The LHC is modeled in the same manner as the PS. With a circumference of 27km, it is much larger than the PS and is capable of accelerating the protons to a speed of $0.99999c$. In the LHC, there are two beams of protons that travel in opposite directions so that when the desired speed is reached, the two beams are made to collide at the position of a particle detector.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Defining variables for the LHC&quot;&quot;&quot;</span>
+<span class="n">v2</span> <span class="o">=</span> <span class="n">c</span> <span class="c1">#Set wanted speed achieved in the LHC</span>
+<span class="n">l2</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1">#Set length of MINI-LINACs for the LHC</span>
+<span class="n">U2</span> <span class="o">=</span> <span class="mf">2.5e3</span> <span class="c1">#Set voltage of MINI-LINACs for the LHC</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Voltage of LHC is: </span><span class="si">%e</span><span class="s2"> V</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">U2</span><span class="p">)</span>
+<span class="n">r2</span> <span class="o">=</span> <span class="mi">4250</span> <span class="c1">#Set radius of LHC</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Voltage of LHC is: 2.500000e+03 V
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simulation-of-the-Particle-Accelerator">Simulation of the Particle Accelerator<a class="anchor-link" href="#Simulation-of-the-Particle-Accelerator"> </a></h2><p>First we set up the needed variables and arrays for the simulation.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Initializing simulation&quot;&quot;&quot;</span>
+
+<span class="n">t</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Initialize time to 0</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mf">5e-9</span> <span class="c1">#Set timestep to 5 nanoseconds</span>
+
+<span class="n">particlepos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">])</span> <span class="c1">#Set the initial postition of the particle, starting in LINAC2</span>
+<span class="n">particlev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e-12</span><span class="p">,</span><span class="mf">1e-12</span><span class="p">,</span><span class="mf">0.0</span><span class="p">])</span> <span class="c1">#Set the initial speed of the particle, starting from rest in LINAC2</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Although the proton is supposed to start from rest in LINAC2, it needs a small initial velocity to avoid computing-error when calculating the norm of the vector in the function for LINAC.</p>
+<p>We decided to write functions for the LINAC and PS, as this enables us to more easily call on them with varying input variables. Both functions utilize Euler's method; first calculating the force acting on the protons (electric in the LINAC and electromagnetic in the PS) and then estimating the acceleration, velocity and position by integrating in time.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Function for LINAC&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">linac</span><span class="p">(</span><span class="n">U</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">pos</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">):</span>
+
+    <span class="n">posx</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">posy</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">v1</span><span class="p">):</span>
+
+        <span class="n">Fnet</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span><span class="o">*</span><span class="n">q</span><span class="p">)</span><span class="o">/</span><span class="n">l</span> <span class="o">*</span> <span class="n">v</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">Fnet</span><span class="o">*</span><span class="n">dt</span><span class="o">/</span><span class="n">m0</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">dt</span>
+
+        <span class="n">posx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posx</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">posy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posy</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">v1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reached </span><span class="si">%.0f</span><span class="s2"> m&quot;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reached </span><span class="si">%.2f%%</span><span class="s2"> of light speed in %0.f iterations. Time passed: </span><span class="si">%.2e</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">l</span> <span class="o">-</span> <span class="mf">1E-5</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Did not reach speed in 50 m&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final speed was </span><span class="si">%.2f%%</span><span class="s2"> of light speed in %0.f iterations. Time passed: </span><span class="si">%.2e</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+            <span class="k">break</span>
+            
+    <span class="k">return</span> <span class="n">posx</span><span class="p">,</span> <span class="n">posy</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">speed</span><span class="p">,</span> <span class="n">t</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Function for a synchrotron&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">synchrotron</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="n">pos</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">clockwise</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">t0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simulation of a Synchrotron. Calculates the forces on a particle from a</span>
+<span class="sd">    mini-LINAC and from a dipole, and integrates its motion by utilizing Euler&quot;&quot;&quot;</span>
+    <span class="n">posx</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">posy</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">v1</span><span class="p">):</span>
+        
+        <span class="k">if</span> <span class="n">clockwise</span><span class="p">:</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,(</span><span class="n">m0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">q</span><span class="o">*</span><span class="n">r</span><span class="p">)])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="o">-</span><span class="p">(</span><span class="n">m0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">q</span><span class="o">*</span><span class="n">r</span><span class="p">)])</span>
+        
+        <span class="n">Fnet</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span><span class="o">*</span><span class="n">q</span><span class="p">)</span><span class="o">/</span><span class="n">l</span> <span class="o">*</span> <span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="n">Fnet</span> <span class="o">+=</span> <span class="n">q</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">Fnet</span><span class="o">*</span><span class="n">dt</span><span class="o">/</span><span class="n">m0</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">dt</span>
+
+        <span class="n">posx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posx</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">posy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posy</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+        <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">100000</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Did not reach %.f</span><span class="si">%%</span><span class="s2"> of light speed within %0.f iterations&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span><span class="n">i</span><span class="p">))</span>
+            <span class="k">break</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reached </span><span class="si">%.2f%%</span><span class="s2"> of light speed in </span><span class="si">%.0f</span><span class="s2"> iterations. Time passed: </span><span class="si">%.2e</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">posx</span><span class="p">,</span> <span class="n">posy</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">speed</span><span class="p">,</span> <span class="n">t</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now we can actually make use of everything!</p>
+<p>We call on the functions for each component of the particle accelerator and store the returned arrays/lists for plotting purposes.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Calling on functions for all components&quot;&quot;&quot;</span>
+
+<span class="c1">#Linear Accelerator 2</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">LINAC2:&quot;</span><span class="p">)</span>
+<span class="n">particleposxLINAC2</span><span class="p">,</span> <span class="n">particleposyLINAC2</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">,</span> <span class="n">particlev</span><span class="p">,</span> <span class="n">particlespeedLINAC2</span><span class="p">,</span> <span class="n">t</span>  <span class="o">=</span> <span class="n">linac</span><span class="p">(</span><span class="n">U0</span><span class="p">,</span><span class="n">l0</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">particlepos</span><span class="p">,</span><span class="n">particlev</span><span class="p">,</span><span class="n">v0</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">)</span> <span class="c1">#Calls the linac function with given variables to simulate CERN&#39;s LINAC2</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">t</span>
+
+<span class="c1">#Proton Synchrotron</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Proton Synchrotron:&quot;</span><span class="p">)</span>
+<span class="n">particleposxPS</span><span class="p">,</span> <span class="n">particleposyPS</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">,</span> <span class="n">particlev</span><span class="p">,</span> <span class="n">particlespeedPS</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">synchrotron</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">l1</span><span class="p">,</span><span class="n">U1</span><span class="p">,</span><span class="n">particlepos</span><span class="p">,</span><span class="n">particlev</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#Calls the synchrotron function with given variables to simulate CERN&#39;s Proton Synchrotron</span>
+<span class="n">t1</span> <span class="o">=</span> <span class="n">t</span>
+
+<span class="c1">#Proton Transfer Tube</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Proton Transfer Tube:&quot;</span><span class="p">)</span>
+<span class="n">particleposxPTT</span> <span class="o">=</span> <span class="p">[</span><span class="n">particlepos</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="n">particleposyPTT</span> <span class="o">=</span> <span class="p">[</span><span class="n">particlepos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
+    <span class="n">particlepos</span> <span class="o">+=</span> <span class="n">particlev</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#Integrate the position of a particle using Euler</span>
+    <span class="n">particleposxPTT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">particleposxPTT</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#append the x position to the x-position list</span>
+    <span class="n">particleposyPTT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">particleposyPTT</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#append the y position to the y-position list</span>
+    <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transfered Proton successfully from Proton Synchrotron to Large Hadron Collider&quot;</span><span class="p">)</span>
+
+<span class="c1">#Large Hadron Collider</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Large Hadron Collider:&quot;</span><span class="p">)</span>
+<span class="n">particleposxLHC</span><span class="p">,</span> <span class="n">particleposyLHC</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">,</span> <span class="n">particlev</span><span class="p">,</span> <span class="n">particlespeeedLHC</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">synchrotron</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span><span class="n">l2</span><span class="p">,</span><span class="n">U2</span><span class="p">,</span><span class="n">particlepos</span><span class="p">,</span><span class="n">particlev</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+LINAC2:
+Reached 500 m
+Reached 30.00% of light speed in 2230 iterations. Time passed: 1.12e-05 seconds
+
+Proton Synchrotron:
+Reached 87.00% of light speed in 25103 iterations. Time passed: 1.37e-04 seconds
+
+Proton Transfer Tube:
+Transfered Proton successfully from Proton Synchrotron to Large Hadron Collider
+
+Large Hadron Collider:
+Reached 100.00% of light speed in 93793 iterations. Time passed: 6.08e-04 seconds
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Lastly, we'd like to observe the motion of the protons as they move through the particle accelerator complex. The first code below is a simple 2-dimensional plot showing the x- and y-position of the protons.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Regular plot showing motion, non-relativistic&quot;&quot;&quot;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLINAC2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">particleposyLINAC2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LINAC2 Entry&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLINAC2</span><span class="p">,</span> <span class="n">particleposyLINAC2</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LINAC2 Trajectory&quot;</span><span class="p">)</span> <span class="c1">#create the plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLINAC2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">particleposyLINAC2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LINAC2 Exit/PS Entry&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxPS</span><span class="p">,</span> <span class="n">particleposyPS</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PS Trajectory&quot;</span><span class="p">)</span> <span class="c1">#create the plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxPS</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">particleposyPS</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PS Exit&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxPTT</span><span class="p">,</span> <span class="n">particleposyPTT</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PTT Trajectory&quot;</span><span class="p">)</span> <span class="c1">#create the plot</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLHC</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">particleposyLHC</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LHC Entry&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLHC</span><span class="p">,</span> <span class="n">particleposyLHC</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span> <span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LHC Trajectory&quot;</span><span class="p">)</span> <span class="c1">#create the plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLHC</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">particleposyLHC</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;oy&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;End of the Proton&#39;s Journey&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x position [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;y position [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Trajectory of a proton in a Particle Accelerator&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/LHC/LHC_CompEssay_19_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Considering-Relativistic-Factors">Considering Relativistic Factors<a class="anchor-link" href="#Considering-Relativistic-Factors"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the model above, we have neglected the effect of relativistic factors despite the fact that the protons travel at incredibly high speeds. By including the Lorentz factor, $\gamma$, we can see what impact a relativistic increase in mass has on the proton's motion and velocity. The Lorentz factor is defined as the following:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$
+\gamma = \frac{1}{\sqrt{1-\frac{v^2}{c^2}}}
+$$<p>The relativistc mass $m$ is given by the Lorentz factor and the mass at rest, $m_0$:</p>
+$$
+m = \gamma m_0
+$$<p>To implement these changes, we create new simulation variables and arrays, and write a function for the Lorentz factor.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Initializing relativistic simulation&quot;&quot;&quot;</span>
+<span class="n">tr</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#initialize time to 0 (relativistic)</span>
+<span class="n">dtr</span> <span class="o">=</span> <span class="mf">5e-9</span> <span class="c1">#Set timestep to 50 nanoseconds (relativistic)</span>
+
+<span class="n">particleposr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">])</span> <span class="c1">#Set the initial postition of the particle (relativistic)</span>
+<span class="n">particlevr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1e-12</span><span class="p">,</span><span class="mf">1e-12</span><span class="p">,</span><span class="mf">0.0</span><span class="p">])</span> <span class="c1">#Set the initial speed of the particle (relativistic)</span>
+
+<span class="k">def</span> <span class="nf">gamma</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A simple function to return the Lorentz factor for a given velocity&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">c</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The core of the functions remain the same, but we want to be able to dictate whether relativistic factors should or should not be included by issuing an if/else-statement.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Relativistic function for the LINAC&quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">linac</span><span class="p">(</span><span class="n">U</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">pos</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">relativistic</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">t0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simulates a Linear Accelerator by calculating the net force on</span>
+<span class="sd">       a particle and integrating its motion with Euler&quot;&quot;&quot;</span>
+    <span class="n">posx</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">posy</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">v1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">relativistic</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">m0</span>
+            <span class="k">if</span> <span class="n">t</span><span class="o">==</span><span class="n">t0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Speed at non-relativistic end-time for %.f</span><span class="si">%%</span><span class="s2"> of light speed was </span><span class="si">%.2f%%</span><span class="s2"> of light speed&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">m0</span>
+        <span class="n">Fnet</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span><span class="o">*</span><span class="n">q</span><span class="p">)</span><span class="o">/</span><span class="n">l</span> <span class="o">*</span> <span class="n">v</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">Fnet</span><span class="o">*</span><span class="n">dt</span><span class="o">/</span><span class="n">m</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">dt</span>
+
+        <span class="n">posx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posx</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">posy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posy</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">v1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reached </span><span class="si">%.0f</span><span class="s2"> m&quot;</span> <span class="o">%</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reached </span><span class="si">%.2f%%</span><span class="s2"> of light speed in %0.f iterations. Time passed: </span><span class="si">%.2e</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+            <span class="k">break</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">l</span> <span class="o">-</span> <span class="mf">1E-5</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Did not reach speed in 50 m&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final speed was </span><span class="si">%.2f%%</span><span class="s2"> of light speed in %0.f iterations. Time passed: </span><span class="si">%.2e</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">posx</span><span class="p">,</span> <span class="n">posy</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">speed</span><span class="p">,</span> <span class="n">t</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Relativistic function for a synchrotron&quot;&quot;&quot;</span>
+
+<span class="k">def</span> <span class="nf">synchrotron</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">U</span><span class="p">,</span><span class="n">pos</span><span class="p">,</span><span class="n">v</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">clockwise</span><span class="p">,</span><span class="n">relativistic</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="n">t0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simulation of a Synchrotron. Calculates the forces on a particle from a</span>
+<span class="sd">    mini-LINAC and from a dipole, and integrates its motion by utilizing Euler&quot;&quot;&quot;</span>
+    <span class="n">posx</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="n">posy</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">speed</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">v1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">relativistic</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">m0</span>
+            <span class="k">if</span> <span class="n">t</span><span class="o">==</span><span class="n">t0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Speed at non-relativistic end-time for %.f</span><span class="si">%%</span><span class="s2"> of light speed was </span><span class="si">%.2f%%</span><span class="s2"> of light speed&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">m0</span>
+        <span class="n">Fnet</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span><span class="o">*</span><span class="n">q</span><span class="p">)</span><span class="o">/</span><span class="n">l</span> <span class="o">*</span> <span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">clockwise</span><span class="p">:</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,(</span><span class="n">m</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">q</span><span class="o">*</span><span class="n">r</span><span class="p">)])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="o">-</span><span class="p">(</span><span class="n">m</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">q</span><span class="o">*</span><span class="n">r</span><span class="p">)])</span>
+
+        <span class="n">Fnet</span> <span class="o">+=</span> <span class="n">q</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">Fnet</span><span class="o">*</span><span class="n">dt</span><span class="o">/</span><span class="n">m</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">dt</span>
+
+        <span class="n">posx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posx</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">posy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">posy</span><span class="p">,</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">speed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">speed</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+        <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">100000</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Did not reach %.f</span><span class="si">%%</span><span class="s2"> of light speed within %0.f iterations&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span><span class="n">i</span><span class="p">))</span>
+            <span class="k">break</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reached </span><span class="si">%.2f%%</span><span class="s2"> of light speed in </span><span class="si">%.0f</span><span class="s2"> iterations. Time passed: </span><span class="si">%.2e</span><span class="s2"> seconds&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">posx</span><span class="p">,</span> <span class="n">posy</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">speed</span><span class="p">,</span> <span class="n">t</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We now call on the functions both with and without relativistic factors. This is because we want to compare the velocity when relativistic factors are included at the time when the protons reach their desired final speed ($0.99999c$) without relativistic factors.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Calling on non-relativistic functions&quot;&quot;&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Non-relativistic&quot;</span><span class="p">)</span>
+
+<span class="c1">#Linear Accelerator 2</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">LINAC2:&quot;</span><span class="p">)</span>
+<span class="n">particleposxLINAC2</span><span class="p">,</span> <span class="n">particleposyLINAC2</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">,</span> <span class="n">particlev</span><span class="p">,</span> <span class="n">particlespeedLINAC2</span><span class="p">,</span> <span class="n">t</span>  <span class="o">=</span> <span class="n">linac</span><span class="p">(</span><span class="n">U0</span><span class="p">,</span><span class="n">l0</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">particlepos</span><span class="p">,</span><span class="n">particlev</span><span class="p">,</span><span class="n">v0</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#Calls the linac function with given variables to simulate CERN&#39;s LINAC2</span>
+<span class="n">t0</span> <span class="o">=</span> <span class="n">t</span>
+
+<span class="c1">#Proton Synchrotron</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Proton Synchrotron:&quot;</span><span class="p">)</span>
+<span class="n">particleposxPS</span><span class="p">,</span> <span class="n">particleposyPS</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">,</span> <span class="n">particlev</span><span class="p">,</span> <span class="n">particlespeedPS</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">synchrotron</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">l1</span><span class="p">,</span><span class="n">U1</span><span class="p">,</span><span class="n">particlepos</span><span class="p">,</span><span class="n">particlev</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#Calls the synchrotron function with given variables to simulate CERN&#39;s Proton Synchrotron</span>
+<span class="n">t1</span> <span class="o">=</span> <span class="n">t</span>
+
+<span class="c1">#Proton Transfer Tube</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Proton Transfer Tube:&quot;</span><span class="p">)</span>
+<span class="n">particleposxPTT</span> <span class="o">=</span> <span class="p">[</span><span class="n">particlepos</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="n">particleposyPTT</span> <span class="o">=</span> <span class="p">[</span><span class="n">particlepos</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
+    <span class="n">particlepos</span> <span class="o">+=</span> <span class="n">particlev</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#Integrate the position of a particle using Euler</span>
+    <span class="n">particleposxPTT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">particleposxPTT</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#append the x position to the x-position list</span>
+    <span class="n">particleposyPTT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">particleposyPTT</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#append the y position to the y-position list</span>
+    <span class="n">t</span> <span class="o">+=</span> <span class="n">dt</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transfered Proton successfully from Proton Synchrotron to Large Hadron Collider&quot;</span><span class="p">)</span>
+
+<span class="c1">#Large Hadron Collider</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Large Hadron Collider:&quot;</span><span class="p">)</span>
+<span class="n">particleposxLHC</span><span class="p">,</span> <span class="n">particleposyLHC</span><span class="p">,</span> <span class="n">particlepos</span><span class="p">,</span> <span class="n">particlev</span><span class="p">,</span> <span class="n">particlespeeedLHC</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">synchrotron</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span><span class="n">l2</span><span class="p">,</span><span class="n">U2</span><span class="p">,</span><span class="n">particlepos</span><span class="p">,</span><span class="n">particlev</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">dt</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#Calls the synchrotorn function with given variables to simulate CERN&#39;s Large Hadron Collider</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">t</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Action Report:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The final speed of the proton was </span><span class="si">%.2f%%</span><span class="s2"> of light speed.  The Lorentz factor was </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">particlev</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="n">gamma</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">particlev</span><span class="p">))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time used was </span><span class="si">%e</span><span class="s2"> seconds &quot;</span> <span class="o">%</span> <span class="n">t</span><span class="p">)</span>
+
+<span class="sd">&quot;&quot;&quot;Calling on relativistic functions&quot;&quot;&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Relativistic&quot;</span><span class="p">)</span>
+
+<span class="c1">#Linear Accelerator 2</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">LINAC2:&quot;</span><span class="p">)</span>
+<span class="n">particleposxLINAC2r</span><span class="p">,</span> <span class="n">particleposyLINAC2r</span><span class="p">,</span> <span class="n">particleposr</span><span class="p">,</span> <span class="n">particlevr</span><span class="p">,</span> <span class="n">particlespeedLINAC2r</span><span class="p">,</span> <span class="n">tr</span>  <span class="o">=</span> <span class="n">linac</span><span class="p">(</span><span class="n">U0</span><span class="p">,</span><span class="n">l0</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">particleposr</span><span class="p">,</span><span class="n">particlevr</span><span class="p">,</span><span class="n">v0</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="n">tr</span><span class="p">,</span><span class="n">dtr</span><span class="p">,</span><span class="n">t0</span><span class="p">)</span> <span class="c1">#Calls the linac function with given variables to simulate CERN&#39;s LINAC2 (relativistic)</span>
+
+<span class="c1">#Proton Synchrotron</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Proton Synchrotron:&quot;</span><span class="p">)</span>
+<span class="n">particleposxPSr</span><span class="p">,</span> <span class="n">particleposyPSr</span><span class="p">,</span> <span class="n">particleposr</span><span class="p">,</span> <span class="n">particlevr</span><span class="p">,</span> <span class="n">particlespeedPSr</span><span class="p">,</span> <span class="n">tr</span> <span class="o">=</span> <span class="n">synchrotron</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">l1</span><span class="p">,</span><span class="n">U1</span><span class="p">,</span><span class="n">particleposr</span><span class="p">,</span><span class="n">particlevr</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="kc">False</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="n">tr</span><span class="p">,</span><span class="n">dtr</span><span class="p">,</span><span class="n">t1</span><span class="p">)</span> <span class="c1">#Calls the synchrotron function with given variables to simulate CERN&#39;s Proton Synchrotron (relativistic)</span>
+
+<span class="c1">#Proton Transfer Tube</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Proton Transfer Tube:&quot;</span><span class="p">)</span>
+<span class="n">particleposxPTTr</span> <span class="o">=</span> <span class="p">[</span><span class="n">particleposr</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+<span class="n">particleposyPTTr</span> <span class="o">=</span> <span class="p">[</span><span class="n">particleposr</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
+    <span class="n">particleposr</span> <span class="o">+=</span> <span class="n">particlevr</span><span class="o">*</span><span class="n">dtr</span> <span class="c1">#Integrate the position of a particle using Euler</span>
+    <span class="n">particleposxPTTr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">particleposxPTTr</span><span class="p">,</span> <span class="n">particleposr</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#append the x position to the x-position list</span>
+    <span class="n">particleposyPTTr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">particleposyPTTr</span><span class="p">,</span> <span class="n">particleposr</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="c1">#append the y position to the y-position list</span>
+    <span class="n">tr</span> <span class="o">+=</span> <span class="n">dtr</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Transfered Proton successfully from Proton Synchrotron to Large Hadron Collider&quot;</span><span class="p">)</span>
+
+<span class="c1">#Large Hadron Collider</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Large Hadron Collider:&quot;</span><span class="p">)</span>
+<span class="n">particleposxLHCr</span><span class="p">,</span> <span class="n">particleposyLHCr</span><span class="p">,</span> <span class="n">particleposr</span><span class="p">,</span> <span class="n">particlevr</span><span class="p">,</span> <span class="n">particlespeeedLHCr</span><span class="p">,</span> <span class="n">tr</span> <span class="o">=</span> <span class="n">synchrotron</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span><span class="n">l2</span><span class="p">,</span><span class="n">U2</span><span class="p">,</span><span class="n">particleposr</span><span class="p">,</span><span class="n">particlevr</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">m0</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="kc">True</span><span class="p">,</span><span class="n">tr</span><span class="p">,</span><span class="n">dtr</span><span class="p">,</span><span class="n">t2</span><span class="p">)</span> <span class="c1">#Calls the synchrotorn function with given variables to simulate CERN&#39;s Large Hadron Collider (relativistic)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Action Report:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The final speed of the proton was </span><span class="si">%.2f%%</span><span class="s2"> of light speed.  The Lorentz factor was </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">particlevr</span><span class="p">)</span><span class="o">/</span><span class="n">c</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="n">gamma</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">particlevr</span><span class="p">))))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time used was </span><span class="si">%e</span><span class="s2"> seconds &quot;</span> <span class="o">%</span> <span class="n">tr</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+
+Non-relativistic
+
+LINAC2:
+
+Proton Synchrotron:
+Reached 100.00% of light speed in 0 iterations. Time passed: 6.08e-04 seconds
+
+Proton Transfer Tube:
+Transfered Proton successfully from Proton Synchrotron to Large Hadron Collider
+
+Large Hadron Collider:
+Reached 100.00% of light speed in 0 iterations. Time passed: 6.11e-04 seconds
+
+Action Report:
+The final speed of the proton was 100.00% of light speed.  The Lorentz factor was nan
+Time used was 6.106300e-04 seconds 
+
+
+Relativistic
+
+LINAC2:
+Did not reach speed in 50 m
+Final speed was 29.66% of light speed in 2238 iterations. Time passed: 1.12e-05 seconds
+
+Proton Synchrotron:
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>/srv/conda/lib/python3.6/site-packages/ipykernel_launcher.py:10: RuntimeWarning: invalid value encountered in sqrt
+  # Remove the CWD from sys.path while we load stuff.
+</pre>
+</div>
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Reached 87.00% of light speed in 32919 iterations. Time passed: 1.76e-04 seconds
+
+Proton Transfer Tube:
+Transfered Proton successfully from Proton Synchrotron to Large Hadron Collider
+
+Large Hadron Collider:
+Speed at non-relativistic end-time for 100% of light speed was 92.45% of light speed
+Did not reach 100% of light speed within 100000 iterations
+Reached 93.18% of light speed in 100000 iterations. Time passed: 6.78e-04 seconds
+
+Action Report:
+The final speed of the proton was 93.18% of light speed.  The Lorentz factor was 2.76
+Time used was 6.782850e-04 seconds 
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The resulting motion now changes, as we can also observe in the plot below.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="sd">&quot;&quot;&quot;Plot showing x and y, relativstic&quot;&quot;&quot;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLINAC2r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">particleposyLINAC2r</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LINAC2 Entry&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLINAC2r</span><span class="p">,</span> <span class="n">particleposyLINAC2r</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LINAC2 Trajectory&quot;</span><span class="p">)</span> <span class="c1">#create the plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLINAC2r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">particleposyLINAC2r</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LINAC2 Exit/PS Entry&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxPSr</span><span class="p">,</span> <span class="n">particleposyPSr</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PS Trajectory&quot;</span><span class="p">)</span> <span class="c1">#create the plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxPSr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">particleposyPSr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PS Exit&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxPTTr</span><span class="p">,</span> <span class="n">particleposyPTTr</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;PTT Trajectory&quot;</span><span class="p">)</span> <span class="c1">#create the plot</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLHCr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">particleposyLHCr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LHC Entry&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLHCr</span><span class="p">,</span> <span class="n">particleposyLHCr</span><span class="p">,</span> <span class="s2">&quot;k&quot;</span> <span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;LHC Trajectory&quot;</span><span class="p">)</span> <span class="c1">#create the plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">particleposxLHCr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">particleposyLHCr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;oy&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;End of the Proton&#39;s Journey&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;x position [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;y position [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Trajectory of a proton in a Particle Accelerator (relativistic)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/studentessays/LHC/LHC_CompEssay_30_0.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion"> </a></h2><p>We feel that our attempt at creating a (very) simplified model of the particle accelerator was quite successful. Despite lacking many of the actual components, the simulation is able to imitate the workings of the complex to successively accelerate the proton. The implementation of the magnetic field to rotate the path of the protons was perhaps the least accurate one, as we could not find any detailed information regarding the set-up of the dipoles. However, it seems that the protons stay on their circular path while accelerating to the desired end speed, which is what we wanted.</p>
+<p>From the investigation we were able to observe the effects of varying the diffrent physical parameters that were sent as input arguments to the accelerators. With voltages as defined in the program above, the protons reach $0.99999c$ in 61 milliseconds when relativistic factors are ignored. However, when taking these into account, the protons are not able to reach the desired end-speed even in the first LINAC and move at 93.18% of the speed of light at the time when non-relativistic protons achieve 99.999%.</p>
+<p>The exit position of the protons differs when relativistic factors are included because more time is required to reach the desired exit-velocity. However, it is not realistic that the protons leave its accelerator immediately when this velocity is achieved. An improvement to the model would be to define the exit-position and keep the protons circulating with the final velocity until this positioned was reached. It would then be possible to compare how many rounds in the PS and the HLC were needed when relativistic factors were and were not included.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    

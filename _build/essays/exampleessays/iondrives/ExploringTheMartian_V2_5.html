@@ -1,0 +1,913 @@
+---
+redirect_from:
+  - "/essays/exampleessays/iondrives/exploringthemartian-v2-5"
+interact_link: content/essays/exampleessays/iondrives/ExploringTheMartian_V2_5.ipynb
+kernel_name: python3
+kernel_path: content/essays/exampleessays/iondrives
+has_widgets: false
+title: |-
+  How would ion drives compare to conventional rockets on a trip to Mars?
+pagenum: 3
+prev_page:
+  url: /essays/exampleessays/railgun_TOO/Railgun_V1_9.html
+next_page:
+  url: /essays/exampleessays/earthtunnel/FallingThroughTheEarth-Narrative.html
+suffix: .ipynb
+search: mars hermes rocket ion mass acceleration spacecraft d journey conventional thrust drive s constant days fuel turn frac earth its drives get well reach velocity rockets also much space trip rate point our bfr t speed spacex using distance into simulation until used around com problem account gravity nasa take initial m tons computational martian both however really once ship during since simplified www assume while less short loop calculate graph varying weve impulse far movie takes arrives not create engine quite making smaller textrm mm second slow just seems few python case big falcon model km factors taking very
+
+comment: "***PROGRAMMATICALLY GENERATED, DO NOT EDIT. SEE ORIGINAL FILES IN /content***"
+---
+
+    <main class="jupyter-page">
+    <div id="page-info"><div id="page-title">How would ion drives compare to conventional rockets on a trip to Mars?</div>
+</div>
+    <div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Comparing-Ion-Drives-to-Conventional-Rockets-with-Introductory-Physics">Comparing Ion Drives to Conventional Rockets with Introductory Physics<a class="anchor-link" href="#Comparing-Ion-Drives-to-Conventional-Rockets-with-Introductory-Physics"> </a></h1><p><strong>A computational essay by John Burk (john.burk@fys.uio.no) and Tor Ole Odden (t.o.odden@fys.uio.no)</strong></p>
+<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction"> </a></h2><p>The 2015 movie <em>The Martian</em> (and the 2011 book under the same name) tells the story of an astronaut who becomes stranded on Mars and the steps he takes to survive until rescue arrives.</p>
+<p>Interestingly, the rocket used in the movie to get to Mars is not a conventional rocket, which burns fuel to create thrust, but rather something called an <em>ion drive.</em> Ion drives use electric fields to accelerate charged particles, launching them out the back of the engine and thereby creating forward thrust. Ion drives are quite exciting because they don't rely on explosions to propel rockets forward, making them potentially both safer and more fuel-efficient than conventional rockets. However, ion drives also produce a much, much smaller thrust than conventional rockets, meaning that they can only really be used once a craft is out in space.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="Hermes.jpg" alt="The Hermes Space Ship, from *The Martian*"></p>
+<p><strong>The Hermes space ship from <em>The Martian</em>, via 20th Century Fox</strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In the movie, the spacecraft (called The Hermes) makes the trip in two legs of the journey: during the first half of the trip they are constantly burning their engines, accelerating the entire time at a relatively small rate of $2\;\textrm{mm/s}^2$. Then, during the second half of the trip, they turn the rocket around and blast in reverse so that they can slow down. At no point in the journey do they turn off the engines and just coast.</p>
+<p>In principle this seems like a pretty slow way to get to Mars, since the ship will spend much of the first part of the journey inching along as they slowly get up to speed. However, with a few principles and equations from kinematics, along with the computational power of python, we can do some quantiative comparisons to see how effective these ion drives could actually be, as compared to a conventional rocket (in this case, a simplified version of the SpaceX mission to Mars using the <a href="https://www.spacex.com/mars">Big Falcon Rocket</a>).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Setting-up-the-Problem">Setting up the Problem<a class="anchor-link" href="#Setting-up-the-Problem"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We begin by importing the necessary python packages: matplotlib for plotting and math for, well, math.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, we define some model parameters. We'll set the distance to Mars as the <a href="https://www.space.com/14729-spacekids-distance-earth-mars.html">average</a> distance of 225 million km. We will also define the <a href="https://briankoberlein.com/2015/10/06/the-science-behind-the-martian-hermes-spacecraft/">Hermes' acceleration</a> to be a constant $2\;\textrm{mm/s}^2$.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">marsDist</span> <span class="o">=</span> <span class="mf">225E9</span> <span class="c1">#m</span>
+<span class="n">a_Hermes</span> <span class="o">=</span><span class="mf">0.002</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will also make two major simplifying assumptions. First, <strong>we will collapse this 2D problem into a 1D journey from Earth to Mars,</strong> with the spacecraft starting and ending at rest and traveling a distance of 225 million km. Second, <strong>we will ignore the gravitational pull of Earth and Mars.</strong> Note that in actuality one has to account for both of those factors, which necessitates taking the relative orbital distances of Earth and Mars into account and having spacecraft do complex maneuvers like "gravity assists" (both of these factors are thoroughly explored in <em>The Marian</em>). In practice, NASA has developed sophisticated software packages to do this kind of simulation. In our case, these simplifications make this a very unphysical problem—we will essentially be comparing how a conventional rocket would do against the Hermes in a deep-space drag race. But, this kind of (over)simplification can be useful for making rough comparisons between ion drives and conventional rockets.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="Earth-Mars.png" alt=""></p>
+<p><strong>Simplified path from Earth to Mars</strong></p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Analytical-solutions">Analytical solutions<a class="anchor-link" href="#Analytical-solutions"> </a></h2><h3 id="Hermes-(Ion-Drive)">Hermes (Ion Drive)<a class="anchor-link" href="#Hermes-(Ion-Drive)"> </a></h3><p>If we assume that the spacecraft reverses its acceleration at $\frac{d}{2}$, we can algebraically solve for the time it will take Hermes to reach the halfway point, and double that to find the time to reach Mars.</p>
+<p>We begin by calculating the time it takes to reach the halfway point using kinematic equations:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$\frac{1}{2}d=x_0+v_0t+\frac{1}{2}at^2$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Starting with an initial position of 0, and an initial velocity of 0, this equation simplifies to:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$d=at^2$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Solving for $t$:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$t=\sqrt{\frac{d}{a}}$$
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This motion is symmetric, so it will take the same time to slow reach Mars, making the total time, $T_{Heremes}$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+$$T_{Heremes} = 2t = 2\sqrt{\frac{d}{a}}$$<p>Plugging this in, we get a total time of:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">T_Hermes</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="n">marsDist</span><span class="o">/</span><span class="n">a_Hermes</span><span class="p">)</span> <span class="c1">#days</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">T_Hermes</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>245.52318791199568 days
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So, with a constant acceleration of $2\;\textrm{mm/s}^2$ it will take 245 days for a rocket with an ion drive to reach Mars.</p>
+<h3 id="Big-Falcon-Rocket-(Conventional-Drive)">Big Falcon Rocket (Conventional Drive)<a class="anchor-link" href="#Big-Falcon-Rocket-(Conventional-Drive)"> </a></h3><p>For comparison, let's consider a simplified version of the SpaceX mission to Mars using the Big Falcon Rocket (BFR). It's difficult to do a direct comparison, since the BFR is meant to escape Earth's gravity while the Hermes is just meant to be used out in space, but it at least provides a standard for comparison.</p>
+<p>We will assume the BFR will accelerate briefly to a maximum speed, and maintain that speed for the journey until it breifly deaccelerates when arriving at Mars. According to the <a href="https://www.spacex.com/mars">SpaceX Website</a> the BFR will arrive at Mars with a speed of 7.5 km/s so we will take this to be the constant traveling velocity for the trip. In practice, there will also be a few seconds of acceleration and deacceleration at the beginning and end (according to simulations, about about <a href="https://www.spacex.com/mars">473s</a> of deacceleration once it gets to Mars) but considering the month-long length of the trip, these minutes won't significantly contribute to the overall travel time. Treating this as a constant velocity problem, we then get a travel time of:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">v_BFR</span> <span class="o">=</span> <span class="mi">7500</span>
+<span class="n">T_BFR</span> <span class="o">=</span> <span class="n">marsDist</span><span class="o">/</span><span class="n">v_BFR</span> 
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BFR travel time:&quot;</span><span class="p">,</span> <span class="n">T_BFR</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>BFR travel time: 347.22222222222223 days
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The <strong>BFR will take about 347 days to reach Mars, compared to 245 days with an ion drive</strong>—a savings of about 100 days. That's 100 days less of being trapped in a tiny box, 100 days less supplies needed for the trip, and 100 days less radiation exposure (which can really add up over a long space journey). Additionally, the BFR journey also has the downside of exposing the astronauts to much larger accelerations, albeit for relatively short amounts of time, during launch and re-entry. So, for this simplification, the ion drive does appear to be a significantly more efficient way to get to Mars!</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Plotting-the-Rockets'-Journeys">Plotting the Rockets' Journeys<a class="anchor-link" href="#Plotting-the-Rockets'-Journeys"> </a></h2><p>One advantage of computational simulations is that they let us easily visualize data using matplotlib. To visualize these rocket journeys we'll need to create a list to store the velocity and time series data for the Hermes. We can then use a loop to calculate the velocity of the Hermes after each hour (to avoid integration errors), and append every 24th value to our arrays.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Hermes_v</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">Hermes_t</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">T_Hermes_days</span> <span class="o">=</span> <span class="n">T_Hermes</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span>
+
+<span class="n">t</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#time steps are in hours</span>
+<span class="n">v_Hermes</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">while</span> <span class="n">t</span><span class="o">/</span><span class="mi">24</span> <span class="o">&lt;</span> <span class="n">T_Hermes_days</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">t</span><span class="o">/</span><span class="mi">24</span> <span class="o">&lt;</span> <span class="n">T_Hermes_days</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">v_Hermes</span> <span class="o">=</span> <span class="n">v_Hermes</span> <span class="o">+</span> <span class="n">a_Hermes</span> <span class="o">*</span><span class="mi">3600</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">v_Hermes</span> <span class="o">=</span> <span class="n">v_Hermes</span> <span class="o">-</span> <span class="n">a_Hermes</span> <span class="o">*</span><span class="mi">3600</span> 
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">dt</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">%</span> <span class="mi">24</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">Hermes_v</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v_Hermes</span><span class="p">)</span>
+        <span class="n">Hermes_t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="o">/</span><span class="mi">24</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can do a similar calculation for the conventional rocket. We will need to use a smaller timestep in this calculation since the acceleration and deacceleration phases of the rocket are so short. Although the acceleration and deceleration windows are short, we will include those as well, with a value of $7500 \frac{m}{s} /  473s = 15.8 \frac{m}{s^2}$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">BFR_v</span> <span class="o">=</span><span class="p">[]</span>
+<span class="n">BFR_t</span> <span class="o">=</span><span class="p">[]</span>
+<span class="n">BFR_days</span> <span class="o">=</span> <span class="n">T_BFR</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span>
+<span class="n">BFR_accel</span> <span class="o">=</span> <span class="mf">15.8</span> <span class="c1">#m/s/s</span>
+<span class="n">BFR_accel_t</span> <span class="o">=</span> <span class="mi">473</span>
+
+<span class="n">t</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">dt</span><span class="o">=</span><span class="mi">1</span> <span class="c1">#time steps are in seconds</span>
+<span class="n">v_BFR</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">while</span> <span class="n">t</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span> <span class="o">&lt;</span> <span class="n">BFR_days</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">BFR_accel_t</span><span class="p">:</span>
+        <span class="c1">#update velocity</span>
+        <span class="n">v_BFR</span> <span class="o">=</span> <span class="n">v_BFR</span><span class="o">+</span><span class="n">BFR_accel</span><span class="o">*</span><span class="n">dt</span>
+        <span class="n">BFR_v</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v_BFR</span><span class="p">)</span>
+        <span class="n">BFR_t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">T_BFR</span><span class="o">-</span><span class="n">BFR_accel_t</span><span class="p">:</span>
+        <span class="n">v_BFR</span> <span class="o">=</span> <span class="n">v_BFR</span><span class="o">-</span><span class="n">BFR_accel</span><span class="o">*</span><span class="n">dt</span>
+        <span class="n">BFR_v</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v_BFR</span><span class="p">)</span>
+        <span class="n">BFR_t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">%</span> <span class="p">(</span><span class="mi">3600</span><span class="o">*</span><span class="mi">24</span><span class="p">):</span>
+            <span class="n">BFR_v</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v_BFR</span><span class="p">)</span>
+            <span class="n">BFR_t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span><span class="p">)</span>  <span class="c1">#record times in days</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span> <span class="o">+</span> <span class="n">dt</span>    
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now, we can plot the velocities as functions of time:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">BFR_t</span><span class="p">,</span><span class="n">BFR_v</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">Hermes_t</span><span class="p">,</span><span class="n">Hermes_v</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Plot of Rocket Velocities as Functions of Time&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Velocity (m/s)&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Text(0,0.5,&#39;Velocity (m/s)&#39;)</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/exampleessays/iondrives/ExploringTheMartian_V2_5_27_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From this graph, we can see why the Hermes performs so much better than the BFR: by the middle of its journey it gets up to a max speed of over 20,000 m/s! Turns out that little acceleration really does add up over time!</p>
+<p>It's also worth noting that the acceleration and deacelleration phases of the conventional rocket are very short—a few minutes—and when these drawn on a horizontal scale measured in days they appear nearly vertical.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Complicating-Factors:-A-Rocket-with-Varying-Mass">Complicating Factors: A Rocket with Varying Mass<a class="anchor-link" href="#Complicating-Factors:-A-Rocket-with-Varying-Mass"> </a></h2>
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In both of these scenarios, we've made an assumption that the mass of the spacecraft remains constant throughout its journey. Given that the mass of most rockets is fuel, this assumption is not very physical. Using the computational modeling power of python, we can now devise a better model that takes into account the varying rocket mass. To do this we will calculate the initial thrust of the rocket based on the acceleration assumed above, then assume that the thrust stays constant throughout the journey as the rocket ejects mass. This, in turn, will lead to an increasing acceleration.</p>
+<h3 id="Calculating-the-Hermes'-Mass-Ejection-Rate">Calculating the Hermes' Mass Ejection Rate<a class="anchor-link" href="#Calculating-the-Hermes'-Mass-Ejection-Rate"> </a></h3><p>To get us started, NASA scientist <a href="https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20150019662.pdf">Laura Burke</a> has done a detailed calculation of a realistic trajectory of the Heremes, taking into account the varying mass of the spacecraft and the motion of Earth and Mars. While the details of these calculations are well beyond the scope of this analysis, we will use her values to create parameters for our simplified 1-D model. Specifically, we'll use her mass parameter for the Hermes (110,000 kg) and fuel mass for the ion drive (126,000 kg).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">m_Hermes</span> <span class="o">=</span> <span class="mf">110e3</span> <span class="c1">#kg</span>
+<span class="n">m_Fuel</span> <span class="o">=</span> <span class="mf">126e3</span> <span class="c1">#kg</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Assuming the acceleration of the Hermes listed above is the initial acceleration, we can now calculate the ship's initial thrust of the rocket using Newton's 2nd law.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">Thrust</span> <span class="o">=</span> <span class="n">a_Hermes</span><span class="o">*</span><span class="p">(</span><span class="n">m_Fuel</span><span class="o">+</span><span class="n">m_Hermes</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We will assume that this thrust will remain constant (since it is based on the ejection rate of the ions out the back of the ship), while the mass of the rocket decreases.</p>
+<p>In Burke's much more comprehensive paper that calculated a realistic trajectory for the Hermes, she assumed a constant specific impulse of 5000s. Specific Impulse is a commonly used quantity in rocketry, ans is usually abbreviated $I_{sp}$. It is a measure of how effectively a rocket uses propellant or a jet engine uses fuel. By definition, it is the total impulse (or change in momentum) delivered per unit of propellant consume and is dimensionally equivalent to the generated thrust divided by the propellant mass flow rate or weight flow rate. So, we can calculate the mass change rate $\frac{dm}{dt}$ based on the equation for specific Impulse, $I_{sp} = \frac{F}{\frac{dm}{dt}g}$</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">I_sp</span> <span class="o">=</span> <span class="mi">5000</span>
+<span class="n">dmdt</span><span class="o">=</span><span class="n">Thrust</span><span class="o">/</span><span class="mf">9.8</span><span class="o">/</span><span class="n">I_sp</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dm/dt is equal to&#39;</span><span class="p">,</span> <span class="n">dmdt</span><span class="p">,</span> <span class="s1">&#39;kg/s&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>dm/dt is equal to 0.009632653061224489 kg/s
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The mass of the Hermes spacecraft is decreasing at a rate of 0.009 kg per second.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Simulation-of-Hermes-with-Varying-Mass">Simulation of Hermes with Varying Mass<a class="anchor-link" href="#Simulation-of-Hermes-with-Varying-Mass"> </a></h3><p>At some point, $d_{turn}$, the Hermes will turn and reorient itself so that its ion engine switches from accelerating the spacecraft to decaccelerating the spacecraft. Our challenge is that we don't know at what point this will be. If $d_{turn}$ happens too soon, Hermes will decaccerate to the point where it begins to speed up in the direction of earth, effectively "turning around" and will never reach Mars. If $d_{turn}$ happens too late, Hermes will still be moving (possibly quite fast!) when it passes Mars.</p>
+<p>Our goal, then, will be to find the smallest value of $d_{turn}$ so that 1) Hermes reaches Mars and 2) Hermes has a velocity of about 0 m/s when it arrives. This is a challenging problem to solve analytically, but it is possible to solve this problem computationally by creating a loop to test different values of $d_{turn}$ until we arrive at one that satisfies conditions 1 and 2 above. From experimentation we've found that Hermes will have to turn around after the mid-point (after all, it's much easier to decelerate it once the rocket has lost a lot of fuel mass) so we start the loop at 55% of the journey.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">v</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#m/s</span>
+<span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#seconds</span>
+
+<span class="n">Mtot</span> <span class="o">=</span> <span class="n">m_Hermes</span> <span class="o">+</span> <span class="n">m_Fuel</span>
+
+<span class="k">for</span> <span class="n">dturn</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">55</span><span class="p">,</span><span class="mi">100</span><span class="p">):</span> <span class="c1">#search over possible values for the d_turn as a percent of the total trip distance</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#m/s</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="n">Mtot</span> <span class="o">=</span> <span class="n">m_Hermes</span> <span class="o">+</span> <span class="n">m_Fuel</span>
+    <span class="k">while</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">marsDist</span><span class="p">:</span>
+        <span class="c1">#update velocity</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">dturn</span><span class="o">/</span><span class="mi">100</span><span class="o">*</span><span class="n">marsDist</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">Thrust</span><span class="o">/</span><span class="n">Mtot</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#accelerate</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">-</span> <span class="n">Thrust</span><span class="o">/</span><span class="n">Mtot</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#deaccelerate</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;fail--didn&#39;t reach Mars with turnaround at&quot;</span><span class="p">,</span> <span class="n">dturn</span><span class="p">,</span> <span class="s2">&quot;percent of journey&quot;</span><span class="p">)</span> <span class="c1">#stop if Hermes starts to turn around</span>
+            <span class="k">break</span>
+               
+        <span class="n">Mtot</span> <span class="o">=</span> <span class="n">Mtot</span> <span class="o">-</span> <span class="n">dmdt</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#update mass</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">dt</span> <span class="c1">#update position</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">+</span><span class="n">dt</span> <span class="c1">#update time</span>
+        
+    <span class="k">if</span> <span class="n">pos</span> <span class="o">&gt;</span> <span class="n">marsDist</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;success--reached Mars with turnaround at&quot;</span><span class="p">,</span> <span class="n">dturn</span><span class="p">,</span> <span class="s2">&quot;percent of journey&quot;</span><span class="p">)</span>
+        <span class="k">break</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;time to reach Mars:&quot;</span><span class="p">,</span> <span class="n">t</span><span class="o">/</span><span class="mi">24</span><span class="o">/</span><span class="mi">3600</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;velocity at mars&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="s2">&quot;m/s&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>fail--didn&#39;t reach Mars with turnaround at 55 percent of journey
+fail--didn&#39;t reach Mars with turnaround at 56 percent of journey
+fail--didn&#39;t reach Mars with turnaround at 57 percent of journey
+fail--didn&#39;t reach Mars with turnaround at 58 percent of journey
+fail--didn&#39;t reach Mars with turnaround at 59 percent of journey
+success--reached Mars with turnaround at 60 percent of journey
+time to reach Mars: 183.15199074074073 days
+velocity at mars 5090.316399704074 m/s
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So, if Hermes begins to reverse its thrust at 60% of the distance to Mars, it will just arrive at Mars with a velocity of around 5000 m/s.</p>
+<p>We can also see this graphically. From playing around with the simulation, we've found that the sweet spot is a turnaround at about 59.4% of the journey. So, we'll re-run the loop once, appending the values for eventual graphing.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">RHermes_v</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">RHermes_t</span><span class="o">=</span><span class="p">[]</span>
+
+<span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">v</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">Mtot</span> <span class="o">=</span> <span class="n">m_Hermes</span> <span class="o">+</span> <span class="n">m_Fuel</span>
+<span class="k">while</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="n">marsDist</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">pos</span> <span class="o">&lt;</span> <span class="o">.</span><span class="mi">593</span><span class="o">*</span><span class="n">marsDist</span><span class="p">:</span>
+         <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">+</span> <span class="n">Thrust</span><span class="o">/</span><span class="n">Mtot</span><span class="o">*</span><span class="n">dt</span>
+    <span class="k">else</span><span class="p">:</span>
+         <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="o">-</span> <span class="n">Thrust</span><span class="o">/</span><span class="n">Mtot</span><span class="o">*</span><span class="n">dt</span>
+    <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>            
+        <span class="k">break</span>
+    <span class="n">Mtot</span> <span class="o">=</span> <span class="n">Mtot</span> <span class="o">-</span> <span class="n">dmdt</span><span class="o">*</span><span class="n">dt</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">v</span><span class="o">*</span><span class="n">dt</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">t</span><span class="o">+</span><span class="n">dt</span>     
+    <span class="n">RHermes_v</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">RHermes_t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="o">/</span><span class="mi">3600</span><span class="o">/</span><span class="mi">24</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pos</span> <span class="o">&gt;</span> <span class="n">marsDist</span><span class="p">:</span> 
+        <span class="k">break</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;time to reach Mars:&quot;</span><span class="p">,</span> <span class="n">t</span><span class="o">/</span><span class="mi">24</span><span class="o">/</span><span class="mi">3600</span><span class="p">,</span> <span class="s2">&quot;days&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;velocity at mars&quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="s2">&quot;m/s&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;final mass&quot;</span><span class="p">,</span> <span class="n">Mtot</span><span class="p">,</span> <span class="s2">&quot;kg&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>time to reach Mars: 192.3194560185185 days
+velocity at mars -0.006205592541714668 m/s
+final mass 75939.97402794662 kg
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">RHermes_t</span><span class="p">,</span><span class="n">RHermes_v</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Plot of Hermes Velocity as a Function of Time&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Velocity (m/s)&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Text(0,0.5,&#39;Velocity (m/s)&#39;)</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/exampleessays/iondrives/ExploringTheMartian_V2_5_41_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Looking at this graph we see that, by taking the decreasing mass into account, we've reduced the time to mars by an additional 53 days! However, there is one hitch in this simulation: <strong>the final mass of the spacecraft is actually less than when it started</strong> (remember, we started with 126 metric tons of fuel and 110 tons of spaceship). So, in the current simulation, the crew seems to have burned up about 34 additional tons of spacecraft to make it to Mars. It seems that in order to make this journey you would have to have more like 160 tons of fuel and 76 tons of spacecraft.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion:-Ion-Drives-Rock!-(with-the-right-fuel-load,-and-until-you-encounter-gravity...)">Conclusion: Ion Drives Rock! (with the right fuel load, and until you encounter gravity...)<a class="anchor-link" href="#Conclusion:-Ion-Drives-Rock!-(with-the-right-fuel-load,-and-until-you-encounter-gravity...)"> </a></h2><p>Combining all three scenarios into a sigle graph, we get:</p>
+
+</div>
+</div>
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">BFR_t</span><span class="p">,</span><span class="n">BFR_v</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">Hermes_t</span><span class="p">,</span><span class="n">Hermes_v</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="n">RHermes_t</span><span class="p">,</span><span class="n">RHermes_v</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Plot of Rocket Velocities as Functions of Time&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Time (days)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Velocity (m/s)&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Text(0,0.5,&#39;Velocity (m/s)&#39;)</pre>
+</div>
+
+</div>
+</div>
+<div class="jb_output_wrapper }}">
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="../../../images/essays/exampleessays/iondrives/ExploringTheMartian_V2_5_44_1.png"
+>
+</div>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="jb_cell">
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>From this graph, we can see that the ion drive delivers even better performance than our previous constant acceleration assumption. In the "constant thrust" ion drive scenario (where the mass of the rocket decreases while the thrust stays constant), Hermes arrives at Mars in 192 days, over 50 days ahead of the "constant acceleration" ion drive case. This shorter trip time further reduces the time of radiation exposure, amount of food and supplies that must be carried on board. Additionally, the acceleration in the ion drive scenairos are far smaller and therefore more comfortable than the accelerations experienced on the conventional rocket during its short ascent and descent periods.</p>
+<p>However, apart from the issue of fuel vs. spacecraft mass, there is one major difficulty that we still haven't addressed: gravity. Although ion drives seem quite promising, the small amount of thrust used in this simulation would not be enough to overcome the gravitational pull of the Earth until you were far, far away from it (by our calculations, about 1.17 times the distance of the Lunar orbit). This means that in order to really reap the benefits of an ion drive, one would either need to be far away from any planets, massively increase the amount of mass ejected by the drive, combine it with another type of propulsion system (like a conventional rocket) to reach escape velocity, or rely on 2D orbital maneuvers to escape Earth's gravity well.</p>
+
+</div>
+</div>
+</div>
+</div>
+
+ 
+
+
+    </main>
+    
